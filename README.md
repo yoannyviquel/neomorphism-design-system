@@ -1,7 +1,7 @@
 # Neomorphism design system
 
 Le design system néomorphique de mes apps (Follow, Investment, weather-ahead) : les jetons, le CSS
-et les composants React, avec un Storybook. Publié en privé sur GitHub Packages sous
+et les composants React, avec une page de démonstration. Publié en privé sur GitHub Packages sous
 `@yoannyviquel/neomorphism-design-system`.
 
 ## Principes
@@ -60,23 +60,28 @@ Le build d'une app (Cloudflare, CI) a besoin du même `NODE_AUTH_TOKEN` dans ses
 
 ```bash
 npm install          # npm 11 (npm 10 bute sur la résolution des dépendances pair)
-npm run storybook    # http://localhost:6006
+npm run site         # la page de démonstration, http://localhost:5173
 npm test
 npm run build        # dist/index.js, dist/types, dist/styles
 ```
 
-## Storybook en ligne
+## Page de démonstration
 
-Un Worker Cloudflare sert le Storybook construit (`wrangler.jsonc`), déployé à chaque poussée sur
-`main` par l'intégration Git de Cloudflare :
+`site/` est une app Vite toute simple, bâtie sur les composants du paquet : chaque famille en
+situation, avec un sélecteur de thème (appareil, sombre, clair). Pas de Storybook : sur iPhone,
+Safari n'y jouait pas les animations (rebond, pop), alors qu'une page ordinaire les joue, comme
+les apps.
+
+Un Worker Cloudflare la sert (`wrangler.jsonc`), déployée à chaque poussée sur `main` par
+l'intégration Git de Cloudflare :
 
 | Réglage du build | Valeur |
 | --- | --- |
-| Commande de build | `npm run build-storybook` |
+| Commande de build | `npm run build-site` |
 | Commande de déploiement | `npx wrangler deploy` |
 
 Le build de ce Worker n'a besoin d'aucun jeton. L'adresse `*.workers.dev` est publique : pour
-garder le Storybook privé, la protéger par Cloudflare Access (Zero Trust → Access → Applications,
+garder la page privée, la protéger par Cloudflare Access (Zero Trust → Access → Applications,
 une règle sur son adresse e-mail).
 
 ## Publier une version
@@ -87,6 +92,4 @@ git push --follow-tags
 ```
 
 Le workflow « Publier » construit et publie le tag sur GitHub Packages. Il se lance aussi à la main
-(onglet Actions, « Run workflow ») et publie alors la version inscrite dans `package.json`. La CI construit aussi le
-Storybook à chaque poussée sur `main`, téléchargeable depuis la page du workflow (artefact
-`storybook`).
+(onglet Actions, « Run workflow ») et publie alors la version inscrite dans `package.json`.

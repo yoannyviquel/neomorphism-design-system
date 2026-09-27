@@ -5,6 +5,7 @@
     "module": "esnext",
     "types": ["vite/client", "vitest/globals"],
     "strict": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "verbatimModuleSyntax": true,
@@ -16,5 +17,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", ".storybook", "vite.config.ts"]
+  "include": ["src", "site", "vite.config.ts", "vite.site.config.ts"]
 }

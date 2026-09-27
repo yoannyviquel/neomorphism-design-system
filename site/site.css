@@ -1,0 +1,141 @@
+/* La page de démonstration : une colonne, des sections, les commandes du DS en situation. */
+
+body {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.site {
+  display: grid;
+  gap: 44px;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px var(--shadow-room) 64px;
+}
+
+.site-head {
+  display: grid;
+  gap: 18px;
+}
+
+.site-head h1 {
+  font-size: 26px;
+  text-wrap: balance;
+}
+
+.site-head p,
+.demo p {
+  margin: 0;
+  max-width: 64ch;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.site-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--shadow-room);
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-size: 14px;
+}
+
+.site-nav a {
+  color: var(--color-muted);
+  text-decoration: none;
+}
+
+.site-nav a:hover,
+.site-nav a:focus-visible {
+  color: var(--color-text);
+}
+
+.demo {
+  display: grid;
+  gap: 18px;
+  scroll-margin-top: 24px;
+}
+
+.demo h2 {
+  font-size: 19px;
+}
+
+.demo h3 {
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--shadow-room);
+}
+
+.stack {
+  display: grid;
+  gap: var(--shadow-room);
+  max-width: 420px;
+}
+
+.swatch {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.swatch-box {
+  width: 88px;
+  height: 88px;
+  border-radius: 16px;
+  background: var(--color-bg);
+}
+
+.colors,
+.icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.color {
+  display: grid;
+  gap: 8px;
+}
+
+.color-chip {
+  height: 52px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+}
+
+.icons div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.icons .nf {
+  font-size: 22px;
+  color: var(--color-text);
+}
+
+code {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 12px;
+}
+
+.after-fold {
+  margin: 12px 0 0;
+  color: var(--color-muted);
+  font-size: 14px;
+}

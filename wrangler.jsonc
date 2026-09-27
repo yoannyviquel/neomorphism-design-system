@@ -1,11 +1,11 @@
 {
-  // Worker « neomorphism-design-system » : sert le Storybook construit (storybook-static/), rien
-  // d'autre — pas de script, que des fichiers. Build Cloudflare : `npm run build-storybook`, puis
+  // Worker « neomorphism-design-system » : sert la page de démonstration construite (site-dist/),
+  // rien d'autre — pas de script, que des fichiers. Build Cloudflare : `npm run build-site`, puis
   // `npx wrangler deploy`. Le nom doit être celui du Worker dans le tableau de bord Cloudflare.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "neomorphism-design-system",
   "compatibility_date": "2026-09-27",
   "assets": {
-    "directory": "./storybook-static"
+    "directory": "./site-dist"
   }
 }
