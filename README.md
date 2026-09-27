@@ -69,6 +69,7 @@ npm version minor    # ou patch, major : met à jour package.json et crée le ta
 git push --follow-tags
 ```
 
-Le workflow « Publier » construit et publie le tag sur GitHub Packages. La CI construit aussi le
+Le workflow « Publier » construit et publie le tag sur GitHub Packages. Il se lance aussi à la main
+(onglet Actions, « Run workflow ») et publie alors la version inscrite dans `package.json`. La CI construit aussi le
 Storybook à chaque poussée sur `main`, téléchargeable depuis la page du workflow (artefact
 `storybook`).

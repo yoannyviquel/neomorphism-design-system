@@ -1,9 +1,11 @@
 name: Publier
 
 # Une version = un tag : `npm version patch` (ou minor, major), puis `git push --follow-tags`.
+# Ou à la main (onglet Actions, « Run workflow ») : publie la version inscrite dans package.json.
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
 
 jobs:
   publish:
