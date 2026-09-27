@@ -1,12 +1,12 @@
 {
-  "name": "@yoannyviquel/design-system",
+  "name": "@yoannyviquel/neomorphism-design-system",
   "version": "0.1.0",
   "description": "Design system néomorphique partagé : jetons, CSS et composants React (Follow, Investment, weather-ahead).",
   "type": "module",
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yoannyviquel/design-system.git"
+    "url": "git+https://github.com/yoannyviquel/neomorphism-design-system.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

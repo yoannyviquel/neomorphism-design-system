@@ -1,8 +1,8 @@
-# Design system
+# Neomorphism design system
 
 Le design system néomorphique de mes apps (Follow, Investment, weather-ahead) : les jetons, le CSS
 et les composants React, avec un Storybook. Publié en privé sur GitHub Packages sous
-`@yoannyviquel/design-system`.
+`@yoannyviquel/neomorphism-design-system`.
 
 ## Principes
 
@@ -44,11 +44,11 @@ et les composants React, avec un Storybook. Publié en privé sur GitHub Package
    //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
    ```
 
-3. `npm install @yoannyviquel/design-system`, puis :
+3. `npm install @yoannyviquel/neomorphism-design-system`, puis :
 
    ```tsx
-   import '@yoannyviquel/design-system/styles.css'
-   import { Button, FoldingGrid, ImageButton } from '@yoannyviquel/design-system'
+   import '@yoannyviquel/neomorphism-design-system/styles.css'
+   import { Button, FoldingGrid, ImageButton } from '@yoannyviquel/neomorphism-design-system'
    ```
 
 Le build d'une app (Cloudflare, CI) a besoin du même `NODE_AUTH_TOKEN` dans ses variables.
