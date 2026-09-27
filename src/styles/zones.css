@@ -1,0 +1,30 @@
+/* Zones : délimitées par une bordure fine, jamais par une ombre — la profondeur reste réservée aux
+   commandes, si bien qu'un bouton se détache franchement du cadre qui le contient.
+   Padding d'une zone bordée : la marge des ombres (--shadow-room). */
+
+.ds-zone {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--neu-radius-lg);
+  padding: var(--shadow-room);
+}
+
+/* Message : un texte d'accompagnement, sans cadre, dont seul le mot clé est appuyé. */
+.ds-notice {
+  padding: 12px 16px;
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ds-notice strong {
+  color: var(--color-text);
+}
+
+.ds-notice.ds-warn strong {
+  color: var(--grad-solar-to);
+}
+
+.ds-notice.ds-ok strong {
+  color: var(--grad-fern-to);
+}

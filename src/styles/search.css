@@ -1,0 +1,91 @@
+/* Champ de recherche, frère de la barre de menu : même rayon, même marge intérieure, ombres des
+   grands éléments — en relief au repos, creusé une fois engagé, avec le rebond. On écrit dedans ; le
+   bouton Effacer y est en relief, taillé comme la pastille du menu. Engagé, le champ s'allume comme
+   la destination courante du menu : l'icône prend la couleur active et sa lueur. */
+
+.ds-search {
+  --search-pad: 8px;
+  --sink: 0;
+  --sink-lift: calc(1 + max(0, -1 * var(--sink)));
+  --sink-depth: max(0, var(--sink));
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--search-pad);
+  padding: var(--search-pad);
+  border-radius: 22px;
+  background: var(--color-bg);
+  box-shadow:
+    calc(28px * var(--neu-k-lg) * var(--sink-lift)) calc(28px * var(--neu-k-lg) * var(--sink-lift)) calc(50px * var(--neu-k-lg) * var(--sink-lift)) var(--neu-dark),
+    calc(-23px * var(--neu-k-lg) * var(--sink-lift)) calc(-23px * var(--neu-k-lg) * var(--sink-lift)) calc(45px * var(--neu-k-lg) * var(--sink-lift)) var(--neu-light),
+    inset calc(26px * var(--neu-k-lg) * var(--sink-depth)) calc(26px * var(--neu-k-lg) * var(--sink-depth)) calc(48px * var(--neu-k-lg) * var(--sink-depth)) var(--neu-dark),
+    inset calc(-31px * var(--neu-k-lg) * var(--sink-depth)) calc(-31px * var(--neu-k-lg) * var(--sink-depth)) calc(43px * var(--neu-k-lg) * var(--sink-depth)) var(--neu-light-in);
+  transition: --sink 1s var(--sink-ease);
+}
+
+.ds-search:focus-within {
+  --sink: 1;
+}
+
+@supports not (transition-timing-function: linear(0, 1)) {
+  .ds-search {
+    transition: --sink 0.45s cubic-bezier(0.34, 1.8, 0.64, 1);
+  }
+}
+
+.ds-search-icon {
+  position: absolute;
+  left: calc(var(--search-pad) + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: var(--color-muted);
+  pointer-events: none;
+  transition:
+    color 0.2s ease,
+    text-shadow 0.2s ease;
+}
+
+.ds-search:focus-within .ds-search-icon {
+  color: var(--btn-active-color);
+  text-shadow: var(--btn-active-glow);
+}
+
+/* Le champ lui-même n'a pas de forme : c'est le cadre qui la porte. Ni relief, ni creux, ni anneau
+   (sur iPhone, un champ touché montre toujours son anneau de focus). */
+.ds-search-input,
+.ds-search-input:focus,
+.ds-search-input:focus-visible {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 8px 0 42px;
+  border: none;
+  border-radius: 14px;
+  outline: none;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 16px;
+  caret-color: var(--btn-active-color);
+}
+
+.ds-search-input::placeholder {
+  color: color-mix(in srgb, var(--color-muted) 70%, transparent);
+}
+
+/* Le « × » natif ferait doublon avec le bouton Effacer. */
+.ds-search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.ds-search .ds-icon {
+  flex: 0 0 auto;
+  font-size: 18px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-search {
+    transition: none;
+  }
+}

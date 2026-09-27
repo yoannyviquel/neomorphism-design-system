@@ -1,0 +1,168 @@
+/* Jetons du design system néomorphique.
+
+   Néomorphisme à DEUX niveaux — repos = surélevé, actif = enfoncé — en DEUX THÈMES.
+   RÈGLE DE RELIEF : l'ombre ne dit qu'une chose, l'interaction.
+   — SURÉLEVÉ = ce qui s'actionne, au repos (bouton, champ, case à cocher) ;
+   — ENFONCÉ = l'état actif de ces mêmes commandes (bouton pressé, destination courante, champ
+     engagé, case cochée) ;
+   — BORDURE GRISE FINE = une ZONE, et rien d'autre (panneau, liste, message) : une zone ne se
+     presse pas, elle ne porte aucune ombre.
+
+   Le thème SUIT L'APPAREIL : le sombre est le défaut, le clair prend la main sur
+   `prefers-color-scheme: light`. `data-theme="dark"` ou `"light"` sur <html> le force (Storybook,
+   réglage d'une app). Un seul jeu de NOMS : le thème clair ne redéfinit que des valeurs. */
+
+:root {
+  /* Thème sombre — le défaut */
+  --color-bg: rgb(34, 36, 37);
+  --color-surface: rgba(16, 28, 40, 0.92);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-text: #d7e6f2;
+  --color-muted: #8fa6ba;
+  /* Accents issus des palettes (cyan → Glacier, rouge → Blaze). */
+  --color-primary: var(--grad-glacier-to);
+  --color-danger: var(--grad-blaze-to);
+
+  --neu-radius: 10px;
+  --neu-radius-lg: 16px;
+  /* OMBRES ET MARGES — une seule règle.
+     La référence est la maquette (« shadow 2 » en relief, « shadow 4 » en creux, dessinées pour un
+     carré de 383 px) : relief — ombre sombre à 28 px floue sur 50, rehaut à −23 px flou sur 45 ;
+     creux — ombre sombre à 26 px floue sur 48, rehaut à −31 px flou sur 43. Toutes nos ombres en
+     sont une RÉDUCTION par un facteur k qui ne dépend que de la taille de l'élément :
+       k = 1/3 — commandes ordinaires, jusqu'à ~60 px de haut ;
+       k = 1/2 — grandes commandes, ~64 px et plus, ou barre sur toute la largeur ;
+       k = 1/9 — creux fixes logés dans une commande (le chaton d'un bouton à image serti).
+     Le rebord d'un élément enfoncé (son ombre extérieure) est son ombre en relief, au même k.
+     MARGE : autour d'une commande, 72 px × k (24 px à 1/3, 36 px à 1/2), pour que l'ombre ne soit
+     ni rognée par le bord d'une zone qui défile, ni recouverte par la voisine. */
+  --neu-k: calc(1 / 3);
+  --neu-k-lg: calc(1 / 2);
+  --neu-k-xs: calc(1 / 9);
+  --neu-dark: rgba(0, 0, 0, 0.55);
+  --neu-light: rgba(255, 255, 255, 0.05);
+  --neu-light-in: rgba(255, 255, 255, 0.032);
+  --neu-raised:
+    calc(28px * var(--neu-k)) calc(28px * var(--neu-k)) calc(50px * var(--neu-k)) var(--neu-dark),
+    calc(-23px * var(--neu-k)) calc(-23px * var(--neu-k)) calc(45px * var(--neu-k)) var(--neu-light);
+  --neu-raised-lg:
+    calc(28px * var(--neu-k-lg)) calc(28px * var(--neu-k-lg)) calc(50px * var(--neu-k-lg)) var(--neu-dark),
+    calc(-23px * var(--neu-k-lg)) calc(-23px * var(--neu-k-lg)) calc(45px * var(--neu-k-lg)) var(--neu-light);
+  /* Enfoncé : le rebord, puis le creux. */
+  --neu-inset:
+    var(--neu-raised), inset calc(26px * var(--neu-k)) calc(26px * var(--neu-k)) calc(48px * var(--neu-k)) var(--neu-dark),
+    inset calc(-31px * var(--neu-k)) calc(-31px * var(--neu-k)) calc(43px * var(--neu-k)) var(--neu-light-in);
+  --neu-inset-lg:
+    var(--neu-raised-lg),
+    inset calc(26px * var(--neu-k-lg)) calc(26px * var(--neu-k-lg)) calc(48px * var(--neu-k-lg)) var(--neu-dark),
+    inset calc(-31px * var(--neu-k-lg)) calc(-31px * var(--neu-k-lg)) calc(43px * var(--neu-k-lg)) var(--neu-light-in);
+  --shadow-room: calc(72px * var(--neu-k));
+  --shadow-room-lg: calc(72px * var(--neu-k-lg));
+  /* Sol d'une commande enfoncée : la couleur du fond, sans assombrissement. */
+  --neu-sunk-bg: var(--color-bg);
+  /* Fond d'attente d'une image avant son chargement. */
+  --placeholder-bg: color-mix(in srgb, var(--color-bg) 70%, #000);
+  /* Signal d'état actif : blanc rétroéclairé, et son halo, qui rayonne de la couleur de l'élément. */
+  --btn-active-color: #ffffff;
+  --btn-active-glow: 0 0 8px color-mix(in srgb, currentColor 50%, transparent);
+  --btn-active-glow-strong: 0 0 11px color-mix(in srgb, currentColor 75%, transparent);
+  --check-glow: drop-shadow(0 0 4px color-mix(in srgb, var(--color-primary) 70%, transparent));
+
+  /* LE REBOND — la courbe réglée dans l'atelier « Pop du bouton » : dépassement ×1,8, creux,
+     second rebond, posé, en 1 s. Sert à l'enfoncement des boutons (--sink) et au pop (--pop). */
+  --sink-ease: linear(0, 0.041, 0.159, 0.341, 0.569, 0.824, 1.083, 1.324, 1.529, 1.683, 1.775, 1.794, 1.713, 1.585, 1.427, 1.255, 1.086, 0.933, 0.806, 0.713, 0.656, 0.635, 0.647, 0.687, 0.746, 0.819, 0.896, 0.971, 1.039, 1.094, 1.133, 1.157, 1.164, 1.157, 1.137, 1.108, 1.065, 1.021, 1.001, 1, 1);
+
+  /* Palettes de dégradé (couleurs de stop). */
+  --grad-glacier-from: #001020;
+  --grad-glacier-to: #a8e6ff;
+  --grad-dusk-from: #200310;
+  --grad-dusk-to: #ff6b9c;
+  --grad-fern-from: #001a08;
+  --grad-fern-to: #00c85a;
+  --grad-blaze-from: #1a0000;
+  --grad-blaze-to: #ff2d2d;
+  --grad-solar-from: #1a1200;
+  --grad-solar-to: #ffc500;
+
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--color-text);
+  color-scheme: dark;
+}
+
+/* Thème clair — le fond de la maquette des ombres, un gris froid (#E8EAEC) : assez sombre pour que
+   le rehaut blanc se voie ; encre, gris et bordures suivent la même température. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --color-bg: #e8eaec;
+    --color-surface: rgba(232, 234, 236, 0.92);
+    --color-border: rgba(13, 39, 80, 0.13);
+    --color-text: #12161c;
+    --color-muted: #5b6270;
+    /* Les accents du sombre sont des teintes CLAIRES (cyan pâle, rouge vif) : illisibles sur fond
+       clair. On garde la teinte, on descend la luminosité. */
+    --color-primary: #0b7285;
+    --color-danger: #c92a2a;
+    /* Les couleurs de la maquette : bleu nuit à 16 %, rehaut blanc plein, rehaut des creux à 64 %. */
+    --neu-dark: rgba(13, 39, 80, 0.16);
+    --neu-light: #ffffff;
+    --neu-light-in: rgba(255, 255, 255, 0.64);
+    /* L'attente d'une image se contente d'un voile : 30 % de noir, ici, ferait une tache. */
+    --placeholder-bg: color-mix(in srgb, var(--color-bg) 88%, #000);
+    /* L'encre remplace le blanc rétroéclairé : c'est le plus foncé qui « s'allume » sur fond clair. */
+    --btn-active-color: var(--color-text);
+    /* ...et les halos s'éteignent : un glow sombre sur fond clair ne rayonne pas, il salit. */
+    --btn-active-glow: 0 0 0 transparent;
+    --btn-active-glow-strong: 0 0 0 transparent;
+    --check-glow: none;
+    /* Jaune d'alerte : #ffc500 disparaît sur fond clair. */
+    --grad-solar-to: #a86b00;
+    color-scheme: light;
+  }
+}
+
+:root[data-theme='light'] {
+  --color-bg: #e8eaec;
+  --color-surface: rgba(232, 234, 236, 0.92);
+  --color-border: rgba(13, 39, 80, 0.13);
+  --color-text: #12161c;
+  --color-muted: #5b6270;
+  /* Les accents du sombre sont des teintes CLAIRES (cyan pâle, rouge vif) : illisibles sur fond
+     clair. On garde la teinte, on descend la luminosité. */
+  --color-primary: #0b7285;
+  --color-danger: #c92a2a;
+  /* Les couleurs de la maquette : bleu nuit à 16 %, rehaut blanc plein, rehaut des creux à 64 %. */
+  --neu-dark: rgba(13, 39, 80, 0.16);
+  --neu-light: #ffffff;
+  --neu-light-in: rgba(255, 255, 255, 0.64);
+  /* L'attente d'une image se contente d'un voile : 30 % de noir, ici, ferait une tache. */
+  --placeholder-bg: color-mix(in srgb, var(--color-bg) 88%, #000);
+  /* L'encre remplace le blanc rétroéclairé : c'est le plus foncé qui « s'allume » sur fond clair. */
+  --btn-active-color: var(--color-text);
+  /* ...et les halos s'éteignent : un glow sombre sur fond clair ne rayonne pas, il salit. */
+  --btn-active-glow: 0 0 0 transparent;
+  --btn-active-glow-strong: 0 0 0 transparent;
+  --check-glow: none;
+  /* Jaune d'alerte : #ffc500 disparaît sur fond clair. */
+  --grad-solar-to: #a86b00;
+  color-scheme: light;
+}
+
+/* Nombres enregistrés, et non listes d'ombres : Safari n'interpole pas ces dernières quand elles
+   sont écrites en variables — il sautait d'une ombre à l'autre. */
+@property --sink {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --pop {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --menu-at {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}

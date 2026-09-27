@@ -1,0 +1,12 @@
+/* Le design system, dans l'ordre : jetons, base, puis chaque famille. */
+@import './tokens.css';
+@import './base.css';
+@import './icons.css';
+@import './zones.css';
+@import './button.css';
+@import './image-button.css';
+@import './field.css';
+@import './search.css';
+@import './menu.css';
+@import './fold.css';
+@import './spinner.css';

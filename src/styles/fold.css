@@ -1,0 +1,166 @@
+/* Grille dépliante (FoldingGrid).
+   Repliée, elle montre ses premières lignes ; dépliée, toutes. Le dépli va LIGNE PAR LIGNE : le cadre
+   pousse la suite de la page pour faire la place d'une ligne (accélération, croisière, freinage) ;
+   sitôt la place faite, les boutons de cette ligne « poppent » — ils montent du fond, sans ombre,
+   jusqu'à 1,8 fois leur relief, redescendent, rebondissent et s'y posent en 1 s, leur image
+   apparaissant à la redescente —, pendant que la poussée de la ligne suivante part. Le repli est le
+   dépli joué à l'envers, depuis le bas. Les moments sont calculés par fold.ts. */
+
+.ds-fold {
+  /* Durée d'une poussée ; le profil de vitesse en trapèze (30 % d'accélération, croisière, 30 % de
+     freinage) ne se trace pas avec une courbe de Bézier — d'où linear(). */
+  --fold-duration: 0.3s;
+  --fold-ease: cubic-bezier(0.45, 0, 0.55, 1);
+  box-sizing: content-box;
+  overflow: hidden;
+  /* La marge intérieure laisse aux ombres de quoi s'étaler sans être rognées ; la marge négative
+     rend la place à la page. */
+  padding: var(--shadow-room);
+  margin: calc(-1 * var(--shadow-room));
+  transition: height var(--fold-duration) var(--fold-ease);
+}
+
+@supports (transition-timing-function: linear(0, 1)) {
+  .ds-fold {
+    --fold-ease: linear(0, 0.006 5%, 0.024 10%, 0.054 15%, 0.095 20%, 0.149 25%, 0.214 30%, 0.786 70%, 0.851 75%, 0.905 80%, 0.946 85%, 0.976 90%, 0.994 95%, 1);
+  }
+}
+
+.ds-fold-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--fold-cell, 60px), 1fr));
+  justify-items: center;
+  gap: var(--shadow-room);
+}
+
+/* Le chevron qui déplie : un bouton-icône, enfoncé tant que tout est affiché. */
+.ds-fold-toggle {
+  display: flex;
+  margin: var(--shadow-room) auto 0;
+  font-size: 22px;
+}
+
+/* Repliés, les boutons du dessous sont à plat : ni ombre, ni image — le fond de la page. */
+.ds-fold .ds-button.is-folded::after {
+  box-shadow: none;
+}
+
+.ds-fold .ds-button.is-folded .ds-image {
+  opacity: 0;
+}
+
+.ds-fold .ds-button.is-folded .ds-well {
+  --well: 0;
+}
+
+/* Le pop : --pop est la hauteur du bouton (1 = son relief) ; l'ombre, l'échelle (10 % de l'écart)
+   et le chaton en découlent, image par image. */
+.ds-fold .ds-button {
+  --image-on: 1;
+}
+
+.ds-fold .ds-button[aria-pressed='false'] {
+  --image-on: 0.6;
+}
+
+.ds-fold .ds-button:is(.is-popping, .is-unpopping) {
+  transform: scale(calc(1 + 0.1 * (var(--pop) - 1)));
+}
+
+.ds-fold .ds-button.is-popping {
+  animation: ds-pop 1s linear both var(--pop-delay, 0.3s);
+}
+
+.ds-fold .ds-button.is-unpopping {
+  animation: ds-pop 1s linear reverse both;
+}
+
+.ds-fold .ds-button:is(.is-popping, .is-unpopping):not(.ds-active)::after {
+  /* L'ombre suit --pop : la transition du bouton la lisserait et la retarderait. */
+  transition: none;
+  box-shadow:
+    calc(28px * var(--neu-k) * var(--pop)) calc(28px * var(--neu-k) * var(--pop)) calc(50px * var(--neu-k) * var(--pop)) var(--neu-dark),
+    calc(-23px * var(--neu-k) * var(--pop)) calc(-23px * var(--neu-k) * var(--pop)) calc(45px * var(--neu-k) * var(--pop)) var(--neu-light);
+}
+
+.ds-fold .ds-button:is(.is-popping, .is-unpopping) .ds-well {
+  --well: clamp(0, var(--pop), 1);
+}
+
+.ds-fold .ds-button.is-popping .ds-image {
+  animation: ds-image-in 1s linear both var(--pop-delay, 0.3s);
+}
+
+.ds-fold .ds-button.is-unpopping .ds-image {
+  animation: ds-image-in 1s linear reverse both;
+}
+
+/* La courbe du pop, réglée dans l'atelier « Pop du bouton », échantillonnée tous les 25 ms. */
+@keyframes ds-pop {
+  0% { --pop: 0.000; }
+  2.5% { --pop: 0.041; }
+  5% { --pop: 0.159; }
+  7.5% { --pop: 0.341; }
+  10% { --pop: 0.569; }
+  12.5% { --pop: 0.824; }
+  15% { --pop: 1.083; }
+  17.5% { --pop: 1.324; }
+  20% { --pop: 1.529; }
+  22.5% { --pop: 1.683; }
+  25% { --pop: 1.775; }
+  27.5% { --pop: 1.794; }
+  30% { --pop: 1.713; }
+  32.5% { --pop: 1.585; }
+  35% { --pop: 1.427; }
+  37.5% { --pop: 1.255; }
+  40% { --pop: 1.086; }
+  42.5% { --pop: 0.933; }
+  45% { --pop: 0.806; }
+  47.5% { --pop: 0.713; }
+  50% { --pop: 0.656; }
+  52.5% { --pop: 0.635; }
+  55% { --pop: 0.647; }
+  57.5% { --pop: 0.687; }
+  60% { --pop: 0.746; }
+  62.5% { --pop: 0.819; }
+  65% { --pop: 0.896; }
+  67.5% { --pop: 0.971; }
+  70% { --pop: 1.039; }
+  72.5% { --pop: 1.094; }
+  75% { --pop: 1.133; }
+  77.5% { --pop: 1.157; }
+  80% { --pop: 1.164; }
+  82.5% { --pop: 1.157; }
+  85% { --pop: 1.137; }
+  87.5% { --pop: 1.108; }
+  90% { --pop: 1.065; }
+  92.5% { --pop: 1.021; }
+  95% { --pop: 1.001; }
+  97.5% { --pop: 1.000; }
+  100% { --pop: 1.000; }
+}
+
+@keyframes ds-image-in {
+  0% { opacity: calc(var(--image-on, 1) * 0.000); }
+  20% { opacity: calc(var(--image-on, 1) * 0.000); }
+  22.5% { opacity: calc(var(--image-on, 1) * 0.000); }
+  25% { opacity: calc(var(--image-on, 1) * 0.005); }
+  27.5% { opacity: calc(var(--image-on, 1) * 0.028); }
+  30% { opacity: calc(var(--image-on, 1) * 0.084); }
+  32.5% { opacity: calc(var(--image-on, 1) * 0.185); }
+  35% { opacity: calc(var(--image-on, 1) * 0.346); }
+  37.5% { opacity: calc(var(--image-on, 1) * 0.573); }
+  40% { opacity: calc(var(--image-on, 1) * 0.761); }
+  42.5% { opacity: calc(var(--image-on, 1) * 0.884); }
+  45% { opacity: calc(var(--image-on, 1) * 0.955); }
+  47.5% { opacity: calc(var(--image-on, 1) * 0.989); }
+  50% { opacity: calc(var(--image-on, 1) * 0.999); }
+  52.5% { opacity: calc(var(--image-on, 1) * 1.000); }
+  100% { opacity: calc(var(--image-on, 1) * 1.000); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-fold {
+    transition: none;
+  }
+}

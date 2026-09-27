@@ -1,0 +1,128 @@
+/* Champs : ce sont des COMMANDES, pas des zones — on les actionne pour saisir. Même modèle que les
+   boutons : en relief au repos, creusés une fois engagés (focus), avec le rebond (--sink). Texte à
+   16 px : en deçà, iOS zoome sur le champ au moment de la saisie. */
+
+.ds-input,
+.ds-checkbox {
+  --sink: 0;
+  --sink-lift: calc(1 + max(0, -1 * var(--sink)));
+  --sink-depth: max(0, var(--sink));
+  box-shadow:
+    calc(28px * var(--neu-k) * var(--sink-lift)) calc(28px * var(--neu-k) * var(--sink-lift)) calc(50px * var(--neu-k) * var(--sink-lift)) var(--neu-dark),
+    calc(-23px * var(--neu-k) * var(--sink-lift)) calc(-23px * var(--neu-k) * var(--sink-lift)) calc(45px * var(--neu-k) * var(--sink-lift)) var(--neu-light),
+    inset calc(26px * var(--neu-k) * var(--sink-depth)) calc(26px * var(--neu-k) * var(--sink-depth)) calc(48px * var(--neu-k) * var(--sink-depth)) var(--neu-dark),
+    inset calc(-31px * var(--neu-k) * var(--sink-depth)) calc(-31px * var(--neu-k) * var(--sink-depth)) calc(43px * var(--neu-k) * var(--sink-depth)) var(--neu-light-in);
+  transition: --sink 1s var(--sink-ease);
+}
+
+@supports not (transition-timing-function: linear(0, 1)) {
+  .ds-input,
+  .ds-checkbox {
+    transition: --sink 0.45s cubic-bezier(0.34, 1.8, 0.64, 1);
+  }
+}
+
+.ds-input {
+  min-width: 0;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: none;
+  border-radius: var(--neu-radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 16px;
+}
+
+.ds-input:focus {
+  --sink: 1;
+  outline: none;
+}
+
+/* Au clavier, l'enfoncement seul ne suffit pas à repérer la commande : on lui rend son anneau. */
+.ds-input:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.ds-input::placeholder {
+  color: color-mix(in srgb, var(--color-muted) 70%, transparent);
+}
+
+/* Sélecteur, sans habillage natif : sur iPhone, Safari dessinait sinon son propre sélecteur, à
+   plat, par-dessus le relief. Chevron du DS à droite. */
+.ds-select {
+  position: relative;
+}
+
+.ds-select select {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.ds-select select:focus,
+.ds-select select:active {
+  --sink: 1;
+  color: var(--btn-active-color);
+}
+
+.ds-select-chevron {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: color-mix(in srgb, var(--btn-active-color) 50%, transparent);
+  pointer-events: none;
+}
+
+.ds-select:focus-within .ds-select-chevron {
+  color: var(--btn-active-color);
+}
+
+/* Case à cocher : relief au repos ; cochée, elle est ACTIVE, donc enfoncée, coche rétroéclairée. */
+.ds-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  border: none;
+  border-radius: 7px;
+  background: var(--color-bg);
+  cursor: pointer;
+}
+
+.ds-checkbox:checked {
+  --sink: 1;
+}
+
+/* Coche dessinée à l'angle d'une bordure : ni image ni police à charger. */
+.ds-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 4px;
+  width: 4px;
+  height: 9px;
+  border: solid var(--color-primary);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  filter: var(--check-glow);
+}
+
+.ds-checkbox:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 60%, transparent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-input,
+  .ds-checkbox {
+    transition: none;
+  }
+}

@@ -1,0 +1,186 @@
+/* Bouton.
+   Le sol (::before) porte la surface, sous le contenu ; l'ombre est un calque (::after) AU-DESSUS du
+   contenu : le creux assombrit aussi texte et icône, comme une empreinte.
+   Inactif : texte gras à demi-encre de la couleur d'allumage (--btn-active-color) ; actif (enfoncé,
+   `ds-active` ou pressé) : pleine couleur, et son halo.
+
+   L'ENFONCEMENT a le rebond du DS. --sink, un nombre, dit où en est le bouton : 0 au repos, 1
+   enfoncé ; au-delà de 1, le creux se creuse plus que d'ordinaire ; en deçà de 0, le bouton monte
+   au-dessus de son repos et son relief grandit. Il transite selon --sink-ease : à l'enfoncement, le
+   creux dépasse sa profondeur (×1,8), remonte, rebondit et se pose ; au désenfoncement, le bouton
+   jaillit, redescend, rebondit et se pose. Le rebord (l'ombre en relief) reste en place.
+   --sink-k : l'échelle du bouton (celle des commandes ordinaires par défaut). */
+
+.ds-button {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+  border: none;
+  border-radius: var(--neu-radius);
+  color: var(--color-text);
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s ease;
+}
+
+.ds-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--color-bg);
+}
+
+.ds-button:not(.ds-active) {
+  color: color-mix(in srgb, var(--btn-active-color) 50%, transparent);
+}
+
+.ds-button.ds-active,
+.ds-button:active {
+  color: var(--btn-active-color);
+  animation: ds-glow-in 0.05s ease-in 0.15s both;
+  transition: color 0.05s ease 0.15s;
+}
+
+.ds-button::after {
+  --sink: 0;
+  --sink-lift: calc(1 + max(0, -1 * var(--sink)));
+  --sink-depth: max(0, var(--sink));
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    calc(28px * var(--sink-k, var(--neu-k)) * var(--sink-lift)) calc(28px * var(--sink-k, var(--neu-k)) * var(--sink-lift))
+      calc(50px * var(--sink-k, var(--neu-k)) * var(--sink-lift)) var(--neu-dark),
+    calc(-23px * var(--sink-k, var(--neu-k)) * var(--sink-lift)) calc(-23px * var(--sink-k, var(--neu-k)) * var(--sink-lift))
+      calc(45px * var(--sink-k, var(--neu-k)) * var(--sink-lift)) var(--neu-light),
+    inset calc(26px * var(--sink-k, var(--neu-k)) * var(--sink-depth)) calc(26px * var(--sink-k, var(--neu-k)) * var(--sink-depth))
+      calc(48px * var(--sink-k, var(--neu-k)) * var(--sink-depth)) var(--neu-dark),
+    inset calc(-31px * var(--sink-k, var(--neu-k)) * var(--sink-depth)) calc(-31px * var(--sink-k, var(--neu-k)) * var(--sink-depth))
+      calc(43px * var(--sink-k, var(--neu-k)) * var(--sink-depth)) var(--neu-light-in);
+  transition: --sink 1s var(--sink-ease);
+}
+
+/* Sans linear() (Safari avant 17.2) : un seul dépassement, sans rebonds, plus court. */
+@supports not (transition-timing-function: linear(0, 1)) {
+  .ds-button::after {
+    transition: --sink 0.45s cubic-bezier(0.34, 1.8, 0.64, 1);
+  }
+}
+
+.ds-button.ds-active::after,
+.ds-button:active::after {
+  --sink: 1;
+}
+
+/* À plat au repos (posé dans une surface déjà en relief). */
+.ds-button.ds-flat:not(.ds-active):not(:active)::after {
+  box-shadow: none;
+}
+
+.ds-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.ds-button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 60%, transparent);
+  outline-offset: 2px;
+}
+
+@keyframes ds-glow-in {
+  from {
+    text-shadow: 0 0 0 transparent;
+  }
+  to {
+    text-shadow: var(--btn-active-glow);
+  }
+}
+
+/* --- Formes --- */
+
+/* Bouton à libellé. */
+.ds-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  min-height: 44px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.ds-text.ds-small {
+  padding: 7px 12px;
+  min-height: 40px;
+  font-size: 13px;
+}
+
+/* Bouton-icône : carré de 44 px, rayon 14 (celui d'une pastille de menu). */
+.ds-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 14px;
+  font-size: 20px;
+  --btn-active-glow: var(--btn-active-glow-strong);
+}
+
+.ds-round {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 50%;
+}
+
+/* Échelle des grands éléments (un bouton logé dans une barre de même échelle). */
+.ds-large::after {
+  --sink-k: var(--neu-k-lg);
+}
+
+/* --- Tons ---
+   Un bouton TEINTÉ garde sa pleine teinte au repos : la demi-encre suppose une couleur d'allumage
+   proche du fond, ce qui n'est pas le cas d'un accent saturé. */
+.ds-primary {
+  --btn-active-color: var(--color-primary);
+}
+
+.ds-danger {
+  --btn-active-color: var(--color-danger);
+}
+
+.ds-link {
+  --btn-active-color: var(--color-primary);
+  padding: 4px 11px;
+  min-height: 0;
+  font-size: 13px;
+}
+
+.ds-primary:not(.ds-active),
+.ds-danger:not(.ds-active),
+.ds-link:not(.ds-active) {
+  color: var(--btn-active-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-button,
+  .ds-button::after {
+    transition: none;
+    animation: none;
+  }
+  .ds-button.ds-active,
+  .ds-button:active {
+    animation: none;
+    text-shadow: var(--btn-active-glow);
+  }
+}

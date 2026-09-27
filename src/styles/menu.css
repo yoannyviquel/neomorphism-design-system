@@ -1,0 +1,109 @@
+/* Barre de menu : un rectangle à coins arrondis CREUSÉ (shadow 4, échelle des grands éléments), sur
+   toute la largeur. Chaque destination y est une icône à plat ; celle où l'on est S'ÉTIRE pour
+   montrer son libellé, et une pastille EN RELIEF (shadow 2) glisse sous elle. --menu-at, le rang
+   courant, est un nombre animé : la pastille et la largeur des destinations en découlent, au même
+   rythme. L'app place la barre (marges, zone sûre du bas d'iPhone). */
+
+.ds-menu {
+  /* Ce que la destination courante prend de largeur en plus (0,8 = 1,8 fois une autre). */
+  --menu-grow: 0.8;
+  --menu-gap: 8px;
+  --menu-pad: 8px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--menu-gap);
+  padding: var(--menu-pad);
+  border-radius: 22px;
+  background: var(--color-bg);
+  box-shadow: var(--neu-inset-lg);
+  transition: --menu-at 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ds-menu-indicator {
+  --u: calc((100% - 2 * var(--menu-pad) - (var(--menu-n) - 1) * var(--menu-gap)) / (var(--menu-n) + var(--menu-grow)));
+  position: absolute;
+  top: var(--menu-pad);
+  bottom: var(--menu-pad);
+  left: calc(var(--menu-pad) + var(--menu-at) * (var(--u) + var(--menu-gap)));
+  width: calc(var(--u) * (1 + var(--menu-grow)));
+  border-radius: 15px;
+  background: var(--color-bg);
+  box-shadow: var(--neu-raised-lg);
+  pointer-events: none;
+}
+
+.ds-menu-item {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+  flex-grow: calc(1 + var(--menu-grow) * max(0, 1 - max(var(--menu-at) - var(--i), var(--i) - var(--menu-at))));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  min-width: 52px;
+  padding: 0;
+  border: none;
+  border-radius: 15px;
+  background: transparent;
+  color: color-mix(in srgb, var(--btn-active-color) 50%, transparent);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+  transition: color 0.3s ease;
+}
+
+.ds-menu-item .nf {
+  flex: 0 0 auto;
+  width: 20px;
+  font-size: 20px;
+  line-height: 1;
+  text-align: center;
+}
+
+.ds-menu-label {
+  max-width: 0;
+  margin-left: 0;
+  opacity: 0;
+  transform: translateX(-8px);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition:
+    max-width 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    margin-left 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.25s ease,
+    transform 0.35s ease;
+}
+
+.ds-menu-item.ds-active {
+  color: var(--btn-active-color);
+  animation: ds-glow-in 0.05s ease-in 0.15s both;
+}
+
+.ds-menu-item.ds-active .ds-menu-label {
+  max-width: 120px;
+  margin-left: 8px;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.ds-menu-item:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 60%, transparent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-menu,
+  .ds-menu-item,
+  .ds-menu-label {
+    transition: none;
+  }
+  .ds-menu-item.ds-active {
+    animation: none;
+    text-shadow: var(--btn-active-glow);
+  }
+}

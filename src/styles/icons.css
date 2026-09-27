@@ -1,0 +1,168 @@
+/* Icônes : Symbols Nerd Font (ryanoasis/nerd-fonts, v3.4.0), servie avec le paquet — pas de CDN.
+   Les glyphes sont ceux de Material Design Icons (nf-md-*, même point de code). N'y figurent que
+   ceux dont les apps se servent ; en ajouter un, c'est une ligne ici et une dans icons.ts. */
+@font-face {
+  font-family: 'Symbols Nerd Font';
+  src: url('../assets/fonts/symbols-nerd-font-v2.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.nf {
+  font-family: 'Symbols Nerd Font';
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.nf-md-account::before {
+  content: '\f0004';
+}
+
+.nf-md-alert::before {
+  content: '\f0026';
+}
+
+.nf-md-arrow_left::before {
+  content: '\f004d';
+}
+
+.nf-md-arrow_up::before {
+  content: '\f005d';
+}
+
+.nf-md-arrow_up_down::before {
+  content: '\f04e2';
+}
+
+.nf-md-bank::before {
+  content: '\f0070';
+}
+
+.nf-md-chart_donut::before {
+  content: '\f0128';
+}
+
+.nf-md-chart_line::before {
+  content: '\f012a';
+}
+
+.nf-md-check::before {
+  content: '\f012c';
+}
+
+.nf-md-check_all::before {
+  content: '\f012d';
+}
+
+.nf-md-chevron_down::before {
+  content: '\f0140';
+}
+
+.nf-md-close::before {
+  content: '\f0156';
+}
+
+.nf-md-cog::before {
+  content: '\f0493';
+}
+
+.nf-md-copyright::before {
+  content: '\f05e6';
+}
+
+.nf-md-crosshairs_gps::before {
+  content: '\f0796';
+}
+
+.nf-md-delete::before {
+  content: '\f01b4';
+}
+
+.nf-md-eye::before {
+  content: '\f0208';
+}
+
+.nf-md-eye_off::before {
+  content: '\f0209';
+}
+
+.nf-md-fire::before {
+  content: '\f0238';
+}
+
+.nf-md-format_list_bulleted::before {
+  content: '\f0279';
+}
+
+.nf-md-home::before {
+  content: '\f02dc';
+}
+
+.nf-md-leaf::before {
+  content: '\f032a';
+}
+
+.nf-md-magnify::before {
+  content: '\f0349';
+}
+
+.nf-md-movie::before {
+  content: '\f0381';
+}
+
+.nf-md-open_in_new::before {
+  content: '\f03cc';
+}
+
+.nf-md-pause::before {
+  content: '\f03e4';
+}
+
+.nf-md-play::before {
+  content: '\f040a';
+}
+
+.nf-md-refresh::before {
+  content: '\f0450';
+}
+
+.nf-md-sun_thermometer::before {
+  content: '\f18d6';
+}
+
+.nf-md-television::before {
+  content: '\f0502';
+}
+
+.nf-md-tray_arrow_down::before {
+  content: '\f0120';
+}
+
+.nf-md-tray_arrow_up::before {
+  content: '\f011d';
+}
+
+.nf-md-view_dashboard::before {
+  content: '\f056e';
+}
+
+.nf-md-volume_high::before {
+  content: '\f057e';
+}
+
+.nf-md-volume_off::before {
+  content: '\f0581';
+}
+
+.nf-md-weather_night::before {
+  content: '\f0594';
+}
+
+.nf-md-weather_sunny::before {
+  content: '\f0599';
+}
