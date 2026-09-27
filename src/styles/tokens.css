@@ -9,7 +9,7 @@
      presse pas, elle ne porte aucune ombre.
 
    Le thème SUIT L'APPAREIL : le sombre est le défaut, le clair prend la main sur
-   `prefers-color-scheme: light`. `data-theme="dark"` ou `"light"` sur <html> le force (Storybook,
+   `prefers-color-scheme: light`. `data-theme="dark"` ou `"light"` sur <html> le force (page de démonstration,
    réglage d'une app). Un seul jeu de NOMS : le thème clair ne redéfinit que des valeurs. */
 
 :root {
