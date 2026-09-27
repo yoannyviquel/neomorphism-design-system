@@ -62,6 +62,20 @@ npm test
 npm run build        # dist/index.js, dist/types, dist/styles
 ```
 
+## Storybook en ligne
+
+Un Worker Cloudflare sert le Storybook construit (`wrangler.jsonc`), déployé à chaque poussée sur
+`main` par l'intégration Git de Cloudflare :
+
+| Réglage du build | Valeur |
+| --- | --- |
+| Commande de build | `npm run build-storybook` |
+| Commande de déploiement | `npx wrangler deploy` |
+
+Le build de ce Worker n'a besoin d'aucun jeton. L'adresse `*.workers.dev` est publique : pour
+garder le Storybook privé, la protéger par Cloudflare Access (Zero Trust → Access → Applications,
+une règle sur son adresse e-mail).
+
 ## Publier une version
 
 ```bash
