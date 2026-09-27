@@ -149,9 +149,11 @@
 
 /* Nombres enregistrés, et non listes d'ombres : Safari n'interpole pas ces dernières quand elles
    sont écrites en variables — il sautait d'une ombre à l'autre. */
+/* --sink est animé sur l'élément lui-même (le bouton, le champ) et hérité par son calque d'ombre :
+   Safari n'anime pas une propriété enregistrée sur un pseudo-élément. */
 @property --sink {
   syntax: '<number>';
-  inherits: false;
+  inherits: true;
   initial-value: 0;
 }
 
