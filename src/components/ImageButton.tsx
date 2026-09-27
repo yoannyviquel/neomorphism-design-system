@@ -1,5 +1,6 @@
 import { useState, type ButtonHTMLAttributes, type CSSProperties, type ReactNode } from 'react'
 import { cx } from './cx'
+import { Shade } from './Shade'
 
 export type ImageButtonVariant = 'chip' | 'set' | 'label'
 
@@ -69,6 +70,7 @@ export function ImageButton({ variant = 'set', name, src, pressed, fold, classNa
       style={foldStyle || style ? { ...style, ...foldStyle } : undefined}
       {...rest}
     >
+      <Shade />
       {variant === 'set' ? <span className="ds-well">{image}</span> : image}
       {variant === 'label' && <span>{name}</span>}
     </button>

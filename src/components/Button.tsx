@@ -2,6 +2,7 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { cx } from './cx'
 import { Icon } from './Icon'
 import type { IconName } from './icons'
+import { Shade } from './Shade'
 
 export type ButtonTone = 'default' | 'primary' | 'danger' | 'link'
 
@@ -30,6 +31,7 @@ export function Button({ tone = 'default', size = 'md', icon, active = false, fl
       className={cx('ds-button', 'ds-text', size === 'sm' && 'ds-small', tone !== 'default' && `ds-${tone}`, active && 'ds-active', flat && 'ds-flat', className)}
       {...rest}
     >
+      <Shade />
       {icon && <Icon name={icon} />}
       {children}
     </button>
@@ -55,6 +57,7 @@ export function IconButton({ icon, label, active = false, large = false, tone = 
       className={cx('ds-button', 'ds-icon', large && 'ds-large', tone !== 'default' && `ds-${tone}`, active && 'ds-active', className)}
       {...rest}
     >
+      <Shade />
       <Icon name={icon} />
     </button>
   )

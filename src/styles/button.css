@@ -1,6 +1,7 @@
 /* Bouton.
-   Le sol (::before) porte la surface, sous le contenu ; l'ombre est un calque (::after) AU-DESSUS du
-   contenu : le creux assombrit aussi texte et icône, comme une empreinte.
+   Le sol (::before) porte la surface, sous le contenu ; l'ombre est un calque, un vrai élément
+   enfant (.ds-shade, que les composants rendent), AU-DESSUS du contenu : le creux assombrit aussi
+   texte et icône, comme une empreinte.
    Inactif : texte gras à demi-encre de la couleur d'allumage (--btn-active-color) ; actif (enfoncé,
    `ds-active` ou pressé) : pleine couleur, et son halo.
 
@@ -10,8 +11,10 @@
    creux dépasse sa profondeur (×1,8), remonte, rebondit et se pose ; au désenfoncement, le bouton
    jaillit, redescend, rebondit et se pose. Le rebord (l'ombre en relief) reste en place.
    --sink-k : l'échelle du bouton (celle des commandes ordinaires par défaut).
-   --sink transite sur le BOUTON, et son calque d'ombre en hérite : Safari, sur iPhone, n'anime pas
-   une propriété enregistrée posée sur un pseudo-élément (::after) — le rebond n'y jouait pas. */
+   --sink transite sur le BOUTON, et son calque d'ombre, un élément enfant, en hérite. Pas de
+   pseudo-élément : sur iPhone, Safari ne répercutait pas le nombre animé sur ::after (ni sur les
+   autres propriétés du bouton lui-même), alors qu'un enfant, comme le chaton d'un bouton serti,
+   le suit. */
 
 .ds-button {
   --sink: 0;
@@ -52,10 +55,9 @@
     --sink 1s var(--sink-ease);
 }
 
-.ds-button::after {
+.ds-shade {
   --sink-lift: calc(1 + max(0, -1 * var(--sink)));
   --sink-depth: max(0, var(--sink));
-  content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -87,7 +89,7 @@
 }
 
 /* À plat au repos (posé dans une surface déjà en relief). */
-.ds-button.ds-flat:not(.ds-active):not(:active)::after {
+.ds-button.ds-flat:not(.ds-active):not(:active) > .ds-shade {
   box-shadow: none;
 }
 
@@ -153,7 +155,7 @@
 }
 
 /* Échelle des grands éléments (un bouton logé dans une barre de même échelle). */
-.ds-large::after {
+.ds-large {
   --sink-k: var(--neu-k-lg);
 }
 
@@ -182,8 +184,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ds-button,
-  .ds-button::after {
+  .ds-button {
     transition: none;
     animation: none;
   }

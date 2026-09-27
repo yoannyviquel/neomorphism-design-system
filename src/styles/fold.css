@@ -41,7 +41,7 @@
 }
 
 /* Repliés, les boutons du dessous sont à plat : ni ombre, ni image — le fond de la page. */
-.ds-fold .ds-button.is-folded::after {
+.ds-fold .ds-button.is-folded > .ds-shade {
   box-shadow: none;
 }
 
@@ -63,21 +63,22 @@
   --image-on: 0.6;
 }
 
-.ds-fold .ds-button:is(.is-popping, .is-unpopping) {
-  transform: scale(calc(1 + 0.1 * (var(--pop) - 1)));
-}
-
+/* --pop s'anime sur le bouton ; ses enfants (calque d'ombre, chaton) en héritent. L'échelle du bouton,
+   elle, a ses propres images clés, aux valeurs écrites en clair : sur iPhone, Safari ne répercute
+   pas un nombre animé sur les autres propriétés de l'élément même qui l'anime. */
 .ds-fold .ds-button.is-popping {
-  animation: ds-pop 1s linear both var(--pop-delay, 0.3s);
+  animation:
+    ds-pop 1s linear both var(--pop-delay, 0.3s),
+    ds-pop-scale 1s linear both var(--pop-delay, 0.3s);
 }
 
 .ds-fold .ds-button.is-unpopping {
-  animation: ds-pop 1s linear reverse both;
+  animation:
+    ds-pop 1s linear reverse both,
+    ds-pop-scale 1s linear reverse both;
 }
 
-.ds-fold .ds-button:is(.is-popping, .is-unpopping):not(.ds-active)::after {
-  /* L'ombre suit --pop : la transition du bouton la lisserait et la retarderait. */
-  transition: none;
+.ds-fold .ds-button:is(.is-popping, .is-unpopping):not(.ds-active) > .ds-shade {
   box-shadow:
     calc(28px * var(--neu-k) * var(--pop)) calc(28px * var(--neu-k) * var(--pop)) calc(50px * var(--neu-k) * var(--pop)) var(--neu-dark),
     calc(-23px * var(--neu-k) * var(--pop)) calc(-23px * var(--neu-k) * var(--pop)) calc(45px * var(--neu-k) * var(--pop)) var(--neu-light);
@@ -140,6 +141,50 @@
   100% { --pop: 1.000; }
 }
 
+/* L'échelle : 1 + 10 % de l'écart de --pop à son relief, image par image. */
+@keyframes ds-pop-scale {
+  0% { transform: scale(0.9000); }
+  2.5% { transform: scale(0.9041); }
+  5% { transform: scale(0.9159); }
+  7.5% { transform: scale(0.9341); }
+  10% { transform: scale(0.9569); }
+  12.5% { transform: scale(0.9824); }
+  15% { transform: scale(1.0083); }
+  17.5% { transform: scale(1.0324); }
+  20% { transform: scale(1.0529); }
+  22.5% { transform: scale(1.0683); }
+  25% { transform: scale(1.0775); }
+  27.5% { transform: scale(1.0794); }
+  30% { transform: scale(1.0713); }
+  32.5% { transform: scale(1.0585); }
+  35% { transform: scale(1.0427); }
+  37.5% { transform: scale(1.0255); }
+  40% { transform: scale(1.0086); }
+  42.5% { transform: scale(0.9933); }
+  45% { transform: scale(0.9806); }
+  47.5% { transform: scale(0.9713); }
+  50% { transform: scale(0.9656); }
+  52.5% { transform: scale(0.9635); }
+  55% { transform: scale(0.9647); }
+  57.5% { transform: scale(0.9687); }
+  60% { transform: scale(0.9746); }
+  62.5% { transform: scale(0.9819); }
+  65% { transform: scale(0.9896); }
+  67.5% { transform: scale(0.9971); }
+  70% { transform: scale(1.0039); }
+  72.5% { transform: scale(1.0094); }
+  75% { transform: scale(1.0133); }
+  77.5% { transform: scale(1.0157); }
+  80% { transform: scale(1.0164); }
+  82.5% { transform: scale(1.0157); }
+  85% { transform: scale(1.0137); }
+  87.5% { transform: scale(1.0108); }
+  90% { transform: scale(1.0065); }
+  92.5% { transform: scale(1.0021); }
+  95% { transform: scale(1.0001); }
+  97.5% { transform: scale(1.0000); }
+  100% { transform: scale(1.0000); }
+}
 @keyframes ds-image-in {
   0% { opacity: calc(var(--image-on, 1) * 0.000); }
   20% { opacity: calc(var(--image-on, 1) * 0.000); }

@@ -19,6 +19,9 @@ et les composants React, avec un Storybook. Publié en privé sur GitHub Package
   du bouton » (`--sink-ease`) : dépassement ×1,8, creux, second rebond, posé, en 1 s. Les
   animations passent par des nombres enregistrés (`@property --sink`, `--pop`, `--menu-at`) :
   Safari n'interpole pas des listes d'ombres écrites en variables.
+- **L'ombre d'un bouton est un élément** (`<span class="ds-shade">`, rendu par les composants ;
+  `Shade` pour un bouton écrit à la main), pas un pseudo-élément : il hérite des nombres animés du
+  bouton, ce que Safari ne fait pas pour `::after`.
 - **Les images ne remplacent jamais la surface d'un bouton.** Elles en sont le contenu, posées
   au-dessus de ses ombres : pastille, sertie ou logo et nom.
 
