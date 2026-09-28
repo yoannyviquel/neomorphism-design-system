@@ -23,6 +23,7 @@ export const ICONS = [
   'home',
   'leaf',
   'magnify',
+  'minus',
   'movie',
   'open_in_new',
   'pause',

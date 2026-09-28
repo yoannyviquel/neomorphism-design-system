@@ -111,6 +111,10 @@
   content: '\f0349';
 }
 
+.nf-md-minus::before {
+  content: '\f0374';
+}
+
 .nf-md-movie::before {
   content: '\f0381';
 }
