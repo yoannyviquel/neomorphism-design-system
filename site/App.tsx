@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Button, IconButton } from '../src/components/Button'
 import { Notice, Spinner, Zone } from '../src/components/Feedback'
 import { Checkbox, Input, Select } from '../src/components/Field'
+import { FlatSelector } from '../src/components/FlatSelector'
 import { FoldingGrid } from '../src/components/FoldingGrid'
 import { ImageButton, type ImageButtonVariant } from '../src/components/ImageButton'
 import { Body, Footer, Header, Screen } from '../src/components/Layout'
@@ -24,6 +25,7 @@ const SECTIONS = [
   { id: 'images', title: 'Boutons à image' },
   { id: 'champs', title: 'Champs' },
   { id: 'menu', title: 'Barre de menu' },
+  { id: 'selecteur', title: 'Sélecteur multiple plat' },
   { id: 'ecran', title: 'Écran' },
   { id: 'grille', title: 'Grille dépliante' },
   { id: 'retours', title: 'Zones et messages' },
@@ -123,6 +125,25 @@ function Menu() {
   return (
     <div style={{ maxWidth: 420 }}>
       <MenuBar label="Sections" items={MENU} active={active} onSelect={setActive} />
+    </div>
+  )
+}
+
+function RangeDemo() {
+  const [range, setRange] = useState('today')
+  return (
+    <div style={{ maxWidth: 420 }}>
+      <FlatSelector
+        label="Plage"
+        value={range}
+        onChange={setRange}
+        options={[
+          { id: 'today', label: "Aujourd'hui" },
+          { id: 'tomorrow', label: 'Demain' },
+          { id: 'week', label: '7j' },
+          { id: 'fortnight', label: '14j' },
+        ]}
+      />
     </div>
   )
 }
@@ -288,8 +309,16 @@ export function App() {
         <Fields />
       </Demo>
 
-      <Demo id="menu" title="Barre de menu" intro="Un cadre creusé ; une seule pastille en relief glisse sous la destination courante, qui s'étire pour montrer son libellé.">
+      <Demo id="menu" title="Barre de menu" intro="Un cadre creusé ; une pastille en relief sous la destination courante, qui montre son libellé. D'une destination à l'autre, la pastille s'étire puis se rétracte. Chaque destination est une commande de 50 px.">
         <Menu />
+      </Demo>
+
+      <Demo
+        id="selecteur"
+        title="Sélecteur multiple plat"
+        intro="Un choix parmi quelques-uns, côte à côte dans un cadre creusé : la pastille en relief s'étire jusqu'au nouveau choix puis se rétracte de l'ancien, comme la barre de menu, dans la hauteur d'une commande."
+      >
+        <RangeDemo />
       </Demo>
 
       <Demo

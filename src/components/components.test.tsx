@@ -6,6 +6,7 @@ import { Button, IconButton } from './Button'
 import { Checkbox, Select } from './Field'
 import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
 import { ImageButton } from './ImageButton'
+import { FlatSelector } from './FlatSelector'
 import { Body, Footer, Header, Screen } from './Layout'
 import { MENU_RELEASE_DELAY_MS, MenuBar } from './MenuBar'
 import { SearchField } from './SearchField'
@@ -198,5 +199,30 @@ describe('Screen', () => {
       'div.ds-body',
       'footer.ds-footer',
     ])
+  })
+})
+
+describe('FlatSelector', () => {
+  it('coche le choix courant, montre tous les libellés, et en change', async () => {
+    const change = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <FlatSelector
+        label="Plage"
+        value="today"
+        onChange={change}
+        options={[
+          { id: 'today', label: "Aujourd'hui" },
+          { id: 'week', label: '7j' },
+        ]}
+      />,
+    )
+    const group = screen.getByRole('radiogroup', { name: 'Plage' })
+    expect(group).toHaveClass('ds-menu', 'ds-flat-selector')
+    expect(screen.getByRole('radio', { name: "Aujourd'hui" })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('radio', { name: '7j' })).toHaveAttribute('aria-checked', 'false')
+    expect(screen.getByRole('radio', { name: '7j' })).toHaveClass('ds-plain')
+    await user.click(screen.getByRole('radio', { name: '7j' }))
+    expect(change).toHaveBeenCalledWith('week')
   })
 })

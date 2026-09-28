@@ -3,8 +3,13 @@
    montrer son libellé, et une pastille EN RELIEF (shadow 2) est posée sous elle. Au changement, la
    pastille s'étire jusqu'à la nouvelle destination puis se rétracte depuis l'ancienne : le
    composant (MenuBar) en pose les bords, mesurés sur les destinations ; l'ancienne reste allumée
-   (.ds-trail) le temps que la pastille la quitte. Le cadre fait la hauteur d'une commande, comme la recherche. L'app
-   place la barre (marges, zone sûre du bas d'iPhone). */
+   (.ds-trail) le temps que la pastille la quitte.
+   Deux usages, la même mécanique (PillBar) :
+     .ds-menu-bar      — la barre de menu (MenuBar) : chaque destination est une commande de 50 px ;
+     .ds-flat-selector — le sélecteur multiple plat (FlatSelector) : un choix parmi quelques-uns,
+                         dans la hauteur d'une commande (50 px, choix de 34 px). Un choix à libellé
+                         seul (.ds-plain) le montre toujours.
+   L'app place la barre de menu (marges, zone sûre du bas d'iPhone). */
 
 .ds-menu {
   /* Ce que la destination courante prend de largeur en plus (0,8 = 1,8 fois une autre). */
@@ -96,6 +101,30 @@
 .ds-menu-item:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--color-primary) 60%, transparent);
   outline-offset: 2px;
+}
+
+/* La barre de menu : des destinations de la hauteur d'une commande. */
+.ds-menu-bar .ds-menu-item {
+  height: var(--control-height);
+  min-width: var(--control-height);
+}
+
+/* Le sélecteur multiple plat : chaque choix à sa largeur (son libellé), aucun ne grandit. */
+.ds-flat-selector {
+  --menu-grow: 0;
+}
+
+.ds-flat-selector .ds-menu-item {
+  flex: 1 1 auto;
+  padding: 0 10px;
+}
+
+/* Un choix à libellé seul : toujours visible. */
+.ds-menu-item.ds-plain .ds-menu-label {
+  max-width: none;
+  margin-left: 0;
+  opacity: 1;
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

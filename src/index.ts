@@ -2,6 +2,7 @@ export { Button, IconButton, type ButtonProps, type ButtonTone, type IconButtonP
 export { cx } from './components/cx'
 export { Notice, Spinner, Zone } from './components/Feedback'
 export { Checkbox, Input, Select, type SelectOption } from './components/Field'
+export { FlatSelector, type FlatSelectorOption, type FlatSelectorProps } from './components/FlatSelector'
 export { FALLBACK_COLUMNS, FoldingGrid, type FoldingGridProps } from './components/FoldingGrid'
 export { Icon } from './components/Icon'
 export { ICONS, type IconName } from './components/icons'
