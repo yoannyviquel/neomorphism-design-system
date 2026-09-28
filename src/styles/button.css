@@ -13,7 +13,10 @@
    enfoncé ; au-delà de 1, le creux se creuse plus que d'ordinaire ; en deçà de 0, le bouton monte
    au-dessus de son repos et son relief grandit. Il transite selon --sink-ease : à l'enfoncement, le
    creux dépasse sa profondeur (×1,8), remonte, rebondit et se pose ; au désenfoncement, le bouton
-   jaillit, redescend, rebondit et se pose. Le rebord (l'ombre en relief) reste en place.
+   jaillit, redescend, rebondit et se pose.
+   Entre les deux, le bouton passe À PLAT : de 0 à ½, le relief s'efface ; de ½ à 1, le creux se
+   forme et le rebord (le relief qui cerne le creux) revient. Au-delà de 1, seul le creux se
+   creuse ; en deçà de 0, seul le relief grandit. Un rebond qui retraverse ½ repasse donc à plat.
    --sink-k : l'échelle du bouton (celle des commandes ordinaires par défaut).
    --sink transite sur le BOUTON, et son calque d'ombre, un élément enfant, en hérite. Pas de
    pseudo-élément : sur iPhone, Safari ne répercutait pas le nombre animé sur ::after (ni sur les
@@ -61,8 +64,8 @@
 }
 
 .ds-shade {
-  --sink-lift: calc(1 + max(0, -1 * var(--sink)));
-  --sink-depth: max(0, var(--sink));
+  --sink-lift: calc(max(1 - 2 * clamp(0, var(--sink), 1), 2 * clamp(0, var(--sink), 1) - 1) + max(0, -1 * var(--sink)));
+  --sink-depth: calc(max(0, 2 * min(var(--sink), 1) - 1) + max(0, var(--sink) - 1));
   position: absolute;
   inset: 0;
   border-radius: inherit;

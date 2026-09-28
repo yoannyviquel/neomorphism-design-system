@@ -6,8 +6,8 @@
 .ds-search {
   --search-pad: 8px;
   --sink: 0;
-  --sink-lift: calc(1 + max(0, -1 * var(--sink)));
-  --sink-depth: max(0, var(--sink));
+  --sink-lift: calc(max(1 - 2 * clamp(0, var(--sink), 1), 2 * clamp(0, var(--sink), 1) - 1) + max(0, -1 * var(--sink)));
+  --sink-depth: calc(max(0, 2 * min(var(--sink), 1) - 1) + max(0, var(--sink) - 1));
   position: relative;
   display: flex;
   align-items: center;
