@@ -12,9 +12,6 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   tone?: ButtonTone
   /** Taille d'un bouton à libellé. */
   size?: 'md' | 'sm'
-  /** L'icône au-dessus du libellé, dans la même hauteur : pour aligner plusieurs boutons sur une
-   *  ligne étroite (trois sur la largeur d'un téléphone). */
-  stacked?: boolean
   /** Icône avant le libellé. */
   icon?: IconName
   /** Enfoncé, durablement : la destination courante, un réglage actif. Sans elle, le bouton est
@@ -29,7 +26,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * Bouton à libellé : en relief au repos, enfoncé pressé ou actif, avec le rebond du DS — un
  * toucher bref compris (cf. usePress). Un bouton à bascule passe `aria-pressed` et `active` ensemble.
  */
-export function Button({ tone = 'default', size = 'md', stacked = false, icon, active, flat = false, className, children, type = 'button', ...rest }: ButtonProps) {
+export function Button({ tone = 'default', size = 'md', icon, active, flat = false, className, children, type = 'button', ...rest }: ButtonProps) {
   const { pressed, handlers } = usePress(rest)
   return (
     <button
@@ -38,7 +35,6 @@ export function Button({ tone = 'default', size = 'md', stacked = false, icon, a
         'ds-button',
         'ds-text',
         size === 'sm' && 'ds-small',
-        stacked && 'ds-stacked',
         tone !== 'default' && `ds-${tone}`,
         active && 'ds-active',
         active === undefined && 'ds-momentary',

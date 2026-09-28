@@ -76,12 +76,6 @@ body {
   gap: var(--shadow-room);
 }
 
-.stack-row {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--shadow-room);
-}
-
 .stack {
   display: grid;
   gap: var(--shadow-room);

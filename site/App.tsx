@@ -229,18 +229,6 @@ export function App() {
           <Button tone="link">Choisir mes plateformes</Button>
           <Button disabled>Indisponible</Button>
         </div>
-        <h3>Empilés</h3>
-        <div className="stack-row">
-          <Button stacked icon="tray_arrow_down">
-            Sauvegarder
-          </Button>
-          <Button stacked icon="tray_arrow_up">
-            Restaurer
-          </Button>
-          <Button stacked tone="danger" icon="delete">
-            Effacer
-          </Button>
-        </div>
         <h3>Bascule</h3>
         <div className="row">
           <SoundToggle />
