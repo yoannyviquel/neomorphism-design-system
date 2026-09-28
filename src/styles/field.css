@@ -1,12 +1,13 @@
 /* Champs : ce sont des COMMANDES, pas des zones — on les actionne pour saisir. Même modèle que les
    boutons : en relief au repos, creusés une fois engagés (focus), avec le rebond (--sink), sans
-   anneau de focus. Texte à 16 px : en deçà, iOS zoome sur le champ au moment de la saisie. */
+   anneau de focus. Mais, contrairement au bouton, un champ ne passe jamais à plat : son relief reste
+   en place et seul le creux se forme — à plat, il avait l'air, un instant, d'un champ ordinaire. Texte à 16 px : en deçà, iOS zoome sur le champ au moment de la saisie. */
 
 .ds-input,
 .ds-checkbox {
   --sink: 0;
-  --sink-lift: calc(max(0, 1 - 2 * max(0, var(--sink))) + max(0, -1 * var(--sink)) * var(--sink-over) + var(--sink-depth));
-  --sink-depth: calc(max(0, 2 * min(var(--sink), 1) - 1) + max(0, var(--sink) - 1) * var(--sink-over));
+  --sink-lift: calc(1 + max(0, -1 * var(--sink)) * var(--sink-over));
+  --sink-depth: calc(max(0, min(var(--sink), 1)) + max(0, var(--sink) - 1) * var(--sink-over));
   box-shadow:
     calc(28px * var(--neu-k) * var(--sink-lift)) calc(28px * var(--neu-k) * var(--sink-lift)) calc(50px * var(--neu-k) * var(--sink-lift)) var(--neu-dark),
     calc(-23px * var(--neu-k) * var(--sink-lift)) calc(-23px * var(--neu-k) * var(--sink-lift)) calc(45px * var(--neu-k) * var(--sink-lift)) var(--neu-light),

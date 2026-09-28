@@ -14,7 +14,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'md' | 'sm'
   /** Icône avant le libellé. */
   icon?: IconName
-  /** Enfoncé, durablement : la destination courante, un réglage actif. */
+  /** Enfoncé, durablement : la destination courante, un réglage actif. Sans elle, le bouton est
+   *  une commande MOMENTANÉE (`ds-momentary`) : il ne reste jamais enfoncé, et s'enfonce moins. */
   active?: boolean
   /** À plat au repos (posé dans une surface déjà en relief). */
   flat?: boolean
@@ -25,7 +26,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * Bouton à libellé : en relief au repos, enfoncé pressé ou actif, avec le rebond du DS — un
  * toucher bref compris (cf. usePress). Un bouton à bascule passe `aria-pressed` et `active` ensemble.
  */
-export function Button({ tone = 'default', size = 'md', icon, active = false, flat = false, className, children, type = 'button', ...rest }: ButtonProps) {
+export function Button({ tone = 'default', size = 'md', icon, active, flat = false, className, children, type = 'button', ...rest }: ButtonProps) {
   const { pressed, handlers } = usePress(rest)
   return (
     <button
@@ -36,6 +37,7 @@ export function Button({ tone = 'default', size = 'md', icon, active = false, fl
         size === 'sm' && 'ds-small',
         tone !== 'default' && `ds-${tone}`,
         active && 'ds-active',
+        active === undefined && 'ds-momentary',
         pressed && 'ds-pressed',
         flat && 'ds-flat',
         className,
@@ -61,13 +63,13 @@ export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 /** Bouton-icône : un carré de 44 px, rayon 14. */
-export function IconButton({ icon, label, active = false, large = false, tone = 'default', className, type = 'button', ...rest }: IconButtonProps) {
+export function IconButton({ icon, label, active, large = false, tone = 'default', className, type = 'button', ...rest }: IconButtonProps) {
   const { pressed, handlers } = usePress(rest)
   return (
     <button
       type={type}
       aria-label={label}
-      className={cx('ds-button', 'ds-icon', large && 'ds-large', tone !== 'default' && `ds-${tone}`, active && 'ds-active', pressed && 'ds-pressed', className)}
+      className={cx('ds-button', 'ds-icon', large && 'ds-large', tone !== 'default' && `ds-${tone}`, active && 'ds-active', active === undefined && 'ds-momentary', pressed && 'ds-pressed', className)}
       {...rest}
       {...handlers}
     >

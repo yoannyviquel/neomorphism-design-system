@@ -89,6 +89,9 @@
      l'enfoncement puis au relâchement. Moitié par défaut ; pleine sur les boutons à image, dont
      l'image couvre l'essentiel du creux (cf. image-button.css). */
   --sink-over: 0.5;
+  /* LA PROFONDEUR de l'enfoncement d'un bouton, de 0 à 1 : pleine par défaut, moindre sur une
+     commande momentanée (.ds-momentary, cf. button.css). */
+  --sink-press: 1;
   /* LE RELÂCHEMENT — même ressort (sommet ×1,8, creux, second rebond, posé, en 1 s), mais lancé :
      il part avec sa vitesse au lieu de démarrer à l'arrêt. Le bouton relâché rebondit aussitôt du
      fond, sans y marquer de pause. */
