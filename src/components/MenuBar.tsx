@@ -23,8 +23,9 @@ export interface MenuBarProps<Id extends string> {
 
 /** La pastille s'étire jusqu'à la nouvelle destination… */
 export const MENU_STRETCH_MS = 380
-/** …et, passé ce délai, se rétracte depuis l'ancienne, qui s'éteint alors. */
-export const MENU_RELEASE_DELAY_MS = 300
+/** …et se rétracte depuis l'ancienne, qui s'éteint alors, JUSTE AVANT que l'étirement s'achève :
+ *  à 150 ms, il en est aux 7/8 (il ralentit en arrivant), et les deux temps s'enchaînent sans pause. */
+export const MENU_RELEASE_DELAY_MS = 150
 export const MENU_RELEASE_MS = 420
 
 const easeOut = (p: number) => 1 - (1 - Math.min(1, Math.max(0, p))) ** 4
