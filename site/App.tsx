@@ -67,6 +67,15 @@ function SoundToggle() {
   )
 }
 
+function SeenToggle() {
+  const [seen, setSeen] = useState(false)
+  return (
+    <Button set icon="eye" active={seen} aria-pressed={seen} onClick={() => setSeen(!seen)}>
+      Vu
+    </Button>
+  )
+}
+
 function ImageRow({ variant }: { variant: ImageButtonVariant }) {
   const [on, setOn] = useState<Record<string, boolean>>({ Clarté: true, Braise: true })
   return (
@@ -228,6 +237,10 @@ export function App() {
           </Button>
           <Button tone="link">Choisir mes plateformes</Button>
           <Button disabled>Indisponible</Button>
+        </div>
+        <h3>Icône sertie et libellé</h3>
+        <div className="row">
+          <SeenToggle />
         </div>
         <h3>Bascule</h3>
         <div className="row">

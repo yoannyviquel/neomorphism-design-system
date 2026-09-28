@@ -14,6 +14,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'md' | 'sm'
   /** Icône avant le libellé. */
   icon?: IconName
+  /** L'icône sertie : incrustée dans un chaton, comme le logo d'un bouton « logo serti et nom ». */
+  set?: boolean
   /** Enfoncé, durablement : la destination courante, un réglage actif. Sans elle, le bouton est
    *  une commande MOMENTANÉE (`ds-momentary`) : il ne reste jamais enfoncé, et s'enfonce moins. */
   active?: boolean
@@ -26,7 +28,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * Bouton à libellé : en relief au repos, enfoncé pressé ou actif, avec le rebond du DS — un
  * toucher bref compris (cf. usePress). Un bouton à bascule passe `aria-pressed` et `active` ensemble.
  */
-export function Button({ tone = 'default', size = 'md', icon, active, flat = false, className, children, type = 'button', ...rest }: ButtonProps) {
+export function Button({ tone = 'default', size = 'md', icon, set = false, active, flat = false, className, children, type = 'button', ...rest }: ButtonProps) {
   const { pressed, handlers } = usePress(rest)
   return (
     <button
@@ -35,6 +37,7 @@ export function Button({ tone = 'default', size = 'md', icon, active, flat = fal
         'ds-button',
         'ds-text',
         size === 'sm' && 'ds-small',
+        icon && set && 'ds-set',
         tone !== 'default' && `ds-${tone}`,
         active && 'ds-active',
         active === undefined && 'ds-momentary',
@@ -46,7 +49,7 @@ export function Button({ tone = 'default', size = 'md', icon, active, flat = fal
       {...handlers}
     >
       <Shade />
-      {icon && <Icon name={icon} />}
+      {icon && (set ? <span className="ds-well"><Icon name={icon} /></span> : <Icon name={icon} />)}
       {children}
     </button>
   )
