@@ -150,6 +150,21 @@
   font-size: 13px;
 }
 
+/* Empilé : l'icône au-dessus du libellé, dans la hauteur d'une commande (20 + 3 + 14 px). Il prend
+   la largeur qu'on lui donne (une colonne d'une grille) et centre son contenu. */
+.ds-text.ds-stacked {
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: 0 4px;
+  font-size: 12px;
+  line-height: 14px;
+}
+
+.ds-text.ds-stacked .nf {
+  font-size: 20px;
+}
+
 /* Bouton-icône : carré de la hauteur d'une commande. */
 .ds-icon {
   display: inline-flex;
