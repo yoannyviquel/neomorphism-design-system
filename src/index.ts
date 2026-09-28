@@ -9,6 +9,7 @@ export { ImageButton, type FoldItemState, type ImageButtonProps, type ImageButto
 export { MenuBar, type MenuBarProps, type MenuItem } from './components/MenuBar'
 export { SearchField, type SearchFieldProps } from './components/SearchField'
 export { Shade } from './components/Shade'
+export { PRESS_HOLD_MS, usePress } from './components/usePress'
 export { prefersReducedMotion } from './fold/motion'
 export { foldBackSchedule, foldSchedule, POP_S, PUSH_S, SETTLE_S, type FoldBackStep, type FoldStep } from './fold/schedule'
 export { useGridLayout, type GridLayout } from './fold/useGridLayout'

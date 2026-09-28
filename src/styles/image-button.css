@@ -15,8 +15,8 @@
 .ds-image-set {
   display: grid;
   place-items: center;
-  width: 60px;
-  height: 60px;
+  width: var(--control-height-lg);
+  height: var(--control-height-lg);
   padding: 0;
   border-radius: 14px;
 }
@@ -25,8 +25,8 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  min-height: 52px;
-  padding: 0 16px 0 10px;
+  height: var(--control-height);
+  padding: 0 16px 0 7px;
   font-size: 14px;
 }
 

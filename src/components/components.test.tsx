@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
@@ -8,6 +8,7 @@ import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
 import { ImageButton } from './ImageButton'
 import { MenuBar } from './MenuBar'
 import { SearchField } from './SearchField'
+import { PRESS_HOLD_MS } from './usePress'
 
 describe('Button', () => {
   it('porte les classes du DS : forme, ton, taille, état', () => {
@@ -20,6 +21,18 @@ describe('Button', () => {
     expect(button).toHaveClass('ds-button', 'ds-text', 'ds-small', 'ds-danger', 'ds-active')
     expect(button.querySelector('.nf-md-delete')).toBeInTheDocument()
     expect(button).toHaveAttribute('type', 'button')
+  })
+
+  it("un toucher bref reste enfoncé jusqu'au premier sommet du rebond", () => {
+    vi.useFakeTimers()
+    render(<Button>Sauvegarder</Button>)
+    const button = screen.getByRole('button', { name: 'Sauvegarder' })
+    fireEvent.pointerDown(button)
+    fireEvent.pointerUp(button)
+    expect(button).toHaveClass('ds-pressed')
+    act(() => vi.advanceTimersByTime(PRESS_HOLD_MS))
+    expect(button).not.toHaveClass('ds-pressed')
+    vi.useRealTimers()
   })
 
   it('bouton-icône : un nom accessible, pas de texte', () => {

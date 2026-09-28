@@ -1,6 +1,6 @@
 /* Champs : ce sont des COMMANDES, pas des zones — on les actionne pour saisir. Même modèle que les
-   boutons : en relief au repos, creusés une fois engagés (focus), avec le rebond (--sink). Texte à
-   16 px : en deçà, iOS zoome sur le champ au moment de la saisie. */
+   boutons : en relief au repos, creusés une fois engagés (focus), avec le rebond (--sink), sans
+   anneau de focus. Texte à 16 px : en deçà, iOS zoome sur le champ au moment de la saisie. */
 
 .ds-input,
 .ds-checkbox {
@@ -24,8 +24,8 @@
 
 .ds-input {
   min-width: 0;
-  min-height: 44px;
-  padding: 9px 12px;
+  height: var(--control-height);
+  padding: 0 12px;
   border: none;
   border-radius: var(--neu-radius);
   background: var(--color-bg);
@@ -38,10 +38,10 @@
   outline: none;
 }
 
-/* Au clavier, l'enfoncement seul ne suffit pas à repérer la commande : on lui rend son anneau. */
+/* Engagé, le champ est creusé : c'est assez pour le repérer, sans anneau par-dessus (sur iPhone,
+   un champ touché montre toujours le sien). */
 .ds-input:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--color-primary) 45%, transparent);
-  outline-offset: 2px;
+  outline: none;
 }
 
 .ds-input::placeholder {

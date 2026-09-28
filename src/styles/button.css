@@ -5,6 +5,10 @@
    Inactif : texte gras à demi-encre de la couleur d'allumage (--btn-active-color) ; actif (enfoncé,
    `ds-active` ou pressé) : pleine couleur, et son halo.
 
+   Un toucher bref ne laisse pas le temps de voir l'enfoncement (:active ne dure qu'un instant) :
+   les composants posent `ds-pressed` le temps que le creux atteigne son premier sommet (cf.
+   usePress), puis le bouton se relâche avec son propre rebond.
+
    L'ENFONCEMENT a le rebond du DS. --sink, un nombre, dit où en est le bouton : 0 au repos, 1
    enfoncé ; au-delà de 1, le creux se creuse plus que d'ordinaire ; en deçà de 0, le bouton monte
    au-dessus de son repos et son relief grandit. Il transite selon --sink-ease : à l'enfoncement, le
@@ -46,6 +50,7 @@
 }
 
 .ds-button.ds-active,
+.ds-button.ds-pressed,
 .ds-button:active {
   --sink: 1;
   color: var(--btn-active-color);
@@ -81,6 +86,7 @@
       --sink 0.45s cubic-bezier(0.34, 1.8, 0.64, 1);
   }
   .ds-button.ds-active,
+  .ds-button.ds-pressed,
   .ds-button:active {
     transition:
       color 0.05s ease 0.15s,
@@ -120,25 +126,25 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px 16px;
-  min-height: 44px;
+  height: var(--control-height);
+  padding: 0 16px;
   font-size: 14px;
   white-space: nowrap;
 }
 
+/* Petit : plus serré et un cran plus petit, mais de la même hauteur que les autres. */
 .ds-text.ds-small {
-  padding: 7px 12px;
-  min-height: 40px;
+  padding: 0 12px;
   font-size: 13px;
 }
 
-/* Bouton-icône : carré de 44 px, rayon 14 (celui d'une pastille de menu). */
+/* Bouton-icône : carré de la hauteur d'une commande, rayon 14 (celui d'une pastille de menu). */
 .ds-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: var(--control-height);
+  height: var(--control-height);
   padding: 0;
   border-radius: 14px;
   font-size: 20px;
@@ -172,8 +178,7 @@
 
 .ds-link {
   --btn-active-color: var(--color-primary);
-  padding: 4px 11px;
-  min-height: 0;
+  padding: 0 12px;
   font-size: 13px;
 }
 
@@ -189,6 +194,7 @@
     animation: none;
   }
   .ds-button.ds-active,
+  .ds-button.ds-pressed,
   .ds-button:active {
     animation: none;
     text-shadow: var(--btn-active-glow);

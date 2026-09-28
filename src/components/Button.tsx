@@ -3,6 +3,7 @@ import { cx } from './cx'
 import { Icon } from './Icon'
 import type { IconName } from './icons'
 import { Shade } from './Shade'
+import { usePress } from './usePress'
 
 export type ButtonTone = 'default' | 'primary' | 'danger' | 'link'
 
@@ -21,15 +22,26 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 /**
- * Bouton à libellé : en relief au repos, enfoncé pressé ou actif, avec le rebond du DS. Un bouton
- * à bascule passe `aria-pressed` et `active` ensemble.
+ * Bouton à libellé : en relief au repos, enfoncé pressé ou actif, avec le rebond du DS — un
+ * toucher bref compris (cf. usePress). Un bouton à bascule passe `aria-pressed` et `active` ensemble.
  */
 export function Button({ tone = 'default', size = 'md', icon, active = false, flat = false, className, children, type = 'button', ...rest }: ButtonProps) {
+  const { pressed, handlers } = usePress(rest)
   return (
     <button
       type={type}
-      className={cx('ds-button', 'ds-text', size === 'sm' && 'ds-small', tone !== 'default' && `ds-${tone}`, active && 'ds-active', flat && 'ds-flat', className)}
+      className={cx(
+        'ds-button',
+        'ds-text',
+        size === 'sm' && 'ds-small',
+        tone !== 'default' && `ds-${tone}`,
+        active && 'ds-active',
+        pressed && 'ds-pressed',
+        flat && 'ds-flat',
+        className,
+      )}
       {...rest}
+      {...handlers}
     >
       <Shade />
       {icon && <Icon name={icon} />}
@@ -50,12 +62,14 @@ export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>
 
 /** Bouton-icône : un carré de 44 px, rayon 14. */
 export function IconButton({ icon, label, active = false, large = false, tone = 'default', className, type = 'button', ...rest }: IconButtonProps) {
+  const { pressed, handlers } = usePress(rest)
   return (
     <button
       type={type}
       aria-label={label}
-      className={cx('ds-button', 'ds-icon', large && 'ds-large', tone !== 'default' && `ds-${tone}`, active && 'ds-active', className)}
+      className={cx('ds-button', 'ds-icon', large && 'ds-large', tone !== 'default' && `ds-${tone}`, active && 'ds-active', pressed && 'ds-pressed', className)}
       {...rest}
+      {...handlers}
     >
       <Shade />
       <Icon name={icon} />

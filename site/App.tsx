@@ -3,8 +3,6 @@ import { Button, IconButton } from '../src/components/Button'
 import { Notice, Spinner, Zone } from '../src/components/Feedback'
 import { Checkbox, Input, Select } from '../src/components/Field'
 import { FoldingGrid } from '../src/components/FoldingGrid'
-import { Icon } from '../src/components/Icon'
-import { ICONS } from '../src/components/icons'
 import { ImageButton, type ImageButtonVariant } from '../src/components/ImageButton'
 import { MenuBar, type MenuItem } from '../src/components/MenuBar'
 import { SearchField } from '../src/components/SearchField'
@@ -210,14 +208,6 @@ export function App() {
             <div className="color" key={name}>
               <div className="color-chip" style={{ background: `var(${name})` }} />
               <code>{name}</code>
-            </div>
-          ))}
-        </div>
-        <h3>Icônes</h3>
-        <div className="icons">
-          {ICONS.map((name) => (
-            <div key={name}>
-              <Icon name={name} /> <code>{name}</code>
             </div>
           ))}
         </div>
