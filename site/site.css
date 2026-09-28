@@ -125,3 +125,28 @@ code {
   color: var(--color-muted);
   font-size: 14px;
 }
+
+/* Un écran de téléphone, pour montrer la mise en page (Screen, Header, Body, Footer). */
+.screen-frame {
+  --app-height: 520px;
+  max-width: 393px;
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+.screen-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.screen-card {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--neu-radius-lg);
+  background: linear-gradient(135deg, #3a4a5a, #1b222a);
+  color: #fff;
+  font-weight: 700;
+}

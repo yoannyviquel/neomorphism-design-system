@@ -4,6 +4,7 @@ import { Notice, Spinner, Zone } from '../src/components/Feedback'
 import { Checkbox, Input, Select } from '../src/components/Field'
 import { FoldingGrid } from '../src/components/FoldingGrid'
 import { ImageButton, type ImageButtonVariant } from '../src/components/ImageButton'
+import { Body, Footer, Header, Screen } from '../src/components/Layout'
 import { MenuBar, type MenuItem } from '../src/components/MenuBar'
 import { SearchField } from '../src/components/SearchField'
 import { LOGOS } from './logos'
@@ -23,6 +24,7 @@ const SECTIONS = [
   { id: 'images', title: 'Boutons à image' },
   { id: 'champs', title: 'Champs' },
   { id: 'menu', title: 'Barre de menu' },
+  { id: 'ecran', title: 'Écran' },
   { id: 'grille', title: 'Grille dépliante' },
   { id: 'retours', title: 'Zones et messages' },
 ]
@@ -121,6 +123,32 @@ function Menu() {
   return (
     <div style={{ maxWidth: 420 }}>
       <MenuBar label="Sections" items={MENU} active={active} onSelect={setActive} />
+    </div>
+  )
+}
+
+function ScreenDemo() {
+  const [query, setQuery] = useState('')
+  const [active, setActive] = useState<'home' | 'search' | 'profile'>('search')
+  return (
+    <div className="screen-frame">
+      <Screen>
+        <Header>
+          <SearchField aria-label="Rechercher" placeholder="Film ou série" value={query} onChange={setQuery} onClear={() => setQuery('')} />
+        </Header>
+        <Body>
+          <div className="screen-cards">
+            {Array.from({ length: 12 }, (_, i) => (
+              <div key={i} className="screen-card">
+                {LOGOS[i % 4].name}
+              </div>
+            ))}
+          </div>
+        </Body>
+        <Footer>
+          <MenuBar label="Sections" items={MENU} active={active} onSelect={setActive} />
+        </Footer>
+      </Screen>
     </div>
   )
 }
@@ -262,6 +290,14 @@ export function App() {
 
       <Demo id="menu" title="Barre de menu" intro="Un cadre creusé ; une seule pastille en relief glisse sous la destination courante, qui s'étire pour montrer son libellé.">
         <Menu />
+      </Demo>
+
+      <Demo
+        id="ecran"
+        title="Écran"
+        intro="Un en-tête et un pied fixes, un corps qui seul défile entre eux et passe dessous en s'effaçant en fondu (8 px). Le même écart, la place d'une ombre, sous l'en-tête et au-dessus du pied."
+      >
+        <ScreenDemo />
       </Demo>
 
       <Demo

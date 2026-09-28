@@ -1,0 +1,57 @@
+/* Mise en page d'un écran d'app : un EN-TÊTE et un PIED fixes, et entre eux un CORPS qui défile.
+
+     .ds-screen — l'écran : une colonne, sur toute la hauteur (--app-height si l'app la connaît
+                  mieux que 100dvh, cf. l'app installée sur iPhone) ;
+     .ds-header — l'en-tête (une barre de recherche…) : sous la barre d'état, 16 px plus bas ;
+     .ds-body   — le corps, SEUL à défiler : il passe sous l'en-tête et sous le pied, en s'effaçant
+                  en fondu (8 px) au lieu d'être coupé net ;
+     .ds-footer — le pied (la barre de menu) : au-dessus de la zone sûre du bas d'iPhone.
+
+   Entre l'en-tête et le corps, entre le corps et le pied, le même écart : --shadow-room, la place
+   d'une ombre. Sur les côtés, le corps garde la même marge, où débordent les ombres de ce qu'il
+   contient (un défilement rogne tout ce qui dépasse de sa boîte). Sans en-tête, le corps prend
+   lui-même la marge du haut, sous la barre d'état. L'en-tête et le pied restent au-dessus du
+   corps : rien n'est collé (sticky), rien ne défile avec eux. */
+
+.ds-screen {
+  --ds-fade: 8px;
+  --ds-edge-top: calc(16px + env(safe-area-inset-top));
+  --ds-edge-x: max(var(--shadow-room), env(safe-area-inset-left), env(safe-area-inset-right));
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  height: var(--app-height, 100dvh);
+  background: var(--color-bg);
+}
+
+.ds-header,
+.ds-footer {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  background: var(--color-bg);
+}
+
+.ds-header {
+  padding: var(--ds-edge-top) var(--ds-edge-x) calc(var(--shadow-room) - var(--ds-fade));
+}
+
+.ds-footer {
+  padding: calc(var(--shadow-room) - var(--ds-fade)) var(--ds-edge-x) max(12px, env(safe-area-inset-bottom));
+}
+
+.ds-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--ds-edge-top) var(--ds-edge-x) var(--ds-fade);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--ds-fade), #000 calc(100% - var(--ds-fade)), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 var(--ds-fade), #000 calc(100% - var(--ds-fade)), transparent);
+}
+
+/* Sous un en-tête, le corps commence par son seul fondu. */
+.ds-header + .ds-body {
+  padding-top: var(--ds-fade);
+}

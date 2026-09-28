@@ -6,6 +6,7 @@ import { Button, IconButton } from './Button'
 import { Checkbox, Select } from './Field'
 import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
 import { ImageButton } from './ImageButton'
+import { Body, Footer, Header, Screen } from './Layout'
 import { MENU_RELEASE_DELAY_MS, MenuBar } from './MenuBar'
 import { SearchField } from './SearchField'
 import { PRESS_HOLD_MS } from './usePress'
@@ -178,5 +179,24 @@ describe('FoldingGrid', () => {
   it('garde visibles, repliée, les lignes des éléments à montrer', () => {
     render(grid((item) => item.mine))
     expect(shown()).toHaveLength(2 * FALLBACK_COLUMNS)
+  })
+})
+
+describe('Screen', () => {
+  it("pose l'en-tête, le corps qui défile et le pied", () => {
+    const { container } = render(
+      <Screen>
+        <Header>haut</Header>
+        <Body>milieu</Body>
+        <Footer>bas</Footer>
+      </Screen>,
+    )
+    const screen = container.firstElementChild as HTMLElement
+    expect(screen).toHaveClass('ds-screen')
+    expect([...screen.children].map((child) => `${child.tagName.toLowerCase()}.${child.className}`)).toEqual([
+      'header.ds-header',
+      'div.ds-body',
+      'footer.ds-footer',
+    ])
   })
 })
