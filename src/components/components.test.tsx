@@ -63,6 +63,14 @@ describe('ImageButton', () => {
     expect(screen.getByRole('button', { name: /Clarté/ })).toHaveClass('ds-image-label')
   })
 
+  it('logo serti et nom : le logo dans un chaton, le nom écrit', () => {
+    render(<ImageButton variant="label-set" name="Lagune" src="lagune.png" pressed />)
+    const button = screen.getByRole('button', { name: /Lagune/ })
+    expect(button).toHaveClass('ds-image-label', 'ds-image-label-set')
+    expect(button.querySelector('.ds-well > img.ds-image')).toBeInTheDocument()
+    expect(button).toHaveTextContent('Lagune')
+  })
+
   it("prend l'état de la grille dépliante", () => {
     render(<ImageButton name="Nocturne" fold={{ folded: false, motion: 'pop', popDelay: 0.3 }} />)
     const button = screen.getByRole('button', { name: 'Nocturne' })

@@ -2,7 +2,7 @@ import { useState, type ButtonHTMLAttributes, type CSSProperties, type ReactNode
 import { cx } from './cx'
 import { Shade } from './Shade'
 
-export type ImageButtonVariant = 'chip' | 'set' | 'label'
+export type ImageButtonVariant = 'chip' | 'set' | 'label' | 'label-set'
 
 /** L'état d'un bouton dans une grille dépliante (cf. FoldingGrid) : repli, pop, attente. */
 export interface FoldItemState {
@@ -14,10 +14,10 @@ export interface FoldItemState {
 export interface ImageButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /**
    * La forme (cf. image-button.css) : `chip`, la pastille ; `set`, sertie dans un chaton ; `label`,
-   * l'image en icône suivie du nom.
+   * l'image en icône suivie du nom ; `label-set`, le logo serti suivi du nom.
    */
   variant?: ImageButtonVariant
-  /** Le nom : nom accessible et infobulle, écrit à côté de l'image en `label`. */
+  /** Le nom : nom accessible et infobulle, écrit à côté de l'image en `label` et `label-set`. */
   name: string
   /** L'image ; à défaut, ou si elle ne charge pas, les initiales du nom. */
   src?: string | null
@@ -50,16 +50,18 @@ export function ImageButton({ variant = 'set', name, src, pressed, fold, classNa
         {initials(name)}
       </span>
     )
+  const labelled = variant === 'label' || variant === 'label-set'
   const foldStyle = fold?.motion === 'pop' ? ({ '--pop-delay': `${fold.popDelay}s` } as CSSProperties) : undefined
   return (
     <button
       type={type}
-      aria-label={variant === 'label' ? undefined : name}
+      aria-label={labelled ? undefined : name}
       title={name}
       aria-pressed={pressed}
       inert={fold?.folded || undefined}
       className={cx(
         'ds-button',
+        variant === 'label-set' && 'ds-image-label',
         `ds-image-${variant}`,
         pressed && 'ds-active',
         fold?.folded && 'is-folded',
@@ -71,8 +73,8 @@ export function ImageButton({ variant = 'set', name, src, pressed, fold, classNa
       {...rest}
     >
       <Shade />
-      {variant === 'set' ? <span className="ds-well">{image}</span> : image}
-      {variant === 'label' && <span>{name}</span>}
+      {variant === 'set' || variant === 'label-set' ? <span className="ds-well">{image}</span> : image}
+      {labelled && <span>{name}</span>}
     </button>
   )
 }

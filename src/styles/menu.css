@@ -15,7 +15,7 @@
   align-items: center;
   gap: var(--menu-gap);
   padding: var(--menu-pad);
-  border-radius: 22px;
+  border-radius: var(--control-radius);
   background: var(--color-bg);
   box-shadow: var(--neu-inset-lg);
   transition: --menu-at 0.45s cubic-bezier(0.22, 1, 0.36, 1);
@@ -28,7 +28,7 @@
   bottom: var(--menu-pad);
   left: calc(var(--menu-pad) + var(--menu-at) * (var(--u) + var(--menu-gap)));
   width: calc(var(--u) * (1 + var(--menu-grow)));
-  border-radius: 14px;
+  border-radius: var(--control-radius-inner);
   background: var(--color-bg);
   box-shadow: var(--neu-raised-lg);
   pointer-events: none;
@@ -46,7 +46,7 @@
   min-width: var(--control-inner);
   padding: 0;
   border: none;
-  border-radius: 14px;
+  border-radius: var(--control-radius-inner);
   background: transparent;
   color: color-mix(in srgb, var(--btn-active-color) 50%, transparent);
   font: inherit;

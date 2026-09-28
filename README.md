@@ -23,20 +23,23 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   sélecteur, logo et nom), cadres qui en contiennent (recherche, barre de menu, où la commande fait
   34 px à 8 px de marge), tuiles à image (carrés de 50) — `--control-height`, `--control-height-lg`,
   `--control-inner`.
+- **Un rayon** : 14 px, celui des boutons-icônes, pour tout ce qui fait la hauteur d'une commande
+  (cadres de la recherche et du menu compris) ; 6 px pour ce qui y est logé, à 8 px du bord
+  (`--control-radius`, `--control-radius-inner`).
 - **Un toucher bref se voit** : le bouton reste enfoncé jusqu'au premier sommet du rebond (280 ms),
   puis se relâche avec le sien (`usePress`, classe `ds-pressed`).
 - **L'ombre d'un bouton est un élément** (`<span class="ds-shade">`, rendu par les composants ;
   `Shade` pour un bouton écrit à la main), pas un pseudo-élément : il hérite des nombres animés du
   bouton, ce que Safari ne fait pas pour `::after`.
 - **Les images ne remplacent jamais la surface d'un bouton.** Elles en sont le contenu, posées
-  au-dessus de ses ombres : pastille, sertie ou logo et nom.
+  au-dessus de ses ombres : pastille, sertie, logo et nom, ou logo serti et nom.
 
 ## Contenu
 
 | Composant | Rôle |
 | --- | --- |
 | `Button`, `IconButton` | bouton à libellé (tons défaut, primaire, danger, lien) et bouton-icône |
-| `ImageButton` | bouton à image : `chip` (pastille), `set` (sertie), `label` (logo et nom) |
+| `ImageButton` | bouton à image : `chip` (pastille), `set` (sertie), `label` (logo et nom), `label-set` (logo serti et nom) |
 | `Input`, `Select`, `Checkbox` | champs, en relief au repos, creusés engagés |
 | `SearchField` | champ de recherche, loupe qui s'allume, bouton Effacer |
 | `MenuBar` | barre de menu creusée, pastille qui glisse sous la destination courante |

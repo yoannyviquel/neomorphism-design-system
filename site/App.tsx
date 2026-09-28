@@ -252,6 +252,8 @@ export function App() {
         <ImageRow variant="chip" />
         <h3>Logo et nom</h3>
         <ImageRow variant="label" />
+        <h3>Logo serti et nom</h3>
+        <ImageRow variant="label-set" />
       </Demo>
 
       <Demo id="champs" title="Champs" intro="Des commandes, pas des zones : en relief au repos, creusées une fois engagées, avec le rebond. Texte à 16 px, pour qu'iOS ne zoome pas.">

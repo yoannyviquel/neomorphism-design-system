@@ -65,6 +65,11 @@
   --control-height: 50px;
   --control-height-lg: 50px;
   --control-inner: calc(var(--control-height-lg) - 16px);
+  /* UN RAYON, celui des boutons-icônes : 14 px pour tout ce qui fait la hauteur d'une commande
+     (boutons, champs, sélecteur, tuiles, cadres de la recherche et du menu). Ce qui est logé dans un
+     cadre, à 8 px de son bord, prend 14 − 8 = 6 px : les arrondis restent parallèles. */
+  --control-radius: 14px;
+  --control-radius-inner: calc(var(--control-radius) - 8px);
   /* Sol d'une commande enfoncée : la couleur du fond, sans assombrissement. */
   --neu-sunk-bg: var(--color-bg);
   /* Fond d'attente d'une image avant son chargement. */

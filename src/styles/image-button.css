@@ -7,7 +7,8 @@
      .ds-image-set   — sertie : l'image incrustée dans un creux fixe, son chaton (.ds-well, chaton
                        et image aux deux tiers du côté) ; elle le remplit bord à bord, et l'ombre sombre du creux
                        (shadow 4 au cran --neu-k-xs, sans son reflet clair) passe sur ses bords ;
-     .ds-image-label — logo et nom : l'image en icône d'une commande ordinaire, suivie du nom.
+     .ds-image-label — logo et nom : l'image en icône d'une commande ordinaire, suivie du nom ;
+     .ds-image-label-set — logo serti et nom : le même, le logo incrusté dans un chaton.
    L'image est posée AU-DESSUS des ombres du bouton : le creux de l'enfoncement se dessine autour
    d'elle, jamais par-dessus — son reflet clair la voilait, surtout en thème clair. Un bouton à
    bascule éteint son image (gris, 60 %) tant qu'il n'est pas enfoncé. */
@@ -19,7 +20,7 @@
   width: var(--control-height-lg);
   height: var(--control-height-lg);
   padding: 0;
-  border-radius: 14px;
+  border-radius: var(--control-radius);
 }
 
 .ds-image-label {
@@ -27,7 +28,7 @@
   align-items: center;
   gap: 10px;
   height: var(--control-height);
-  padding: 0 16px 0 7px;
+  padding: 0 16px 0 8px;
   font-size: 14px;
 }
 
@@ -54,9 +55,28 @@
 }
 
 .ds-image-label .ds-image {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
+  width: var(--control-inner);
+  height: var(--control-inner);
+  border-radius: var(--control-radius-inner);
+}
+
+/* Logo serti et nom : le logo remplit un chaton de la hauteur d'une commande logée (34 px), à
+   8 px du bord, sous l'ombre du creux. */
+.ds-image-label-set {
+  padding-left: 8px;
+}
+
+.ds-image-label-set .ds-well {
+  flex: 0 0 auto;
+  width: var(--control-inner);
+  height: var(--control-inner);
+  border-radius: var(--control-radius-inner);
+}
+
+.ds-image-label-set .ds-well .ds-image {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
 }
 
 .ds-image-set .ds-image {

@@ -26,7 +26,7 @@
   isolation: isolate;
   background: transparent;
   border: none;
-  border-radius: var(--neu-radius);
+  border-radius: var(--control-radius);
   color: var(--color-text);
   font-weight: 700;
   cursor: pointer;
@@ -138,7 +138,7 @@
   font-size: 13px;
 }
 
-/* Bouton-icône : carré de la hauteur d'une commande, rayon 14 (celui d'une pastille de menu). */
+/* Bouton-icône : carré de la hauteur d'une commande. */
 .ds-icon {
   display: inline-flex;
   align-items: center;
@@ -146,7 +146,6 @@
   width: var(--control-height);
   height: var(--control-height);
   padding: 0;
-  border-radius: 14px;
   font-size: 20px;
   --btn-active-glow: var(--btn-active-glow-strong);
 }

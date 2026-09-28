@@ -27,7 +27,7 @@
   height: var(--control-height);
   padding: 0 12px;
   border: none;
-  border-radius: var(--neu-radius);
+  border-radius: var(--control-radius);
   background: var(--color-bg);
   color: var(--color-text);
   font-size: 16px;

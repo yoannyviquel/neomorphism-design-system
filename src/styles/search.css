@@ -13,7 +13,7 @@
   align-items: center;
   gap: var(--search-pad);
   padding: var(--search-pad);
-  border-radius: 22px;
+  border-radius: var(--control-radius);
   background: var(--color-bg);
   box-shadow:
     calc(28px * var(--neu-k-lg) * var(--sink-lift)) calc(28px * var(--neu-k-lg) * var(--sink-lift)) calc(50px * var(--neu-k-lg) * var(--sink-lift)) var(--neu-dark),
@@ -61,7 +61,7 @@
   height: var(--control-inner);
   padding: 0 8px 0 42px;
   border: none;
-  border-radius: 14px;
+  border-radius: var(--control-radius-inner);
   outline: none;
   background: transparent;
   color: var(--color-text);
@@ -83,7 +83,7 @@
   flex: 0 0 auto;
   width: var(--control-inner);
   height: var(--control-inner);
-  border-radius: 14px;
+  border-radius: var(--control-radius-inner);
   font-size: 18px;
 }
 
