@@ -83,6 +83,12 @@
   /* LE REBOND — la courbe réglée dans l'atelier « Pop du bouton » : dépassement ×1,8, creux,
      second rebond, posé, en 1 s. Sert à l'enfoncement des boutons (--sink) et au pop (--pop). */
   --sink-ease: linear(0, 0.041, 0.159, 0.341, 0.569, 0.824, 1.083, 1.324, 1.529, 1.683, 1.775, 1.794, 1.713, 1.585, 1.427, 1.255, 1.086, 0.933, 0.806, 0.713, 0.656, 0.635, 0.647, 0.687, 0.746, 0.819, 0.896, 0.971, 1.039, 1.094, 1.133, 1.157, 1.164, 1.157, 1.137, 1.108, 1.065, 1.021, 1.001, 1, 1);
+  /* L'AMPLEUR DES DÉPASSEMENTS du rebond (au-delà d'enfoncé, au-dessus du repos), de 0 à 1. Une
+     surface nue (bouton à libellé, bouton-icône, champ) montre tout son creux et tout son relief :
+     à pleine ampleur, le rebond y paraît exagéré, d'autant qu'un toucher bref en joue deux, à
+     l'enfoncement puis au relâchement. Moitié par défaut ; pleine sur les boutons à image, dont
+     l'image couvre l'essentiel du creux (cf. image-button.css). */
+  --sink-over: 0.5;
   /* LE RELÂCHEMENT — même ressort (sommet ×1,8, creux, second rebond, posé, en 1 s), mais lancé :
      il part avec sa vitesse au lieu de démarrer à l'arrêt. Le bouton relâché rebondit aussitôt du
      fond, sans y marquer de pause. */

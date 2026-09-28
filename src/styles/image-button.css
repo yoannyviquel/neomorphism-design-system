@@ -13,6 +13,13 @@
    d'elle, jamais par-dessus — son reflet clair la voilait, surtout en thème clair. Un bouton à
    bascule éteint son image (gris, 60 %) tant qu'il n'est pas enfoncé. */
 
+/* L'image couvre l'essentiel du creux : le rebond y garde sa pleine ampleur. */
+.ds-image-chip,
+.ds-image-set,
+.ds-image-label-set {
+  --sink-over: 1;
+}
+
 .ds-image-chip,
 .ds-image-set {
   display: grid;
