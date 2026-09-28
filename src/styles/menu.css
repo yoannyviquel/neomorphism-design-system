@@ -109,21 +109,14 @@
   height: var(--control-height);
 }
 
-/* Le sélecteur multiple plat : chaque choix à sa largeur (son libellé, 6 px d'air de chaque côté),
-   aucun ne grandit. Libellés à 13 px, comme les petits boutons, et 4 px entre les choix : de quoi
-   tenir quatre plages et une commande sur la largeur d'un téléphone. */
+/* Le sélecteur multiple plat : chaque choix à sa largeur (son libellé), aucun ne grandit. */
 .ds-flat-selector {
   --menu-grow: 0;
-  --menu-gap: 4px;
 }
 
 .ds-flat-selector .ds-menu-item {
   flex: 1 1 auto;
-  padding: 0 6px;
-}
-
-.ds-flat-selector .ds-menu-label {
-  font-size: 13px;
+  padding: 0 10px;
 }
 
 /* Un choix à libellé seul : toujours visible. */
