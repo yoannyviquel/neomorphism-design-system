@@ -2,9 +2,10 @@
    Une image (un logo) ne remplace jamais la surface d'un bouton : posée à plein cadre, elle en
    prenait la place, et le relief se lisait plus ou moins selon l'image. Le bouton reste une surface
    du DS et l'image en est le contenu, sous trois formes :
-     .ds-image-chip  — pastille : l'image au centre, avec une marge de matière (60 px, image 34) ;
-     .ds-image-set   — sertie : l'image incrustée dans un creux fixe, son chaton (.ds-well, 60 px,
-                       chaton et image 40) ; elle le remplit bord à bord, et l'ombre sombre du creux
+     .ds-image-chip  — pastille : l'image au centre, avec une marge de matière (image : 57 % du
+                       côté de la tuile) ;
+     .ds-image-set   — sertie : l'image incrustée dans un creux fixe, son chaton (.ds-well, chaton
+                       et image aux deux tiers du côté) ; elle le remplit bord à bord, et l'ombre sombre du creux
                        (shadow 4 au cran --neu-k-xs, sans son reflet clair) passe sur ses bords ;
      .ds-image-label — logo et nom : l'image en icône d'une commande ordinaire, suivie du nom.
    L'image est posée AU-DESSUS des ombres du bouton : le creux de l'enfoncement se dessine autour
@@ -47,8 +48,8 @@
 }
 
 .ds-image-chip .ds-image {
-  width: 34px;
-  height: 34px;
+  width: calc(var(--control-height-lg) * 0.567);
+  height: calc(var(--control-height-lg) * 0.567);
   border-radius: 9px;
 }
 
@@ -70,9 +71,9 @@
 .ds-well {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
+  width: calc(var(--control-height-lg) * 2 / 3);
+  height: calc(var(--control-height-lg) * 2 / 3);
+  border-radius: 10px;
 }
 
 .ds-well::after {

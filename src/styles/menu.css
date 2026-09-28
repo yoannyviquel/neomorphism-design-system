@@ -2,7 +2,7 @@
    toute la largeur. Chaque destination y est une icône à plat ; celle où l'on est S'ÉTIRE pour
    montrer son libellé, et une pastille EN RELIEF (shadow 2) glisse sous elle. --menu-at, le rang
    courant, est un nombre animé : la pastille et la largeur des destinations en découlent, au même
-   rythme. Une commande de 44 px dans un cadre à 8 px de marge : 60 px, comme la recherche. L'app
+   rythme. Le cadre fait la hauteur d'une commande, comme la recherche. L'app
    place la barre (marges, zone sûre du bas d'iPhone). */
 
 .ds-menu {
@@ -42,8 +42,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: var(--control-height);
-  min-width: var(--control-height);
+  height: var(--control-inner);
+  min-width: var(--control-inner);
   padding: 0;
   border: none;
   border-radius: 14px;

@@ -19,9 +19,10 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   du bouton » (`--sink-ease`) : dépassement ×1,8, creux, second rebond, posé, en 1 s. Les
   animations passent par des nombres enregistrés (`@property --sink`, `--pop`, `--menu-at`) :
   Safari n'interpole pas des listes d'ombres écrites en variables.
-- **Deux hauteurs** : 44 px pour une commande (bouton, lien d'action, bouton-icône, champ,
-  sélecteur, logo et nom), 60 px pour un grand élément (recherche, barre de menu, tuile à image) —
-  `--control-height`, `--control-height-lg`.
+- **Une hauteur** : 50 px pour tout — commandes (bouton, lien d'action, bouton-icône, champ,
+  sélecteur, logo et nom), cadres qui en contiennent (recherche, barre de menu, où la commande fait
+  34 px à 8 px de marge), tuiles à image (carrés de 50) — `--control-height`, `--control-height-lg`,
+  `--control-inner`.
 - **Un toucher bref se voit** : le bouton reste enfoncé jusqu'au premier sommet du rebond (280 ms),
   puis se relâche avec le sien (`usePress`, classe `ds-pressed`).
 - **L'ombre d'un bouton est un élément** (`<span class="ds-shade">`, rendu par les composants ;

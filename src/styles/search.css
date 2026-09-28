@@ -58,7 +58,7 @@
 .ds-search-input:focus-visible {
   flex: 1;
   min-width: 0;
-  height: var(--control-height);
+  height: var(--control-inner);
   padding: 0 8px 0 42px;
   border: none;
   border-radius: 14px;
@@ -81,6 +81,9 @@
 
 .ds-search .ds-icon {
   flex: 0 0 auto;
+  width: var(--control-inner);
+  height: var(--control-inner);
+  border-radius: 14px;
   font-size: 18px;
 }
 

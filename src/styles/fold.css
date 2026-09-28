@@ -28,7 +28,7 @@
 
 .ds-fold-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--fold-cell, 60px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--fold-cell, var(--control-height-lg)), 1fr));
   justify-items: center;
   gap: var(--shadow-room);
 }

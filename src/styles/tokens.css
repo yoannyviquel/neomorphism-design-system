@@ -58,11 +58,13 @@
     inset calc(-31px * var(--neu-k-lg)) calc(-31px * var(--neu-k-lg)) calc(43px * var(--neu-k-lg)) var(--neu-light-in);
   --shadow-room: calc(72px * var(--neu-k));
   --shadow-room-lg: calc(72px * var(--neu-k-lg));
-  /* DEUX HAUTEURS, pour que tout s'aligne : 44 px pour une commande (bouton, lien d'action,
-     bouton-icône, champ, sélecteur, logo et nom), 60 px pour un grand élément (recherche, barre de
-     menu, tuile à image) — soit une commande de 44 px dans un cadre à 8 px de marge. */
-  --control-height: 44px;
-  --control-height-lg: 60px;
+  /* UNE HAUTEUR, pour que tout s'aligne : 50 px, qu'il s'agisse d'une commande (bouton, lien
+     d'action, bouton-icône, champ, sélecteur, logo et nom) ou d'un cadre qui en contient (recherche,
+     barre de menu) ; les tuiles à image sont des carrés de même côté. Dans un cadre, à 8 px de
+     marge, une commande fait donc 34 px (--control-inner). */
+  --control-height: 50px;
+  --control-height-lg: 50px;
+  --control-inner: calc(var(--control-height-lg) - 16px);
   /* Sol d'une commande enfoncée : la couleur du fond, sans assombrissement. */
   --neu-sunk-bg: var(--color-bg);
   /* Fond d'attente d'une image avant son chargement. */

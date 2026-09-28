@@ -20,7 +20,7 @@ export interface FoldingGridProps<T> {
   keepVisible?: (item: T) => boolean
   /** Nom accessible du chevron qui déplie. */
   toggleLabel: string
-  /** Largeur minimale d'une cellule (60 px, celle d'un bouton à image). */
+  /** Largeur minimale d'une cellule (par défaut, le côté d'une tuile à image). */
   cellSize?: number
   className?: string
 }
