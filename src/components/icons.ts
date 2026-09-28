@@ -27,6 +27,7 @@ export const ICONS = [
   'open_in_new',
   'pause',
   'play',
+  'plus',
   'refresh',
   'sun_thermometer',
   'television',

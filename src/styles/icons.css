@@ -127,6 +127,10 @@
   content: '\f040a';
 }
 
+.nf-md-plus::before {
+  content: '\f0415';
+}
+
 .nf-md-refresh::before {
   content: '\f0450';
 }
