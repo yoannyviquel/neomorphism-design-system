@@ -174,3 +174,35 @@
 .nf-md-weather_sunny::before {
   content: '\f0599';
 }
+
+.nf-md-calendar::before {
+  content: '\f00ed';
+}
+
+.nf-md-cloud::before {
+  content: '\f015f';
+}
+
+.nf-md-flash::before {
+  content: '\f0241';
+}
+
+.nf-md-gauge::before {
+  content: '\f029a';
+}
+
+.nf-md-map_marker::before {
+  content: '\f034e';
+}
+
+.nf-md-map_marker_radius::before {
+  content: '\f0352';
+}
+
+.nf-md-water::before {
+  content: '\f058c';
+}
+
+.nf-md-weather_windy::before {
+  content: '\f059d';
+}
