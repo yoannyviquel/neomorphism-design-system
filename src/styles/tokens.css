@@ -188,8 +188,3 @@
   initial-value: 1;
 }
 
-@property --menu-at {
-  syntax: '<number>';
-  inherits: true;
-  initial-value: 0;
-}

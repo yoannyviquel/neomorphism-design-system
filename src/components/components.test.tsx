@@ -6,7 +6,7 @@ import { Button, IconButton } from './Button'
 import { Checkbox, Select } from './Field'
 import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
 import { ImageButton } from './ImageButton'
-import { MenuBar } from './MenuBar'
+import { MENU_RELEASE_DELAY_MS, MenuBar } from './MenuBar'
 import { SearchField } from './SearchField'
 import { PRESS_HOLD_MS } from './usePress'
 
@@ -125,10 +125,27 @@ describe('MenuBar', () => {
       />,
     )
     const nav = screen.getByRole('navigation', { name: 'Sections' })
-    expect(nav.style.getPropertyValue('--menu-at')).toBe('1')
+    expect(nav.querySelector('.ds-active')).toHaveAccessibleName('Recherche')
     expect(screen.getByRole('button', { name: 'Recherche' })).toHaveAttribute('aria-current', 'page')
     await user.click(screen.getByRole('button', { name: 'Accueil' }))
     expect(select).toHaveBeenCalledWith('home')
+  })
+
+  it("garde l'ancienne destination allumée le temps que la pastille la quitte", () => {
+    vi.useFakeTimers()
+    const items = [
+      { id: 'home', icon: 'home', label: 'Accueil' },
+      { id: 'search', icon: 'magnify', label: 'Recherche' },
+    ] as const
+    const { rerender } = render(<MenuBar label="Sections" active="search" onSelect={() => {}} items={items} />)
+    rerender(<MenuBar label="Sections" active="home" onSelect={() => {}} items={items} />)
+    const old = screen.getByRole('button', { name: 'Recherche' })
+    expect(old).toHaveClass('ds-active', 'ds-trail')
+    expect(old).not.toHaveAttribute('aria-current')
+    expect(screen.getByRole('button', { name: 'Accueil' })).toHaveAttribute('aria-current', 'page')
+    act(() => vi.advanceTimersByTime(MENU_RELEASE_DELAY_MS))
+    expect(old).not.toHaveClass('ds-active')
+    vi.useRealTimers()
   })
 })
 
