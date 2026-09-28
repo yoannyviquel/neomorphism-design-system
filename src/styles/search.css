@@ -20,11 +20,12 @@
     calc(-23px * var(--neu-k-lg) * var(--sink-lift)) calc(-23px * var(--neu-k-lg) * var(--sink-lift)) calc(45px * var(--neu-k-lg) * var(--sink-lift)) var(--neu-light),
     inset calc(26px * var(--neu-k-lg) * var(--sink-depth)) calc(26px * var(--neu-k-lg) * var(--sink-depth)) calc(48px * var(--neu-k-lg) * var(--sink-depth)) var(--neu-dark),
     inset calc(-31px * var(--neu-k-lg) * var(--sink-depth)) calc(-31px * var(--neu-k-lg) * var(--sink-depth)) calc(43px * var(--neu-k-lg) * var(--sink-depth)) var(--neu-light-in);
-  transition: --sink 1s var(--sink-ease);
+  transition: --sink 1s var(--release-ease);
 }
 
 .ds-search:focus-within {
   --sink: 1;
+  transition: --sink 1s var(--sink-ease);
 }
 
 @supports not (transition-timing-function: linear(0, 1)) {

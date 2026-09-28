@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 
-/** Le premier sommet du rebond (27 % d'1 s) : le creux y est le plus profond. */
-export const PRESS_HOLD_MS = 280
+/** Juste avant le premier sommet du rebond (27 % d'1 s) : le bouton descend encore quand il est
+ *  relâché, et rebondit du fond sans s'y arrêter. */
+export const PRESS_HOLD_MS = 230
 
 interface PressHandlers {
   onPointerDown?: (event: PointerEvent<HTMLButtonElement>) => void
@@ -15,8 +16,8 @@ interface PressHandlers {
 /**
  * L'enfoncement d'un toucher bref. `:active` ne dure que le temps du doigt sur l'écran — une
  * fraction de seconde sur iPhone —, et l'enfoncement était interrompu avant d'avoir paru. Le bouton
- * reste donc enfoncé (`pressed`, classe `ds-pressed`) au moins jusqu'au premier sommet du rebond,
- * puis se relâche avec son propre rebond. Clavier compris (Entrée, Espace). Les gestionnaires de
+ * reste donc enfoncé (`pressed`, classe `ds-pressed`) presque jusqu'au premier sommet du rebond,
+ * puis se relâche, lancé, avec son propre rebond. Clavier compris (Entrée, Espace). Les gestionnaires de
  * l'app sont appelés aussi.
  */
 export function usePress(own: PressHandlers): { pressed: boolean; handlers: Required<PressHandlers> } {

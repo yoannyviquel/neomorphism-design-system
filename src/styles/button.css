@@ -13,7 +13,8 @@
    enfoncé ; au-delà de 1, le creux se creuse plus que d'ordinaire ; en deçà de 0, le bouton monte
    au-dessus de son repos et son relief grandit. Il transite selon --sink-ease : à l'enfoncement, le
    creux dépasse sa profondeur (×1,8), remonte, rebondit et se pose ; au désenfoncement, le bouton
-   jaillit, redescend, rebondit et se pose.
+   jaillit, redescend, rebondit et se pose. Le relâchement (--release-ease) part lancé : le bouton
+   rebondit du fond aussitôt, sans s'y arrêter.
    Entre les deux, le bouton passe À PLAT : de 0 à ½, le relief s'efface ; de ½ à 1, le creux se
    forme et le rebord (le relief qui cerne le creux) revient. Au-delà de ½, le rebord suit le creux
    pas à pas : il s'élargit quand le creux se creuse, s'amincit quand il remonte, si bien que tout
@@ -38,7 +39,7 @@
   -webkit-tap-highlight-color: transparent;
   transition:
     color 0.2s ease,
-    --sink 1s var(--sink-ease);
+    --sink 1s var(--release-ease);
 }
 
 .ds-button::before {

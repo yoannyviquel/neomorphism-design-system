@@ -12,7 +12,7 @@
     calc(-23px * var(--neu-k) * var(--sink-lift)) calc(-23px * var(--neu-k) * var(--sink-lift)) calc(45px * var(--neu-k) * var(--sink-lift)) var(--neu-light),
     inset calc(26px * var(--neu-k) * var(--sink-depth)) calc(26px * var(--neu-k) * var(--sink-depth)) calc(48px * var(--neu-k) * var(--sink-depth)) var(--neu-dark),
     inset calc(-31px * var(--neu-k) * var(--sink-depth)) calc(-31px * var(--neu-k) * var(--sink-depth)) calc(43px * var(--neu-k) * var(--sink-depth)) var(--neu-light-in);
-  transition: --sink 1s var(--sink-ease);
+  transition: --sink 1s var(--release-ease);
 }
 
 @supports not (transition-timing-function: linear(0, 1)) {
@@ -35,6 +35,7 @@
 
 .ds-input:focus {
   --sink: 1;
+  transition: --sink 1s var(--sink-ease);
   outline: none;
 }
 
@@ -65,6 +66,7 @@
 .ds-select select:focus,
 .ds-select select:active {
   --sink: 1;
+  transition: --sink 1s var(--sink-ease);
   color: var(--btn-active-color);
 }
 
@@ -99,6 +101,7 @@
 
 .ds-checkbox:checked {
   --sink: 1;
+  transition: --sink 1s var(--sink-ease);
 }
 
 /* Coche dessinée à l'angle d'une bordure : ni image ni police à charger. */
