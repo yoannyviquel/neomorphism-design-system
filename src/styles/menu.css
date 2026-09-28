@@ -103,10 +103,10 @@
   outline-offset: 2px;
 }
 
-/* La barre de menu : des destinations de la hauteur d'une commande. */
+/* La barre de menu : des destinations de la hauteur d'une commande (leur largeur minimale reste
+   celle d'une commande logée, pour tenir cinq destinations sur un téléphone). */
 .ds-menu-bar .ds-menu-item {
   height: var(--control-height);
-  min-width: var(--control-height);
 }
 
 /* Le sélecteur multiple plat : chaque choix à sa largeur (son libellé), aucun ne grandit. */
