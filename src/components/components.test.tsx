@@ -10,6 +10,7 @@ import { FlatSelector } from './FlatSelector'
 import { Body, Footer, Header, Screen } from './Layout'
 import { MENU_RELEASE_DELAY_MS, MenuBar } from './MenuBar'
 import { SearchField } from './SearchField'
+import { SetImage } from './SetImage'
 import { PRESS_HOLD_MS } from './usePress'
 
 describe('Button', () => {
@@ -78,6 +79,24 @@ describe('ImageButton', () => {
     const button = screen.getByRole('button', { name: 'Nocturne' })
     expect(button).toHaveClass('is-popping')
     expect(button.style.getPropertyValue('--pop-delay')).toBe('0.3s')
+  })
+})
+
+describe('SetImage', () => {
+  it("sertie hors bouton : l'image dans un chaton, nommée, à la taille voulue", () => {
+    render(<SetImage name="Ada Lovelace" src="ada.jpg" size={44} />)
+    const image = screen.getByRole('img', { name: 'Ada Lovelace' })
+    expect(image).toHaveClass('ds-well', 'ds-set-image')
+    expect(image.style.getPropertyValue('--set-image-size')).toBe('44px')
+    expect(image.querySelector('img.ds-image')).toBeInTheDocument()
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  })
+
+  it("montre les initiales quand l'image ne charge pas ; décorative, elle se tait", () => {
+    render(<SetImage name="Ada Lovelace" src="ada.jpg" decorative />)
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
+    fireEvent.error(document.querySelector('img')!)
+    expect(screen.getByText('AL')).toHaveClass('ds-image-fallback')
   })
 })
 

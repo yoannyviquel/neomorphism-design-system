@@ -114,6 +114,21 @@
     calc(48px * var(--neu-k-xs) * var(--well, 1)) var(--neu-dark);
 }
 
+/* Image sertie hors bouton (SetImage) : le chaton seul, à la taille voulue, sans surface de bouton
+   autour. Un portrait est plus haut que large : on garde le haut, où est le visage. */
+.ds-set-image {
+  flex: 0 0 auto;
+  width: var(--set-image-size, calc(var(--control-height-lg) * 2 / 3));
+  height: var(--set-image-size, calc(var(--control-height-lg) * 2 / 3));
+}
+
+.ds-set-image .ds-image {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-position: 50% 20%;
+}
+
 /* Initiales, quand l'image manque. */
 .ds-image-fallback {
   display: inline-flex;

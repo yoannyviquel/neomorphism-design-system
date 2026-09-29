@@ -150,3 +150,23 @@ code {
   color: #fff;
   font-weight: 700;
 }
+
+.cast-demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+}
+
+.cast-demo li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cast-demo-role {
+  color: var(--color-muted);
+}

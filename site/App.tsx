@@ -8,6 +8,7 @@ import { ImageButton, type ImageButtonVariant } from '../src/components/ImageBut
 import { Body, Footer, Header, Screen } from '../src/components/Layout'
 import { MenuBar, type MenuItem } from '../src/components/MenuBar'
 import { SearchField } from '../src/components/SearchField'
+import { SetImage } from '../src/components/SetImage'
 import { LOGOS } from './logos'
 import pkg from '../package.json'
 
@@ -23,6 +24,7 @@ const SECTIONS = [
   { id: 'fondations', title: 'Fondations' },
   { id: 'boutons', title: 'Boutons' },
   { id: 'images', title: 'Boutons à image' },
+  { id: 'serties', title: 'Images serties' },
   { id: 'champs', title: 'Champs' },
   { id: 'menu', title: 'Barre de menu' },
   { id: 'selecteur', title: 'Sélecteur multiple plat' },
@@ -303,6 +305,33 @@ export function App() {
         <ImageRow variant="label" />
         <h3>Logo serti et nom</h3>
         <ImageRow variant="label-set" />
+      </Demo>
+
+      <Demo
+        id="serties"
+        title="Images serties"
+        intro="Une image qu'on montre sans rien commander, un portrait : incrustée dans le chaton d'un bouton serti, sans la surface du bouton autour. Ce qui ne se touche pas n'a pas de relief."
+      >
+        <h3>Taille du chaton</h3>
+        <div className="row">
+          {LOGOS.map((logo) => (
+            <SetImage key={logo.name} name={logo.name} src={logo.src} />
+          ))}
+          <SetImage name="Sans Image" />
+        </div>
+        <h3>Portrait et nom</h3>
+        <ul className="cast-demo">
+          {LOGOS.slice(0, 2).map((logo) => (
+            <li key={logo.name}>
+              <SetImage name={logo.name} src={logo.src} size={44} decorative />
+              <span>
+                <strong>{logo.name}</strong>
+                <br />
+                <span className="cast-demo-role">Rôle</span>
+              </span>
+            </li>
+          ))}
+        </ul>
       </Demo>
 
       <Demo id="champs" title="Champs" intro="Des commandes, pas des zones : en relief au repos, creusées une fois engagées, avec le rebond. Texte à 16 px, pour qu'iOS ne zoome pas.">

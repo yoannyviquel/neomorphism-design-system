@@ -1,5 +1,6 @@
 import { useState, type ButtonHTMLAttributes, type CSSProperties, type ReactNode } from 'react'
 import { cx } from './cx'
+import { initials } from './initials'
 import { Shade } from './Shade'
 
 export type ImageButtonVariant = 'chip' | 'set' | 'label' | 'label-set'
@@ -25,15 +26,6 @@ export interface ImageButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEl
   pressed?: boolean
   /** Dans une grille dépliante : l'état que la grille lui passe. */
   fold?: FoldItemState
-}
-
-function initials(name: string): string {
-  return name
-    .split(/\s+/)
-    .map((word) => word[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase()
 }
 
 /**
