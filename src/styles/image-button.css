@@ -94,9 +94,11 @@
 
 /* Le chaton : un creux fixe dans la matière du bouton, que l'image remplit. Son ombre est peinte
    AU-DESSUS de l'image : c'est elle qui l'incruste. --well (0 à 1) en règle la profondeur, pour
-   qu'il puisse naître avec le bouton (pop d'une grille dépliante). */
+   qu'il puisse naître avec le bouton (pop d'une grille dépliante). Sa grille a la taille du chaton :
+   une image plus haute que large (un portrait) y est recadrée au lieu de le déborder. */
 .ds-well {
   display: grid;
+  grid-template: 100% / 100%;
   place-items: center;
   width: calc(var(--control-height-lg) * 2 / 3);
   height: calc(var(--control-height-lg) * 2 / 3);
