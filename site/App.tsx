@@ -79,7 +79,7 @@ function Charts() {
         <figure className="charts-demo-courbe">
           <svg viewBox={`0 0 ${largeur} ${hauteur}`} role="img" aria-label="Une progression de neuf points">
             <line className="charts-demo-axe" x1="8" y1={hauteur - 14} x2={largeur - 8} y2={hauteur - 14} />
-            <path className="charts-demo-trait" d={courbe} filter="url(#ds-chart-shadow)" />
+            <path className="charts-demo-trait" d={courbe} filter="url(#ds-chart-groove)" />
           </svg>
           <figcaption>L'ombre d'une donnée, k = 1/9, à l'encre des données.</figcaption>
         </figure>
@@ -460,7 +460,7 @@ export function App() {
       <Demo
         id="graphiques"
         title="Graphiques"
-        intro="Un graphique n'est ni une commande ni une zone : deux filtres lui suffisent. L'ombre d'une donnée, à l'échelle des plus petits éléments, sur un trait — à l'encre des données, plus dense, car un trait de 2 px ne retient qu'un tiers de l'ombre qu'il porte ; le sertissage, à l'échelle d'une surface, pour loger le graphique dans la page — l'ombre du creux seule, sans son reflet clair, qui délaverait les teintes."
+        intro="Un graphique n'est ni une commande ni une zone : trois filtres lui suffisent. La rainure, pour une courbe — le creux retourné, ses deux ombres posées de part et d'autre du trait faute d'un dedans où les loger, à une échelle que la largeur du trait donne : le flou vaut cette largeur, soit k = largeur / 48. Le sertissage, pour une surface, qui loge le graphique dans la page — l'ombre du creux seule, sans son reflet clair, qui délaverait les teintes. Et l'ombre d'une donnée, que la rainure a remplacée sur les courbes, pour ce qui doit rester posé sur la page."
       >
         <Charts />
       </Demo>

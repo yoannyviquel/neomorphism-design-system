@@ -47,6 +47,10 @@
      l'encre d'une surface, elle tombe sous le seuil du visible. Elle est donc plus dense, pour peser
      autant. Voir chart.css. */
   --neu-data: rgba(0, 0, 0, 0.95);
+  /* La PAROI ÉCLAIRÉE d'une rainure — le pendant clair de --neu-data, et pour la même raison : une
+     paroi large de deux pixels ne retient pas plus un rehaut qu'une ombre. Le rehaut d'une surface,
+     à 5 % en sombre, n'y laisserait rien. */
+  --neu-data-light: rgba(255, 255, 255, 0.3);
   --neu-raised:
     calc(28px * var(--neu-k)) calc(28px * var(--neu-k)) calc(50px * var(--neu-k)) var(--neu-dark),
     calc(-23px * var(--neu-k)) calc(-23px * var(--neu-k)) calc(45px * var(--neu-k)) var(--neu-light);
@@ -137,6 +141,7 @@
     --neu-light: #ffffff;
     --neu-light-in: rgba(255, 255, 255, 0.64);
     --neu-data: rgba(13, 39, 80, 0.42);
+    --neu-data-light: #ffffff;
     /* L'attente d'une image se contente d'un voile : 30 % de noir, ici, ferait une tache. */
     --placeholder-bg: color-mix(in srgb, var(--color-bg) 88%, #000);
     /* L'encre remplace le blanc rétroéclairé : c'est le plus foncé qui « s'allume » sur fond clair. */
@@ -166,6 +171,7 @@
   --neu-light: #ffffff;
   --neu-light-in: rgba(255, 255, 255, 0.64);
   --neu-data: rgba(13, 39, 80, 0.42);
+  --neu-data-light: #ffffff;
   /* L'attente d'une image se contente d'un voile : 30 % de noir, ici, ferait une tache. */
   --placeholder-bg: color-mix(in srgb, var(--color-bg) 88%, #000);
   /* L'encre remplace le blanc rétroéclairé : c'est le plus foncé qui « s'allume » sur fond clair. */

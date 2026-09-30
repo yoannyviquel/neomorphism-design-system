@@ -34,16 +34,31 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 - **L'ombre d'un bouton est un élément** (`<span class="ds-shade">`, rendu par les composants ;
   `Shade` pour un bouton écrit à la main), pas un pseudo-élément : il hérite des nombres animés du
   bouton, ce que Safari ne fait pas pour `::after`.
-- **Un graphique n'est ni une commande ni une zone.** Son relief tient en deux filtres SVG
-  (`ChartFilters`), et en deux seulement : l'**ombre d'une donnée**, le relief à k = 1/9 posé sur un
-  trait de 2 px — au-delà de 1/4 elle s'en détache et se donne pour une seconde courbe ; et le
-  **sertissage** d'un graphique, à k = 1/3, l'ombre du creux seule, sans reflet clair ni rebord, qui
-  le loge dans la page.
+- **Un graphique n'est ni une commande ni une zone.** Son relief tient en trois filtres SVG
+  (`ChartFilters`) : la **rainure** d'une courbe, le **sertissage** d'une surface, et l'**ombre
+  d'une donnée** que la rainure a remplacée sur les courbes. Une courbe est *entaillée* dans la page
+  comme un camembert y est serti — les deux disent la même chose de la même façon, ce que l'ombre,
+  qui posait la courbe par-dessus, ne savait pas faire. Une seule série par graphique : deux
+  rainures qui se croisent se brouillent au croisement.
+- **Le flou d'une rainure vaut la largeur du trait.** Un creux se loge dans une surface, où il range
+  ses deux ombres internes ; un trait n'a pas d'intérieur où les ranger, et la rainure les met donc
+  dehors, de part et d'autre. Ses deux parois sont alors séparées par le trait lui-même : plus
+  larges que lui, elles se recouvrent et s'annulent. Le flou du creux valant 48 k, la règle est
+  **k = largeur / 48** — 1/24 pour un trait de 2 px, 1/48 pour 1 px, 1/12 pour 4 px, qui donnent la
+  même image à l'échelle près. Le modèle d'ombre n'est pas touché : c'est le creux, retourné, à
+  l'échelle que sa largeur commande.
 - **Un trait ne retient qu'un tiers de son ombre.** Le pic d'une ombre floutée vaut la largeur de ce
   qui la porte divisée par σ√2π : sous un trait de 2 px, l'encre du relief tombe au seuil du visible,
-  et sous 16 % — le thème clair — disparaît. L'ombre d'une donnée a donc son encre à elle,
-  `--neu-data`, plus dense (95 % en sombre, 42 % en clair) pour peser autant qu'une ombre de surface.
-  Le sertissage garde l'encre du relief : une surface la retient entière.
+  et sous 16 % — le thème clair — disparaît. Les parois d'une rainure ont donc leurs encres à elles,
+  `--neu-data` et `--neu-data-light`, plus denses (95 % et 30 % en sombre, 42 % et 100 % en clair) —
+  une paroi de deux pixels ne retient pas plus un rehaut qu'une ombre. Le sertissage garde l'encre du
+  relief : une surface la retient entière. En thème clair, la paroi éclairée reste invisible malgré
+  tout — sur un fond déjà presque blanc, il n'y a pas de place au-dessus. C'est alors le SENS de la
+  paroi sombre qui dit la rainure : au-dessus du trait pour une gravure, en dessous pour un objet
+  posé, comme sur le papier.
+- **Un filtre se cite en attribut, jamais par une règle CSS.** WebKit résout le fragment d'un
+  `url(#…)` écrit dans une feuille séparée contre l'URL de la feuille et non contre celle du
+  document : le filtre disparaît alors sans la moindre erreur.
 - **Les images ne remplacent jamais la surface d'un bouton.** Elles en sont le contenu, posées
   au-dessus de ses ombres : pastille, sertie, logo et nom, ou logo serti et nom.
 
@@ -59,7 +74,7 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `MenuBar` | barre de menu creusée, pastille qui glisse sous la destination courante |
 | `ButtonBar` | rangée de commandes répartie sur toute la largeur (l'écart suit le conteneur, pas une constante), qui se replie quand la place manque |
 | `FoldingGrid` | grille repliée à une ligne, dépliée ligne par ligne avec le pop des boutons |
-| `ChartFilters` | le relief d'un graphique : l'ombre d'une donnée (`#ds-chart-shadow`, k = 1/9, encre `--neu-data`) et le sertissage (`#ds-chart-set`, k = 1/3), en filtres SVG |
+| `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'une courbe (`#ds-chart-groove`, k = 1/24 pour un trait de 2 px), le sertissage d'une surface (`#ds-chart-set`, k = 1/3) et l'ombre d'une donnée (`#ds-chart-shadow`, k = 1/9), que la rainure a remplacée sur les courbes |
 | `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile |
 | `Slides` | les écrans côte à côte : changer de destination fait glisser le ruban à gauche ou à droite, tous restés montés, les autres `inert` |
 | `Spinner`, `Notice`, `Zone`, `Icon` | chargement, message, zone bordée, icônes (Symbols Nerd Font) |
@@ -89,7 +104,7 @@ il n'en règle que le relief. `ChartFilters` se rend une fois par page — ses i
 
 ```tsx
 <ChartFilters />
-<Line stroke={VALUE_COLOR} strokeWidth={2} filter="url(#ds-chart-shadow)" />
+<Line stroke={VALUE_COLOR} strokeWidth={2} filter="url(#ds-chart-groove)" />
 <Pie data={parts} innerRadius="58%" outerRadius="86%" filter="url(#ds-chart-set)" />
 ```
 

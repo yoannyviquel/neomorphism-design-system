@@ -15,8 +15,21 @@ import { SetImage } from './SetImage'
 import { PRESS_HOLD_MS } from './usePress'
 
 describe('ChartFilters', () => {
-  it("rend les deux filtres d'un graphique, chacun à son échelle", () => {
+  it("rend les trois filtres d'un graphique, chacun à son échelle", () => {
     const { container } = render(<ChartFilters />)
+
+    // La rainure : le creux à k = 1/24, dont le flou vaut la largeur du trait — 48 × 1/24 = 2 px,
+    // soit σ = 1. C'est la règle entière, et c'est elle que ce test garde.
+    const sombre = container.querySelector('#ds-chart-groove feDropShadow.ds-groove-dark')
+    const claire = container.querySelector('#ds-chart-groove feDropShadow.ds-groove-light')
+    expect(sombre).toHaveAttribute('dx', '-1.08')
+    expect(sombre).toHaveAttribute('stdDeviation', '1')
+    // L'ombre du côté d'où vient la lumière, le rehaut du côté opposé : les signes sont opposés.
+    expect(claire).toHaveAttribute('dx', '1.29')
+    expect(Number(sombre?.getAttribute('dx')) * Number(claire?.getAttribute('dx'))).toBeLessThan(0)
+    // Le tracé passe au-dessus de ses deux parois.
+    const fusion = container.querySelectorAll('#ds-chart-groove feMergeNode')
+    expect(fusion[fusion.length - 1]).toHaveAttribute('in', 'SourceGraphic')
 
     // L'ombre d'une donnée : le relief à k = 1/9 (28 et 50 réduits).
     expect(container.querySelector('#ds-chart-shadow feDropShadow')).toHaveAttribute('dx', '3.11')
