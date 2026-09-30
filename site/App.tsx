@@ -79,7 +79,7 @@ function Charts() {
             <line className="charts-demo-axe" x1="8" y1={hauteur - 14} x2={largeur - 8} y2={hauteur - 14} />
             <path className="charts-demo-trait" d={courbe} filter="url(#ds-chart-shadow)" />
           </svg>
-          <figcaption>L'ombre d'une donnée, k = 1/9 — éteinte en thème clair.</figcaption>
+          <figcaption>L'ombre d'une donnée, k = 1/9, à l'encre des données.</figcaption>
         </figure>
 
         <figure className="charts-demo-parts">
@@ -416,7 +416,7 @@ export function App() {
       <Demo
         id="graphiques"
         title="Graphiques"
-        intro="Un graphique n'est ni une commande ni une zone : deux filtres lui suffisent. L'ombre d'une donnée, à l'échelle des plus petits éléments, sur un trait ; le sertissage, à celle d'une surface, pour loger le graphique dans la page — l'ombre du creux seule, sans son reflet clair, qui délaverait les teintes."
+        intro="Un graphique n'est ni une commande ni une zone : deux filtres lui suffisent. L'ombre d'une donnée, à l'échelle des plus petits éléments, sur un trait — à l'encre des données, plus dense, car un trait de 2 px ne retient qu'un tiers de l'ombre qu'il porte ; le sertissage, à l'échelle d'une surface, pour loger le graphique dans la page — l'ombre du creux seule, sans son reflet clair, qui délaverait les teintes."
       >
         <Charts />
       </Demo>

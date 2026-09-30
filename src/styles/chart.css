@@ -10,21 +10,16 @@
   overflow: hidden;
 }
 
-#ds-chart-shadow feDropShadow,
-#ds-chart-set feFlood {
-  flood-color: var(--neu-dark);
+/* L'ombre d'une donnée prend l'encre des données (--neu-data), plus dense que celle d'une surface :
+   un trait de 2 px ne retient qu'environ le tiers de l'ombre qu'il porte, et à l'encre du relief il
+   n'en restait rien de visible — en thème clair, où elle tombe à 16 %, rien du tout. Le sertissage,
+   lui, garde l'encre du relief : il travaille sur des surfaces, qui la retiennent entière. */
+#ds-chart-shadow feDropShadow {
+  flood-color: var(--neu-data);
   flood-opacity: 1;
 }
 
-/* En thème clair, l'ombre du DS tombe à 16 % : sur un trait de 2 px il n'en reste rien, même
-   agrandi trois fois. Elle s'éteint donc, comme s'y éteignent déjà les halos d'état actif. Le
-   sertissage, lui, porte : il travaille sur des surfaces, et sa discrétion y est un avantage. */
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme='dark']) #ds-chart-shadow feDropShadow {
-    flood-opacity: 0;
-  }
-}
-
-:root[data-theme='light'] #ds-chart-shadow feDropShadow {
-  flood-opacity: 0;
+#ds-chart-set feFlood {
+  flood-color: var(--neu-dark);
+  flood-opacity: 1;
 }

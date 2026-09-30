@@ -35,8 +35,12 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   (`ChartFilters`), et en deux seulement : l'**ombre d'une donnée**, le relief à k = 1/9 posé sur un
   trait de 2 px — au-delà de 1/4 elle s'en détache et se donne pour une seconde courbe ; et le
   **sertissage** d'un graphique, à k = 1/3, l'ombre du creux seule, sans reflet clair ni rebord, qui
-  le loge dans la page. En thème clair l'ombre d'une donnée s'éteint, comme les halos d'état actif :
-  à 16 % d'opacité, elle ne porte pas sur un trait. Le sertissage, lui, y porte : c'est une surface.
+  le loge dans la page.
+- **Un trait ne retient qu'un tiers de son ombre.** Le pic d'une ombre floutée vaut la largeur de ce
+  qui la porte divisée par σ√2π : sous un trait de 2 px, l'encre du relief tombe au seuil du visible,
+  et sous 16 % — le thème clair — disparaît. L'ombre d'une donnée a donc son encre à elle,
+  `--neu-data`, plus dense (95 % en sombre, 42 % en clair) pour peser autant qu'une ombre de surface.
+  Le sertissage garde l'encre du relief : une surface la retient entière.
 - **Les images ne remplacent jamais la surface d'un bouton.** Elles en sont le contenu, posées
   au-dessus de ses ombres : pastille, sertie, logo et nom, ou logo serti et nom.
 
@@ -51,7 +55,7 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `SearchField` | champ de recherche, loupe qui s'allume, bouton Effacer |
 | `MenuBar` | barre de menu creusée, pastille qui glisse sous la destination courante |
 | `FoldingGrid` | grille repliée à une ligne, dépliée ligne par ligne avec le pop des boutons |
-| `ChartFilters` | le relief d'un graphique : l'ombre d'une donnée (`#ds-chart-shadow`, k = 1/9) et le sertissage (`#ds-chart-set`, k = 1/3), en filtres SVG |
+| `ChartFilters` | le relief d'un graphique : l'ombre d'une donnée (`#ds-chart-shadow`, k = 1/9, encre `--neu-data`) et le sertissage (`#ds-chart-set`, k = 1/3), en filtres SVG |
 | `Spinner`, `Notice`, `Zone`, `Icon` | chargement, message, zone bordée, icônes (Symbols Nerd Font) |
 
 ## Utiliser le paquet dans une app
