@@ -8,7 +8,7 @@ import { Checkbox, Select } from './Field'
 import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
 import { ImageButton } from './ImageButton'
 import { FlatSelector } from './FlatSelector'
-import { Body, Footer, Header, Screen } from './Layout'
+import { Body, ButtonBar, Footer, Header, Screen } from './Layout'
 import { MENU_RELEASE_DELAY_MS, MenuBar } from './MenuBar'
 import { SearchField } from './SearchField'
 import { SetImage } from './SetImage'
@@ -237,6 +237,33 @@ describe('Screen', () => {
       'div.ds-body',
       'footer.ds-footer',
     ])
+  })
+})
+
+describe('ButtonBar', () => {
+  it('répartit ses commandes sur la largeur, et se nomme quand on le lui demande', () => {
+    const { container } = render(
+      <ButtonBar label="Commandes de la vue">
+        <button type="button">un</button>
+        <button type="button">deux</button>
+      </ButtonBar>,
+    )
+    const bar = container.firstElementChild as HTMLElement
+    expect(bar).toHaveClass('ds-button-bar')
+    expect(bar).toHaveAttribute('role', 'group')
+    expect(bar).toHaveAccessibleName('Commandes de la vue')
+    expect(bar.children).toHaveLength(2)
+  })
+
+  it("sans libellé, ce n'est qu'une boîte : ce sont les boutons qui se nomment", () => {
+    const { container } = render(
+      <ButtonBar>
+        <button type="button">seul</button>
+      </ButtonBar>,
+    )
+    const bar = container.firstElementChild as HTMLElement
+    expect(bar).not.toHaveAttribute('role')
+    expect(bar).not.toHaveAttribute('aria-label')
   })
 })
 

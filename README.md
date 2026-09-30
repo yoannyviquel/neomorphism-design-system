@@ -57,8 +57,10 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `Input`, `Select`, `Checkbox` | champs, en relief au repos, creusés engagés |
 | `SearchField` | champ de recherche, loupe qui s'allume, bouton Effacer |
 | `MenuBar` | barre de menu creusée, pastille qui glisse sous la destination courante |
+| `ButtonBar` | rangée de commandes répartie sur toute la largeur (l'écart suit le conteneur, pas une constante), qui se replie quand la place manque |
 | `FoldingGrid` | grille repliée à une ligne, dépliée ligne par ligne avec le pop des boutons |
 | `ChartFilters` | le relief d'un graphique : l'ombre d'une donnée (`#ds-chart-shadow`, k = 1/9, encre `--neu-data`) et le sertissage (`#ds-chart-set`, k = 1/3), en filtres SVG |
+| `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile |
 | `Spinner`, `Notice`, `Zone`, `Icon` | chargement, message, zone bordée, icônes (Symbols Nerd Font) |
 
 ## Utiliser le paquet dans une app

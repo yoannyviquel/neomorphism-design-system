@@ -6,7 +6,7 @@ import { Checkbox, Input, Select } from '../src/components/Field'
 import { FlatSelector } from '../src/components/FlatSelector'
 import { FoldingGrid } from '../src/components/FoldingGrid'
 import { ImageButton, type ImageButtonVariant } from '../src/components/ImageButton'
-import { Body, Footer, Header, Screen } from '../src/components/Layout'
+import { Body, ButtonBar, Footer, Header, Screen } from '../src/components/Layout'
 import { MenuBar, type MenuItem } from '../src/components/MenuBar'
 import { SearchField } from '../src/components/SearchField'
 import { SetImage } from '../src/components/SetImage'
@@ -31,6 +31,7 @@ const SECTIONS = [
   { id: 'menu', title: 'Barre de menu' },
   { id: 'selecteur', title: 'Sélecteur multiple plat' },
   { id: 'ecran', title: 'Écran' },
+  { id: 'rangee', title: 'Rangée de commandes' },
   { id: 'grille', title: 'Grille dépliante' },
   { id: 'retours', title: 'Zones et messages' },
 ]
@@ -109,6 +110,25 @@ function Charts() {
         </figure>
       </div>
     </>
+  )
+}
+
+/** La même rangée dans deux largeurs : c'est l'ÉCART qui change, pas les boutons. */
+function ButtonBarDemo() {
+  const boutons = ['sun_thermometer', 'weather_sunny', 'leaf', 'weather_windy', 'water'] as const
+  const rangee = (
+    <ButtonBar label="Catégories">
+      {boutons.map((icon) => (
+        <IconButton key={icon} icon={icon} label={icon} />
+      ))}
+    </ButtonBar>
+  )
+  return (
+    <div className="bar-widths">
+      <div style={{ width: '100%' }}>{rangee}</div>
+      <div style={{ width: '62%' }}>{rangee}</div>
+      <div style={{ width: '38%' }}>{rangee}</div>
+    </div>
   )
 }
 
@@ -443,6 +463,14 @@ export function App() {
         intro="Un en-tête et un pied fixes, un corps qui seul défile entre eux et passe dessous en s'effaçant en fondu (8 px). Le même écart, la place d'une ombre, sous l'en-tête et au-dessus du pied."
       >
         <ScreenDemo />
+      </Demo>
+
+      <Demo
+        id="rangee"
+        title="Rangée de commandes"
+        intro="Des commandes réparties sur toute la largeur qu'on leur donne : la place libre se partage à parts égales entre elles et aux deux bouts. L'écart est une mesure du conteneur, pas une constante — la même rangée, ici, dans trois largeurs. Quand la place manque, l'écart tombe à la marge des ombres, puis la rangée se replie."
+      >
+        <ButtonBarDemo />
       </Demo>
 
       <Demo

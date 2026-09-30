@@ -135,6 +135,15 @@ code {
   overflow: hidden;
 }
 
+/* Les trois largeurs de la démo de rangée : c'est l'écart qui change, pas les boutons. Chaque
+   largeur est centrée pour qu'on compare des rangées et non des alignements. */
+.bar-widths {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--shadow-room);
+}
+
 .screen-cards {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

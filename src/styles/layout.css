@@ -5,7 +5,8 @@
      .ds-header — l'en-tête (une barre de recherche…) : sous la barre d'état, 16 px plus bas ;
      .ds-body   — le corps, SEUL à défiler : il passe sous l'en-tête et sous le pied, en s'effaçant
                   en fondu (8 px) au lieu d'être coupé net ;
-     .ds-footer — le pied (la barre de menu) : au-dessus de la zone sûre du bas d'iPhone.
+     .ds-footer — le pied (la barre de menu) : au-dessus de la zone sûre du bas d'iPhone ;
+     .ds-button-bar — une rangée de commandes répartie sur toute la largeur qu'on lui donne.
 
    Entre l'en-tête et le corps, entre le corps et le pied, le même écart : --shadow-room, la place
    d'une ombre. Sur les côtés, le corps garde la même marge, où débordent les ombres de ce qu'il
@@ -54,4 +55,20 @@
 /* Sous un en-tête, le corps commence par son seul fondu. */
 .ds-header + .ds-body {
   padding-top: var(--ds-fade);
+}
+
+/* UNE RANGÉE DE COMMANDES, RÉPARTIE SUR SA LARGEUR. `space-evenly` donne la même place entre deux
+   boutons et aux deux bouts : la rangée occupe la largeur qu'on lui donne, et l'écart se lit comme
+   une mesure du conteneur plutôt que comme une constante — la même barre respire sur un iPad et se
+   resserre sur un iPhone SE, sans réglage.
+   Le `gap` reste le MINIMUM : quand la largeur manque, la place libre tombe à zéro, c'est lui qui
+   tient l'écart (la marge des ombres), puis la rangée se replie. D'une ligne à l'autre, la moitié :
+   une commande enfoncée a le relief court, ses lignes peuvent se serrer.
+   Pas de marge latérale ici : celle du conteneur (--ds-edge-x du pied ou du corps) la porte déjà. */
+.ds-button-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: calc(var(--shadow-room) / 2) var(--shadow-room);
 }
