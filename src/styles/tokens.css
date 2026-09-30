@@ -119,12 +119,12 @@
   color-scheme: dark;
 }
 
-/* Thème clair — le fond de la maquette des ombres, un gris froid (#E8EAEC) : assez sombre pour que
-   le rehaut blanc se voie ; encre, gris et bordures suivent la même température. */
+/* Thème clair — un blanc cassé légèrement chaud (#F9F9F7) ; encre, gris et bordures gardent la
+   température froide de la maquette des ombres. */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
-    --color-bg: #e8eaec;
-    --color-surface: rgba(232, 234, 236, 0.92);
+    --color-bg: #f9f9f7;
+    --color-surface: rgba(249, 249, 247, 0.92);
     --color-border: rgba(13, 39, 80, 0.13);
     --color-text: #12161c;
     --color-muted: #5b6270;
@@ -152,8 +152,8 @@
 }
 
 :root[data-theme='light'] {
-  --color-bg: #e8eaec;
-  --color-surface: rgba(232, 234, 236, 0.92);
+  --color-bg: #f9f9f7;
+  --color-surface: rgba(249, 249, 247, 0.92);
   --color-border: rgba(13, 39, 80, 0.13);
   --color-text: #12161c;
   --color-muted: #5b6270;
