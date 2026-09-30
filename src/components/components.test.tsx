@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { Button, IconButton } from './Button'
+import { ChartFilters } from './ChartFilters'
 import { Checkbox, Select } from './Field'
 import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
 import { ImageButton } from './ImageButton'
@@ -12,6 +13,24 @@ import { MENU_RELEASE_DELAY_MS, MenuBar } from './MenuBar'
 import { SearchField } from './SearchField'
 import { SetImage } from './SetImage'
 import { PRESS_HOLD_MS } from './usePress'
+
+describe('ChartFilters', () => {
+  it("rend les deux filtres d'un graphique, chacun à son échelle", () => {
+    const { container } = render(<ChartFilters />)
+
+    // L'ombre d'une donnée : le relief à k = 1/9 (28 et 50 réduits).
+    expect(container.querySelector('#ds-chart-shadow feDropShadow')).toHaveAttribute('dx', '3.11')
+    expect(container.querySelector('#ds-chart-shadow feDropShadow')).toHaveAttribute('stdDeviation', '2.78')
+
+    // Le sertissage : le creux à k = 1/3 (26 et 48 réduits), sans reflet clair ni rebord.
+    expect(container.querySelector('#ds-chart-set feOffset')).toHaveAttribute('dx', '8.67')
+    expect(container.querySelector('#ds-chart-set feGaussianBlur')).toHaveAttribute('stdDeviation', '8')
+    expect(container.querySelectorAll('#ds-chart-set feFlood')).toHaveLength(1)
+
+    // Le porteur ne s'annonce pas : il n'existe que pour ses définitions.
+    expect(container.querySelector('svg')).toHaveAttribute('aria-hidden', 'true')
+  })
+})
 
 describe('Button', () => {
   it('porte les classes du DS : forme, ton, taille, état', () => {

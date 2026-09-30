@@ -31,6 +31,12 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 - **L'ombre d'un bouton est un élément** (`<span class="ds-shade">`, rendu par les composants ;
   `Shade` pour un bouton écrit à la main), pas un pseudo-élément : il hérite des nombres animés du
   bouton, ce que Safari ne fait pas pour `::after`.
+- **Un graphique n'est ni une commande ni une zone.** Son relief tient en deux filtres SVG
+  (`ChartFilters`), et en deux seulement : l'**ombre d'une donnée**, le relief à k = 1/9 posé sur un
+  trait de 2 px — au-delà de 1/4 elle s'en détache et se donne pour une seconde courbe ; et le
+  **sertissage** d'un graphique, à k = 1/3, l'ombre du creux seule, sans reflet clair ni rebord, qui
+  le loge dans la page. En thème clair l'ombre d'une donnée s'éteint, comme les halos d'état actif :
+  à 16 % d'opacité, elle ne porte pas sur un trait. Le sertissage, lui, y porte : c'est une surface.
 - **Les images ne remplacent jamais la surface d'un bouton.** Elles en sont le contenu, posées
   au-dessus de ses ombres : pastille, sertie, logo et nom, ou logo serti et nom.
 
@@ -45,6 +51,7 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `SearchField` | champ de recherche, loupe qui s'allume, bouton Effacer |
 | `MenuBar` | barre de menu creusée, pastille qui glisse sous la destination courante |
 | `FoldingGrid` | grille repliée à une ligne, dépliée ligne par ligne avec le pop des boutons |
+| `ChartFilters` | le relief d'un graphique : l'ombre d'une donnée (`#ds-chart-shadow`, k = 1/9) et le sertissage (`#ds-chart-set`, k = 1/3), en filtres SVG |
 | `Spinner`, `Notice`, `Zone`, `Icon` | chargement, message, zone bordée, icônes (Symbols Nerd Font) |
 
 ## Utiliser le paquet dans une app
@@ -65,6 +72,19 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
    ```
 
 Le build d'une app (Cloudflare, CI) a besoin du même `NODE_AUTH_TOKEN` dans ses variables.
+
+Les **graphiques** font exception à la règle « un composant, un rendu » : le DS n'en dessine aucun,
+il n'en règle que le relief. `ChartFilters` se rend une fois par page — ses identifiants sont fixes
+—, puis n'importe quel SVG les cite, recharts compris :
+
+```tsx
+<ChartFilters />
+<Line stroke={VALUE_COLOR} strokeWidth={2} filter="url(#ds-chart-shadow)" />
+<Pie data={parts} innerRadius="58%" outerRadius="86%" filter="url(#ds-chart-set)" />
+```
+
+Les valeurs des filtres sont en unités de tracé, qui sont les pixels de l'écran dans un graphique
+rendu à l'échelle 1. Sur un SVG mis à l'échelle par sa `viewBox`, les diviser par le facteur.
 
 ## Développer
 

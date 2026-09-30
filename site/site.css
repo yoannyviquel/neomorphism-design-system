@@ -170,3 +170,56 @@ code {
 .cast-demo-role {
   color: var(--color-muted);
 }
+
+/* Les deux graphiques de démonstration : le DS n'en dessine pas, la page en dessine juste assez
+   pour montrer ses filtres. */
+.charts-demo {
+  align-items: flex-start;
+}
+
+.charts-demo figure {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.charts-demo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Chacun à sa taille d'usage : une courbe s'étale, un camembert tient dans une carte. */
+.charts-demo-courbe {
+  flex: 1 1 320px;
+  max-width: 420px;
+}
+
+.charts-demo-parts {
+  flex: 0 0 auto;
+  width: 190px;
+}
+
+.charts-demo figcaption {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.charts-demo-trait {
+  fill: none;
+  /* L'accent du thème : le cyan pâle du sombre ne se lit pas sur le fond clair. */
+  stroke: var(--color-primary);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.charts-demo-axe {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.charts-demo-part {
+  stroke: var(--color-bg);
+  stroke-width: 2;
+}

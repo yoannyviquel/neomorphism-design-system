@@ -1,0 +1,30 @@
+/* Graphiques : les couleurs des deux filtres de `ChartFilters`, et rien d'autre — le DS ne dessine
+   pas de graphique, il en règle le relief. Ces couleurs vivent ici et non dans les attributs du
+   filtre : un attribut de présentation ne résout pas var(), et le thème doit pouvoir les changer. */
+
+/* Le porteur des filtres ne prend ni place ni flux : il n'existe que pour ses <defs>. */
+.ds-chart-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+#ds-chart-shadow feDropShadow,
+#ds-chart-set feFlood {
+  flood-color: var(--neu-dark);
+  flood-opacity: 1;
+}
+
+/* En thème clair, l'ombre du DS tombe à 16 % : sur un trait de 2 px il n'en reste rien, même
+   agrandi trois fois. Elle s'éteint donc, comme s'y éteignent déjà les halos d'état actif. Le
+   sertissage, lui, porte : il travaille sur des surfaces, et sa discrétion y est un avantage. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) #ds-chart-shadow feDropShadow {
+    flood-opacity: 0;
+  }
+}
+
+:root[data-theme='light'] #ds-chart-shadow feDropShadow {
+  flood-opacity: 0;
+}

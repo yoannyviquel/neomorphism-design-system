@@ -1,4 +1,5 @@
 export { Button, IconButton, type ButtonProps, type ButtonTone, type IconButtonProps } from './components/Button'
+export { ChartFilters } from './components/ChartFilters'
 export { cx } from './components/cx'
 export { Notice, Spinner, Zone } from './components/Feedback'
 export { Checkbox, Input, Select, type SelectOption } from './components/Field'

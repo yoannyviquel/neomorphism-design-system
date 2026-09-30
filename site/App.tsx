@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Button, IconButton } from '../src/components/Button'
+import { ChartFilters } from '../src/components/ChartFilters'
 import { Notice, Spinner, Zone } from '../src/components/Feedback'
 import { Checkbox, Input, Select } from '../src/components/Field'
 import { FlatSelector } from '../src/components/FlatSelector'
@@ -25,6 +26,7 @@ const SECTIONS = [
   { id: 'boutons', title: 'Boutons' },
   { id: 'images', title: 'Boutons à image' },
   { id: 'serties', title: 'Images serties' },
+  { id: 'graphiques', title: 'Graphiques' },
   { id: 'champs', title: 'Champs' },
   { id: 'menu', title: 'Barre de menu' },
   { id: 'selecteur', title: 'Sélecteur multiple plat' },
@@ -32,6 +34,83 @@ const SECTIONS = [
   { id: 'grille', title: 'Grille dépliante' },
   { id: 'retours', title: 'Zones et messages' },
 ]
+
+/** Une progression de neuf points, en pourcentage : de quoi montrer l'ombre d'une donnée. */
+const COURBE = [-1.2, 2.1, 3.8, 5.2, 8.4, 7.2, 12.6, 16.2, 20.4]
+
+/** Quatre parts, dans les teintes des palettes du DS. */
+const PARTS: [string, number, string][] = [
+  ['Actions', 46, 'var(--grad-glacier-to)'],
+  ['Immobilier', 24, 'var(--grad-solar-to)'],
+  ['Obligations', 18, 'var(--grad-fern-to)'],
+  ['Liquidités', 12, 'var(--grad-dusk-to)'],
+]
+
+function Charts() {
+  const largeur = 420
+  const hauteur = 150
+  const points = COURBE.map((valeur, index) => [
+    8 + (index * (largeur - 16)) / (COURBE.length - 1),
+    hauteur - 14 - ((valeur + 4) * (hauteur - 28)) / 26,
+  ])
+  // Une courbe lissée : chaque point tire ses tangentes de ses voisins (Catmull-Rom).
+  const courbe = points.reduce((chemin, point, index) => {
+    if (index === 0) return `M ${point[0].toFixed(1)} ${point[1].toFixed(1)}`
+    const avant = points[index - 2] ?? points[index - 1]
+    const depuis = points[index - 1]
+    const apres = points[index + 1] ?? point
+    const c1 = [depuis[0] + (point[0] - avant[0]) / 6, depuis[1] + (point[1] - avant[1]) / 6]
+    const c2 = [point[0] - (apres[0] - depuis[0]) / 6, point[1] - (apres[1] - depuis[1]) / 6]
+    return `${chemin} C ${c1[0].toFixed(1)} ${c1[1].toFixed(1)}, ${c2[0].toFixed(1)} ${c2[1].toFixed(1)}, ${point[0].toFixed(1)} ${point[1].toFixed(1)}`
+  }, '')
+
+  const centre = 90
+  const dehors = 78
+  const dedans = 52
+  // L'angle de départ de chaque part se lit dans ce qui la précède : rien à reporter d'un rendu à l'autre.
+  const avantChaque = PARTS.map((_, rang) => PARTS.slice(0, rang).reduce((total, [, part]) => total + part, 0))
+
+  return (
+    <>
+      <ChartFilters />
+      <div className="row charts-demo">
+        <figure className="charts-demo-courbe">
+          <svg viewBox={`0 0 ${largeur} ${hauteur}`} role="img" aria-label="Une progression de neuf points">
+            <line className="charts-demo-axe" x1="8" y1={hauteur - 14} x2={largeur - 8} y2={hauteur - 14} />
+            <path className="charts-demo-trait" d={courbe} filter="url(#ds-chart-shadow)" />
+          </svg>
+          <figcaption>L'ombre d'une donnée, k = 1/9 — éteinte en thème clair.</figcaption>
+        </figure>
+
+        <figure className="charts-demo-parts">
+          <svg viewBox="0 0 180 180" role="img" aria-label="Une répartition en quatre parts">
+            <g filter="url(#ds-chart-set)">
+              {PARTS.map(([nom, part, teinte], rang) => {
+                const delta = (part / 100) * Math.PI * 2
+                const depart = -Math.PI / 2 + (avantChaque[rang] / 100) * Math.PI * 2
+                const fin = depart + delta
+                const bord = (rayon: number, a: number) =>
+                  `${(centre + rayon * Math.cos(a)).toFixed(1)} ${(centre + rayon * Math.sin(a)).toFixed(1)}`
+                const grand = delta > Math.PI ? 1 : 0
+                return (
+                  <path
+                    key={nom}
+                    className="charts-demo-part"
+                    fill={teinte}
+                    d={`M ${bord(dehors, depart)} A ${dehors} ${dehors} 0 ${grand} 1 ${bord(dehors, fin)} L ${bord(dedans, fin)} A ${dedans} ${dedans} 0 ${grand} 0 ${bord(dedans, depart)} Z`}
+                  >
+                    <title>{`${nom} · ${part} %`}</title>
+                  </path>
+                )
+              })}
+            </g>
+          </svg>
+          <figcaption>Le sertissage, k = 1/3 — l'ombre du creux seule, sur les deux bords.</figcaption>
+        </figure>
+      </div>
+    </>
+  )
+}
 
 function Demo({ id, title, intro, children }: { id: string; title: string; intro: string; children: ReactNode }) {
   return (
@@ -332,6 +411,14 @@ export function App() {
             </li>
           ))}
         </ul>
+      </Demo>
+
+      <Demo
+        id="graphiques"
+        title="Graphiques"
+        intro="Un graphique n'est ni une commande ni une zone : deux filtres lui suffisent. L'ombre d'une donnée, à l'échelle des plus petits éléments, sur un trait ; le sertissage, à celle d'une surface, pour loger le graphique dans la page — l'ombre du creux seule, sans son reflet clair, qui délaverait les teintes."
+      >
+        <Charts />
       </Demo>
 
       <Demo id="champs" title="Champs" intro="Des commandes, pas des zones : en relief au repos, creusées une fois engagées, avec le rebond. Texte à 16 px, pour qu'iOS ne zoome pas.">
