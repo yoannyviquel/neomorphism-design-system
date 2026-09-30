@@ -6,7 +6,8 @@
      .ds-body   — le corps, SEUL à défiler : il passe sous l'en-tête et sous le pied, en s'effaçant
                   en fondu (8 px) au lieu d'être coupé net ;
      .ds-footer — le pied (la barre de menu) : au-dessus de la zone sûre du bas d'iPhone ;
-     .ds-button-bar — une rangée de commandes répartie sur toute la largeur qu'on lui donne.
+     .ds-button-bar — une rangée de commandes répartie sur toute la largeur qu'on lui donne ;
+     .ds-slides — les écrans côte à côte, dont on glisse de l'un à l'autre.
 
    Entre l'en-tête et le corps, entre le corps et le pied, le même écart : --shadow-room, la place
    d'une ombre. Sur les côtés, le corps garde la même marge, où débordent les ombres de ce qu'il
@@ -71,4 +72,38 @@
   align-items: center;
   justify-content: space-evenly;
   gap: calc(var(--shadow-room) / 2) var(--shadow-room);
+}
+
+/* LES ÉCRANS CÔTE À CÔTE. Un ruban aussi large que le nombre d'écrans, translaté d'un écran par
+   index : changer de destination le fait glisser à GAUCHE ou à DROITE selon l'ordre du menu, et le
+   mouvement dit où l'on va. Les écrans restent tous montés (une carte garde son contexte), le
+   débord est coupé par le cadre.
+   La durée est celle de la pastille du menu qui s'étire vers la nouvelle destination
+   (`SLIDE_MS`) : un seul geste, un seul rythme. La courbe décélère franchement — un glissement
+   d'écran ne rebondit pas, il arrive et s'arrête. */
+.ds-slides {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ds-slides-track {
+  display: flex;
+  height: 100%;
+  transform: translateX(calc(var(--slides-at, 0) * -100%));
+  transition: transform var(--slides-dur, 380ms) cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ds-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  height: 100%;
+}
+
+/* Mouvement réduit : on saute d'un écran à l'autre, sans glissement. */
+@media (prefers-reduced-motion: reduce) {
+  .ds-slides-track {
+    transition: none;
+  }
 }

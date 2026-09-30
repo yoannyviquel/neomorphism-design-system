@@ -8,7 +8,7 @@ import { Checkbox, Select } from './Field'
 import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
 import { ImageButton } from './ImageButton'
 import { FlatSelector } from './FlatSelector'
-import { Body, ButtonBar, Footer, Header, Screen } from './Layout'
+import { Body, ButtonBar, Footer, Header, Screen, Slides } from './Layout'
 import { MENU_RELEASE_DELAY_MS, MenuBar } from './MenuBar'
 import { SearchField } from './SearchField'
 import { SetImage } from './SetImage'
@@ -237,6 +237,41 @@ describe('Screen', () => {
       'div.ds-body',
       'footer.ds-footer',
     ])
+  })
+})
+
+describe('Slides', () => {
+  const trois = (
+    <Slides at={1}>
+      <div>un</div>
+      <div>deux</div>
+      <div>trois</div>
+    </Slides>
+  )
+
+  it('pose les écrans côte à côte et glisse le ruban sur l’écran courant', () => {
+    const { container } = render(trois)
+    const track = container.querySelector<HTMLElement>('.ds-slides-track')!
+    expect(track.style.getPropertyValue('--slides-at')).toBe('1')
+    expect(track.children).toHaveLength(3)
+    // tous MONTÉS : une carte garde son contexte, une liste sa position
+    expect(track.textContent).toBe('undeuxtrois')
+  })
+
+  it('rend INERTES les écrans qu’on ne regarde pas (ni doigt, ni focus, ni lecteur d’écran)', () => {
+    const { container } = render(trois)
+    const slides = [...container.querySelectorAll('.ds-slide')]
+    expect(slides.map((slide) => slide.hasAttribute('inert'))).toEqual([true, false, true])
+  })
+
+  it('borne l’index : un écran hors liste ne déraille pas le ruban', () => {
+    const { container } = render(
+      <Slides at={9}>
+        <div>un</div>
+        <div>deux</div>
+      </Slides>,
+    )
+    expect(container.querySelector<HTMLElement>('.ds-slides-track')!.style.getPropertyValue('--slides-at')).toBe('1')
   })
 })
 

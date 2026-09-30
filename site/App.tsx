@@ -6,7 +6,7 @@ import { Checkbox, Input, Select } from '../src/components/Field'
 import { FlatSelector } from '../src/components/FlatSelector'
 import { FoldingGrid } from '../src/components/FoldingGrid'
 import { ImageButton, type ImageButtonVariant } from '../src/components/ImageButton'
-import { Body, ButtonBar, Footer, Header, Screen } from '../src/components/Layout'
+import { Body, ButtonBar, Footer, Header, Screen, Slides } from '../src/components/Layout'
 import { MenuBar, type MenuItem } from '../src/components/MenuBar'
 import { SearchField } from '../src/components/SearchField'
 import { SetImage } from '../src/components/SetImage'
@@ -32,6 +32,7 @@ const SECTIONS = [
   { id: 'selecteur', title: 'Sélecteur multiple plat' },
   { id: 'ecran', title: 'Écran' },
   { id: 'rangee', title: 'Rangée de commandes' },
+  { id: 'glissement', title: 'Écrans qui glissent' },
   { id: 'grille', title: 'Grille dépliante' },
   { id: 'retours', title: 'Zones et messages' },
 ]
@@ -128,6 +129,29 @@ function ButtonBarDemo() {
       <div style={{ width: '100%' }}>{rangee}</div>
       <div style={{ width: '62%' }}>{rangee}</div>
       <div style={{ width: '38%' }}>{rangee}</div>
+    </div>
+  )
+}
+
+/** Trois écrans dans un cadre, et la barre de menu qui les choisit : le ruban glisse. */
+function SlidesDemo() {
+  const items: MenuItem<string>[] = [
+    { id: 'un', icon: 'weather_sunny', label: 'Aperçu' },
+    { id: 'deux', icon: 'map_marker_radius', label: 'Carte' },
+    { id: 'trois', icon: 'leaf', label: 'Air' },
+  ]
+  const [at, setAt] = useState('un')
+  const index = items.findIndex((item) => item.id === at)
+  return (
+    <div className="slides-demo">
+      <Slides at={index}>
+        {items.map((item) => (
+          <div key={item.id} className="slides-card">
+            {item.label}
+          </div>
+        ))}
+      </Slides>
+      <MenuBar label="Écrans" items={items} active={at} onSelect={setAt} />
     </div>
   )
 }
@@ -471,6 +495,14 @@ export function App() {
         intro="Des commandes réparties sur toute la largeur qu'on leur donne : la place libre se partage à parts égales entre elles et aux deux bouts. L'écart est une mesure du conteneur, pas une constante — la même rangée, ici, dans trois largeurs. Quand la place manque, l'écart tombe à la marge des ombres, puis la rangée se replie."
       >
         <ButtonBarDemo />
+      </Demo>
+
+      <Demo
+        id="glissement"
+        title="Écrans qui glissent"
+        intro="Les écrans d'une app sont côte à côte : changer de destination fait glisser le ruban à gauche ou à droite selon l'ordre du menu — le mouvement dit où l'on va, pas seulement qu'on a changé. Tous restent montés (une carte garde son contexte) ; seul celui qu'on regarde est atteignable au doigt et au lecteur d'écran."
+      >
+        <SlidesDemo />
       </Demo>
 
       <Demo

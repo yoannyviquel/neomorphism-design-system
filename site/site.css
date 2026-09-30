@@ -135,6 +135,24 @@ code {
   overflow: hidden;
 }
 
+/* La démo de glissement : un cadre de la hauteur d'un petit écran, et la barre de menu dessous. */
+.slides-demo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--shadow-room);
+  height: 260px;
+}
+
+.slides-card {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  border-radius: var(--neu-radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--neu-inset);
+  font-weight: 700;
+}
+
 /* Les trois largeurs de la démo de rangée : c'est l'écart qui change, pas les boutons. Chaque
    largeur est centrée pour qu'on compare des rangées et non des alignements. */
 .bar-widths {
