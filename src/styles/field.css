@@ -119,6 +119,18 @@
   filter: var(--check-glow);
 }
 
+/* AU DOIGT, une case de 22 px se vise mal : les recommandations tactiles demandent 44. Sa zone
+   sensible déborde donc jusque-là par un pseudo-élément — l'aspect ne bouge pas, et le clic sur le
+   débord appartient à la case, comme tout pseudo-élément. `::after` porte déjà la coche : c'est
+   `::before` qui sert ici, sur les seuls pointeurs grossiers (une souris vise juste). */
+@media (pointer: coarse) {
+  .ds-checkbox::before {
+    content: '';
+    position: absolute;
+    inset: -11px;
+  }
+}
+
 .ds-checkbox:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--color-primary) 60%, transparent);
   outline-offset: 2px;

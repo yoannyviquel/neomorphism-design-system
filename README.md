@@ -26,6 +26,9 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 - **Un rayon** : 14 px, celui des boutons-icônes, pour tout ce qui fait la hauteur d'une commande
   (cadres de la recherche et du menu compris) ; 6 px pour ce qui y est logé, à 8 px du bord
   (`--control-radius`, `--control-radius-inner`).
+- **Une cible tactile fait 44 px.** Les commandes y sont par leur hauteur (50 px) ; la case à
+  cocher, seule exception à 22 px, y arrive par un débord invisible de sa zone sensible, sur les
+  seuls pointeurs grossiers (`@media (pointer: coarse)`).
 - **Un toucher bref se voit** : le bouton reste enfoncé jusqu'au premier sommet du rebond (280 ms),
   puis se relâche avec le sien (`usePress`, classe `ds-pressed`).
 - **L'ombre d'un bouton est un élément** (`<span class="ds-shade">`, rendu par les composants ;
