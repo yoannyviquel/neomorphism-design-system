@@ -219,7 +219,8 @@ code {
   stroke-width: 1;
 }
 
+/* Pas de séparateur entre les parts : le sertissage loge un anneau, et l'ombre ne travaille que
+   sur ses deux bords. La frontière, c'est le changement de teinte. */
 .charts-demo-part {
-  stroke: var(--color-bg);
-  stroke-width: 2;
+  stroke: none;
 }
