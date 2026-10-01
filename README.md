@@ -51,12 +51,31 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   Les jetons dérivés sont déclarés **sur le même élément** que les primitives : une densité par
   sous-arbre n'est pas supportée (le `calc()` y serait déjà substitué). La densité est une affaire
   de racine.
-- **Une hauteur** : `--control-height` pour tout — commandes (bouton, lien d'action, bouton-icône,
-  champ, sélecteur, logo et nom), cadres qui en contiennent (recherche, barre de menu), tuiles à
-  image (des carrés du même côté). **Un cadre fait UNE hauteur de commande, pas une de plus** : posé
-  à côté d'un bouton, il s'aligne dessus. Ce qu'il loge, à une marge de cadre de son bord, fait donc
-  `--control-inner` — le champ de la recherche, les destinations du menu, les choix du sélecteur
-  plat, tous à la même hauteur.
+- **Une hauteur** : `--control-height` pour **toute commande** — bouton, lien d'action,
+  bouton-icône, champ, sélecteur, logo et nom, **et destination de la barre de menu** ; les tuiles à
+  image sont des carrés du même côté. Un **cadre** qui *loge* une commande (la recherche, le
+  sélecteur plat) ne la rapetisse pas pour rien : il la pose à `--control-inner` et retombe ainsi
+  lui-même sur `--control-height`, si bien qu'il s'aligne sur le bouton posé à côté de lui. La
+  **barre de menu** est la seule exception, et c'est une exception de FOND, pas de forme : une
+  destination n'est pas un contenu logé mais une **commande à part entière** — on la vise, on la
+  presse, c'est la cible la plus sollicitée de l'app. Elle garde donc `--control-height`, et la
+  barre fait une hauteur de commande *plus* ses deux marges (66 / 33 px). Elle le peut : seule au
+  pied de l'écran, elle n'a rien à aligner à côté d'elle.
+
+  | | ce qu'il loge | le logé | le cadre |
+  |---|---|---|---|
+  | `SearchField` | un champ, du contenu | `--control-inner` | `--control-height` |
+  | `FlatSelector` | des choix, du contenu | `--control-inner` | `--control-height` |
+  | `MenuBar` | des destinations, des **commandes** | `--control-height` | `--control-height` + 2 marges |
+- **Un sous-menu, c'est `FlatSelector`.** Toute bascule entre contenus d'un même écran — Build /
+  Run, Courant / Priorisation, une période, un mode d'affichage — **se fait avec le sélecteur
+  multiple plat du DS, et avec rien d'autre** : pas de « segmented toggle » maison, pas de rangée de
+  boutons dont on allume le courant. La règle de partage est simple : **`MenuBar` dit où l'on est
+  dans l'app, `FlatSelector` dit ce qu'on regarde là où l'on est.** Les deux partagent la même
+  mécanique (`PillBar`) — cadre creusé, pastille en relief qui s'étire jusqu'au nouveau choix puis
+  se rétracte de l'ancien —, si bien qu'un sous-menu refait à la main ne sera jamais que cette
+  mécanique en moins bien : pastille qui glisse au lieu de s'étirer, hauteurs hors échelle, relief
+  hors facteur k, et une seconde grammaire à maintenir à côté de la première.
 - **Un rayon** : `--control-radius`, celui des boutons-icônes, pour tout ce qui fait la hauteur
   d'une commande (cadres de la recherche et du menu compris) ; rayon − marge de cadre pour ce qui y
   est logé (`--control-radius-inner`), si bien que les arrondis restent parallèles.
@@ -110,7 +129,8 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `SetImage` | image sertie hors bouton (un portrait) : le chaton seul, sans relief, initiales à défaut d'image |
 | `Input`, `Select`, `Checkbox` | champs, en relief au repos, creusés engagés |
 | `SearchField` | champ de recherche, loupe qui s'allume, bouton Effacer |
-| `MenuBar` | barre de menu creusée, pastille qui glisse sous la destination courante |
+| `MenuBar` | barre de menu creusée, pastille qui glisse sous la destination courante — *où l'on est dans l'app* |
+| `FlatSelector` | **le sous-menu du DS** : un choix parmi quelques-uns, même cadre et même pastille — *ce qu'on regarde là où l'on est*. Toute bascule entre contenus passe par lui |
 | `ButtonBar` | rangée de commandes répartie sur toute la largeur (l'écart suit le conteneur, pas une constante), qui se replie quand la place manque |
 | `FoldingGrid` | grille repliée à une ligne, dépliée ligne par ligne avec le pop des boutons |
 | `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'une courbe (`#ds-chart-groove`, k = 1/24 pour un trait de 2 px), le sertissage d'une surface (`#ds-chart-set`, k = 1/3) et l'ombre d'une donnée (`#ds-chart-shadow`, k = 1/9), que la rainure a remplacée sur les courbes |

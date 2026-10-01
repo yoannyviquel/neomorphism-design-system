@@ -16,9 +16,14 @@ export interface FlatSelectorProps<Id extends string> {
  * Sélecteur multiple plat : un choix parmi quelques-uns, côte à côte dans un cadre creusé, la
  * pastille en relief sous le choix courant — qui s'étire jusqu'au nouveau puis se rétracte de
  * l'ancien, comme la barre de menu (cf. PillBar). Le cadre fait une hauteur de commande
- * (--control-height) et chaque choix y est logé, à --control-inner. Un choix à libellé seul le
- * montre toujours ; un choix à icône ne le montre que courant.
+ * (--control-height) et chaque choix y est LOGÉ, à --control-inner — comme le champ dans la
+ * recherche, et à la différence des destinations de la barre de menu, qui sont des commandes
+ * entières. Un choix à libellé seul le montre toujours ; un choix à icône ne le montre que courant.
  * Groupe de boutons radio pour les lecteurs d'écran.
+ *
+ * C'EST LE SOUS-MENU DU DS : toute bascule entre contenus d'un même écran (Build / Run, Courant /
+ * Priorisation, une période, un mode d'affichage) passe par lui, jamais par un composant d'app.
+ * La barre de menu dit où l'on est dans l'app ; le sélecteur plat, ce qu'on regarde là où l'on est.
  */
 export function FlatSelector<Id extends string>({ options, value, onChange, label, className }: FlatSelectorProps<Id>) {
   return (
