@@ -7,7 +7,7 @@ export { FlatSelector, type FlatSelectorOption, type FlatSelectorProps } from '.
 export { FALLBACK_COLUMNS, FoldingGrid, type FoldingGridProps } from './components/FoldingGrid'
 export { Icon } from './components/Icon'
 export { ICONS, type IconName } from './components/icons'
-export { Body, ButtonBar, Footer, Header, Screen } from './components/Layout'
+export { Body, ButtonBar, Footer, Header, Screen, SLIDE_MS, Slides } from './components/Layout'
 export { ImageButton, type FoldItemState, type ImageButtonProps, type ImageButtonVariant } from './components/ImageButton'
 export { MenuBar, type MenuBarProps, type MenuItem } from './components/MenuBar'
 export { SetImage, type SetImageProps } from './components/SetImage'

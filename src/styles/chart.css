@@ -19,6 +19,32 @@
   flood-opacity: 1;
 }
 
+/* Les deux PAROIS d'une rainure. L'encre des données des deux côtés : une paroi large de deux
+   pixels ne retient pas plus un rehaut qu'une ombre, et le rehaut d'une surface — 5 % de blanc en
+   thème sombre — n'y laisserait rien du tout. */
+#ds-chart-groove feDropShadow.ds-groove-dark {
+  flood-color: var(--neu-data);
+  flood-opacity: 1;
+}
+
+#ds-chart-groove feDropShadow.ds-groove-light {
+  flood-color: var(--neu-data-light);
+  flood-opacity: 1;
+}
+
+/* La rainure d'une MARQUE PLEINE : mêmes parois, aux mêmes décalages et au même flou — c'est la
+   même gravure —, mais à l'encre d'une surface (--neu-data-fill), parce qu'une marque pleine retient
+   toute son ombre là où un trait en perd les trois cinquièmes. Voir tokens.css pour le facteur. */
+#ds-chart-groove-fill feDropShadow.ds-groove-dark {
+  flood-color: var(--neu-data-fill);
+  flood-opacity: 1;
+}
+
+#ds-chart-groove-fill feDropShadow.ds-groove-light {
+  flood-color: var(--neu-data-fill-light);
+  flood-opacity: 1;
+}
+
 #ds-chart-set feFlood {
   flood-color: var(--neu-dark);
   flood-opacity: 1;

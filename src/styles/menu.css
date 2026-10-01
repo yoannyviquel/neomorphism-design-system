@@ -4,19 +4,28 @@
    pastille s'étire jusqu'à la nouvelle destination puis se rétracte depuis l'ancienne : le
    composant (MenuBar) en pose les bords, mesurés sur les destinations ; l'ancienne reste allumée
    (.ds-trail) le temps que la pastille la quitte.
-   Deux usages, la même mécanique (PillBar) :
-     .ds-menu-bar      — la barre de menu (MenuBar) : chaque destination est une commande de 50 px ;
+   Deux usages, la même mécanique (PillBar), DEUX HAUTEURS — et c'est ce que contient le cadre qui
+   en décide, pas le cadre :
      .ds-flat-selector — le sélecteur multiple plat (FlatSelector) : un choix parmi quelques-uns,
-                         dans la hauteur d'une commande (50 px, choix de 34 px). Un choix à libellé
-                         seul (.ds-plain) le montre toujours. Multiligne (.ds-multiline), les choix
-                         se replient : la pastille s'étire alors aussi d'une ligne à l'autre.
+                         LOGÉS à --control-inner par la règle de base ci-dessous. Le cadre leur
+                         ajoute ses deux marges et retombe sur --control-height : posé à côté d'un
+                         bouton, il s'aligne dessus, comme la recherche et son champ. Un choix à
+                         libellé seul (.ds-plain) le montre toujours. Multiligne (.ds-multiline),
+                         les choix se replient : la pastille s'étire alors aussi d'une ligne à
+                         l'autre ;
+     .ds-menu-bar      — la barre de menu (MenuBar) : une destination n'est pas un contenu logé,
+                         c'est une COMMANDE À PART ENTIÈRE — on la vise et on la presse, c'est la
+                         cible la plus sollicitée de l'app. Elle fait donc --control-height, comme
+                         un bouton, et le cadre fait --control-height + 2 marges. La barre de menu
+                         est le seul cadre du DS plus haut qu'une commande, et elle le gagne : elle
+                         occupe un pied d'écran à elle seule, sans rien à aligner à côté d'elle.
    L'app place la barre de menu (marges, zone sûre du bas d'iPhone). */
 
 .ds-menu {
   /* Ce que la destination courante prend de largeur en plus (0,8 = 1,8 fois une autre). */
   --menu-grow: 0.8;
-  --menu-gap: 8px;
-  --menu-pad: 8px;
+  --menu-gap: var(--control-pad);
+  --menu-pad: var(--control-pad);
   position: relative;
   display: flex;
   align-items: center;
@@ -66,8 +75,8 @@
 
 .ds-menu-item .nf {
   flex: 0 0 auto;
-  width: 20px;
-  font-size: 20px;
+  width: var(--control-icon);
+  font-size: var(--control-icon);
   line-height: 1;
   text-align: center;
 }
@@ -78,6 +87,16 @@
   opacity: 0;
   transform: translateX(-8px);
   font-size: 14px;
+  /* La boîte de ligne vaut le texte, et rien de plus. C'est le sélecteur plat que ça regarde (ses
+     choix montrent leur libellé à --control-inner) ; la barre de menu, dont les destinations font
+     une hauteur de commande, a la place de toute façon. À 17 px de choix — l'ancienne échelle
+     compacte — la boîte en ligne d'un 14 px, haute de 19 px, dépassait de deux pixels, que
+     l'`overflow: hidden` du choix rognait. À 23 px (33 − 2 × 5) elle entre, et l'encre encore
+     mieux : 13,75 px mesurés pour le plus haut de nos libellés, avec 6,6 px de jeu en haut et 2,6
+     en bas. La règle reste, elle n'a plus rien à sauver qu'une police plus grande : c'est la BOÎTE
+     qu'on ramène à sa taille, pas le texte. Même raison que le `line-height: 1` du glyphe,
+     juste au-dessus. */
+  line-height: 1;
   font-weight: 700;
   white-space: nowrap;
   transition:
@@ -95,7 +114,7 @@
 
 .ds-menu-item.ds-active .ds-menu-label {
   max-width: 120px;
-  margin-left: 8px;
+  margin-left: var(--control-pad);
   opacity: 1;
   transform: translateX(0);
 }
@@ -105,10 +124,21 @@
   outline-offset: 2px;
 }
 
-/* La barre de menu : des destinations de la hauteur d'une commande (leur largeur minimale reste
-   celle d'une commande logée, pour tenir cinq destinations sur un téléphone). */
+/* La barre de menu : des destinations à la HAUTEUR D'UNE COMMANDE, et non à --control-inner comme
+   un contenu logé. Une destination se vise et se presse : c'est une commande, pas le champ d'une
+   recherche. La rapetisser pour que le cadre s'aligne sur un bouton reviendrait à payer la
+   navigation de l'app — ce qu'on y touche le plus — pour un alignement qu'elle n'a de toute façon
+   pas à tenir, seule au pied de l'écran. Le cadre fait donc une hauteur de commande PLUS ses deux
+   marges : 66 px au doigt, 43 à la souris.
+   La MARGE INTERNE, elle, donne sa respiration au libellé de la destination courante — sans elle,
+   dans une colonne à la largeur de son contenu, il n'y a aucun espace libre à distribuer et le
+   libellé colle aux bords de la pastille puis se fait rogner. Une destination inactive fait donc
+   l'icône + 3 × la marge de cadre : 20 + 24 = 44 px au doigt (cinq tiennent encore sur un
+   téléphone : 5 × 44 + 4 × 8 de gouttière + 16 de marge du cadre = 268 px), 18 + 15 = 33 px à la
+   souris. */
 .ds-menu-bar .ds-menu-item {
   height: var(--control-height);
+  padding: 0 calc(1.5 * var(--control-pad));
 }
 
 /* Le sélecteur multiple plat : chaque choix à sa largeur (son libellé), aucun ne grandit. */
@@ -121,7 +151,8 @@
   padding: 0 10px;
 }
 
-/* Multiligne : les choix se replient, 8 px entre les lignes comme entre les choix. Chaque ligne
+/* Multiligne : les choix se replient, la marge du cadre entre les lignes comme entre les choix
+   (--menu-gap : 8 px au doigt, 5 à la souris). Chaque ligne
    occupe toute la largeur ; la dernière reste à gauche, comme celle d'un texte justifié — un dernier
    choix seul sur sa ligne ne s'étire pas sur toute la largeur. C'est le rôle de ce butoir : il prend
    la place libre de la dernière ligne, et sa marge négative annule l'écart qui le précède, pour

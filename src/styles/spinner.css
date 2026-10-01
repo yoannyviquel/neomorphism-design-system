@@ -8,11 +8,13 @@
   color: var(--color-muted);
 }
 
+/* Compact : le point à sa taille, plus une marge de cadre de part et d'autre — 38 px au doigt,
+   comme avant, 28 à la souris, où une commande n'en fait plus que 33. */
 .ds-spinner-compact {
   display: inline-flex;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: calc(var(--control-check) + 2 * var(--control-pad));
+  height: calc(var(--control-check) + 2 * var(--control-pad));
   padding: 0;
 }
 
@@ -25,8 +27,8 @@
 }
 
 .ds-spinner-compact .ds-spinner-dot {
-  width: 22px;
-  height: 22px;
+  width: var(--control-check);
+  height: var(--control-check);
 }
 
 @keyframes ds-spinner-bounce {

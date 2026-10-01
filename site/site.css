@@ -120,7 +120,8 @@ code {
   font-size: 12px;
 }
 
-.after-fold {
+.after-fold,
+.legend {
   margin: 12px 0 0;
   color: var(--color-muted);
   font-size: 14px;
@@ -133,6 +134,24 @@ code {
   border: 1px solid var(--color-border);
   border-radius: 28px;
   overflow: hidden;
+}
+
+/* La démo de glissement : un cadre de la hauteur d'un petit écran, et la barre de menu dessous. */
+.slides-demo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--shadow-room);
+  height: 260px;
+}
+
+.slides-card {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  border-radius: var(--neu-radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--neu-inset);
+  font-weight: 700;
 }
 
 /* Les trois largeurs de la démo de rangée : c'est l'écart qui change, pas les boutons. Chaque

@@ -35,8 +35,22 @@
   align-items: center;
   gap: 10px;
   height: var(--control-height);
-  padding: 0 16px 0 8px;
+  padding: 0 calc(2 * var(--control-pad)) 0 var(--control-pad);
   font-size: 14px;
+}
+
+/* LE NOM, à côté de l'image. Il tient sur UNE LIGNE et se tronque par des points de suspension : un
+   bouton a la hauteur d'une commande, pas celle de son contenu, et un nom long qui passait à la
+   ligne débordait de la plaque — 42 px de texte dans 33 px de bouton à l'échelle compacte (le
+   relief ne rogne rien, il laisse baver sur la page). `min-width: 0` est ce qui l'autorise à
+   rétrécir : sans lui, un élément flexible refuse de descendre sous la largeur de son contenu, et
+   `overflow` n'a jamais rien à rogner. `white-space: nowrap` va avec `text-overflow` : des points de
+   suspension ne se posent qu'au bout d'une ligne qui ne se replie pas. */
+.ds-image-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ds-image,
@@ -58,7 +72,11 @@
 .ds-image-chip .ds-image {
   width: calc(var(--control-height-lg) * 0.567);
   height: calc(var(--control-height-lg) * 0.567);
-  border-radius: 9px;
+  /* Le rayon est PROPORTIONNEL à la tuile, comme la largeur de l'image juste au-dessus : les 9 px
+     d'origine valaient 0,18 du côté d'une tuile de 50. En jeton de rayon (--control-radius-inner,
+     6 px) l'arrondi aurait changé au doigt comme à la souris ; ici le rendu téléphone est
+     strictement inchangé, et la pastille garde sa rondeur — 32 % de l'image aux deux échelles. */
+  border-radius: calc(var(--control-height-lg) * 0.18);
 }
 
 .ds-image-label .ds-image {
@@ -67,10 +85,10 @@
   border-radius: var(--control-radius-inner);
 }
 
-/* Logo serti et nom : le logo remplit un chaton de la hauteur d'une commande logée (34 px), à
-   8 px du bord, sous l'ombre du creux. */
+/* Logo serti et nom : le logo remplit un chaton de la hauteur d'une commande logée
+   (--control-inner), à une marge de cadre du bord, sous l'ombre du creux. */
 .ds-image-label-set {
-  padding-left: 8px;
+  padding-left: var(--control-pad);
 }
 
 .ds-image-label-set .ds-well {
@@ -102,7 +120,9 @@
   place-items: center;
   width: calc(var(--control-height-lg) * 2 / 3);
   height: calc(var(--control-height-lg) * 2 / 3);
-  border-radius: 10px;
+  /* Même raison que la pastille : les 10 px d'origine valaient 0,2 du côté d'une tuile de 50, soit
+     30 % du chaton. Un --control-radius (14) l'aurait porté à 42 %, et jusque sur téléphone. */
+  border-radius: calc(var(--control-height-lg) * 0.2);
 }
 
 .ds-well::after {

@@ -13,37 +13,144 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   liste, message) n'a qu'une bordure fine.
 - **Une échelle d'ombres.** Toutes les ombres réduisent la maquette (shadow 2 en relief, shadow 4 en
   creux) d'un facteur k : **1/3** pour les commandes ordinaires, **1/2** pour les grandes (barre de
-  menu, recherche), **1/9** pour les creux fixes (le chaton d'un bouton serti). Marge autour d'une
-  commande : **72 px × k** (24 px, 36 px). Un élément enfoncé garde son rebord : son ombre en relief.
+  menu, recherche), **1/9** pour les creux fixes (le chaton d'un bouton serti) — **multipliés par
+  `--neu-density`**, l'amplitude du relief de l'échelle en cours (1 au doigt, **2/3** à la souris).
+  k n'a jamais dépendu que de la taille de l'élément : une commande plus petite ne porte pas
+  l'ombre d'une grande, et la règle n'est pas cassée, elle est précisée. Marge autour d'une
+  commande : **72 px × k**, soit 24 / 36 px au doigt et **16 / 24 px à la souris**. Elle couvre :
+  mesurée dans Chrome, l'ombre d'un bouton porte à 14 px à la souris et 21 au doigt, celle d'un
+  cadre (k = 1/2) à 21 et 31. Un élément enfoncé garde son rebord : son ombre en relief.
 - **Le rebond.** Les boutons s'enfoncent et se relâchent avec la courbe réglée dans l'atelier « Pop
   du bouton » (`--sink-ease`) : dépassement ×1,8, creux, second rebond, posé, en 1 s. Les
   animations passent par des nombres enregistrés (`@property --sink`, `--pop`, `--menu-at`) :
   Safari n'interpole pas des listes d'ombres écrites en variables.
-- **Une hauteur** : 50 px pour tout — commandes (bouton, lien d'action, bouton-icône, champ,
-  sélecteur, logo et nom), cadres qui en contiennent (recherche, barre de menu, où la commande fait
-  34 px à 8 px de marge), tuiles à image (carrés de 50) — `--control-height`, `--control-height-lg`,
-  `--control-inner`.
-- **Un rayon** : 14 px, celui des boutons-icônes, pour tout ce qui fait la hauteur d'une commande
-  (cadres de la recherche et du menu compris) ; 6 px pour ce qui y est logé, à 8 px du bord
-  (`--control-radius`, `--control-radius-inner`).
-- **Une cible tactile fait 44 px.** Les commandes y sont par leur hauteur (50 px) ; la case à
-  cocher, seule exception à 22 px, y arrive par un débord invisible de sa zone sensible, sur les
-  seuls pointeurs grossiers (`@media (pointer: coarse)`).
+- **Deux échelles, choisies par le POINTEUR.** Le DS a été dessiné pour le pouce ; à la souris, qui
+  vise au pixel, la même maquette est trop grosse. L'échelle **compacte** (commande de
+  **33 px**) est donc le **défaut**, et l'échelle **confortable** (**50 px**, la maquette au pixel
+  près) revient sur `@media (pointer: coarse)` — doigt, stylet. Pas de `resolution` / `dppx` : un
+  écran Retina est un écran de bureau, et se vise à la souris. `data-density="compact"` ou
+  `"comfortable"` sur `<html>` force l'une ou l'autre, comme `data-theme` force le thème.
+
+  Six jetons littéraux par échelle, **tout le reste en découle** :
+
+  | jeton | confortable (doigt) | compact (souris) |
+  |---|---|---|
+  | `--control-height` (= `-lg`) | 50 | 33 |
+  | `--control-pad` — la marge d'un cadre | 8 | 5 |
+  | `--control-icon` — le glyphe d'une commande | 20 | 18 |
+  | `--control-check` — la case à cocher | 22 | 18 |
+  | `--control-radius` | 14 | 9 |
+  | `--neu-density` — l'amplitude du relief | 1 | `calc(2 / 3)` |
+  | *dérivé* `--control-inner` (hauteur − 2 marges) | 34 | 23 |
+  | *dérivé* `--control-radius-inner` (rayon − marge) | 6 | 4 |
+  | *dérivé* `--shadow-room` / `-lg` | 24 / 36 | 16 / 24 |
+
+  **Le rapport est 2/3, pas la moitié.** Une commande de 25 px faisait trop petit à l'écran. Et
+  les deux tiers sont le seul rapport simple qui rende `--shadow-room` **entier aux deux k**
+  (72 × 1/3 × 2/3 = 16, 72 × 1/2 × 2/3 = 24), ce que ni 0,625 ni 0,66 ne font : ce n'est pas une
+  ombre mais une **gouttière de mise en page**, posée en marge et en `gap` par les apps, elle doit
+  tomber juste. D'où `calc(2 / 3)`, écrit en fraction et non en décimale.
+
+  **La typographie ne bouge pas** : 14 / 15 / 16 px restent lisibles à 60 cm, et c'est pourquoi
+  l'échelle n'est pas un simple multiplicateur. Les glyphes ne suivent pas non plus le rapport des
+  boîtes (18, et non 13) : ils vivent avec un texte resté à 14 px.
+
+  Les jetons dérivés sont déclarés **sur le même élément** que les primitives : une densité par
+  sous-arbre n'est pas supportée (le `calc()` y serait déjà substitué). La densité est une affaire
+  de racine.
+- **Une hauteur** : `--control-height` pour **toute commande** — bouton, lien d'action,
+  bouton-icône, champ, sélecteur, logo et nom, **et destination de la barre de menu** ; les tuiles à
+  image sont des carrés du même côté. Un **cadre** qui *loge* une commande (la recherche, le
+  sélecteur plat) ne la rapetisse pas pour rien : il la pose à `--control-inner` et retombe ainsi
+  lui-même sur `--control-height`, si bien qu'il s'aligne sur le bouton posé à côté de lui. La
+  **barre de menu** est la seule exception, et c'est une exception de FOND, pas de forme : une
+  destination n'est pas un contenu logé mais une **commande à part entière** — on la vise, on la
+  presse, c'est la cible la plus sollicitée de l'app. Elle garde donc `--control-height`, et la
+  barre fait une hauteur de commande *plus* ses deux marges (66 / 43 px). Elle le peut : seule au
+  pied de l'écran, elle n'a rien à aligner à côté d'elle.
+
+  | | ce qu'il loge | le logé | le cadre |
+  |---|---|---|---|
+  | `SearchField` | un champ, du contenu | `--control-inner` | `--control-height` |
+  | `FlatSelector` | des choix, du contenu | `--control-inner` | `--control-height` |
+  | `MenuBar` | des destinations, des **commandes** | `--control-height` | `--control-height` + 2 marges |
+- **Un sous-menu, c'est `FlatSelector`.** Toute bascule entre contenus d'un même écran — Build /
+  Run, Courant / Priorisation, une période, un mode d'affichage — **se fait avec le sélecteur
+  multiple plat du DS, et avec rien d'autre** : pas de « segmented toggle » maison, pas de rangée de
+  boutons dont on allume le courant. La règle de partage est simple : **`MenuBar` dit où l'on est
+  dans l'app, `FlatSelector` dit ce qu'on regarde là où l'on est.** Les deux partagent la même
+  mécanique (`PillBar`) — cadre creusé, pastille en relief qui s'étire jusqu'au nouveau choix puis
+  se rétracte de l'ancien —, si bien qu'un sous-menu refait à la main ne sera jamais que cette
+  mécanique en moins bien : pastille qui glisse au lieu de s'étirer, hauteurs hors échelle, relief
+  hors facteur k, et une seconde grammaire à maintenir à côté de la première.
+- **Un rayon** : `--control-radius`, celui des boutons-icônes, pour tout ce qui fait la hauteur
+  d'une commande (cadres de la recherche et du menu compris) ; rayon − marge de cadre pour ce qui y
+  est logé (`--control-radius-inner`), si bien que les arrondis restent parallèles.
+- **Une cible tactile fait 44 px — sur pointeur grossier**, et c'est là que la règle s'applique. Les
+  commandes y sont par leur hauteur (50 px) ; la case à cocher, seule exception à 22 px, y arrive
+  par un débord invisible de sa zone sensible, déduit de sa taille (`(44px - --control-check) / -2`)
+  et posé sous `@media (pointer: coarse)`. À la souris, les commandes font 33 px et la case 18, sans
+  débord : un curseur vise juste. Le débord se déduisant de la case, il suit même un
+  `data-density="compact"` forcé sur un écran tactile : case de 18, débord de −13, cible de 44.
 - **Un toucher bref se voit** : le bouton reste enfoncé jusqu'au premier sommet du rebond (280 ms),
   puis se relâche avec le sien (`usePress`, classe `ds-pressed`).
 - **L'ombre d'un bouton est un élément** (`<span class="ds-shade">`, rendu par les composants ;
   `Shade` pour un bouton écrit à la main), pas un pseudo-élément : il hérite des nombres animés du
   bouton, ce que Safari ne fait pas pour `::after`.
-- **Un graphique n'est ni une commande ni une zone.** Son relief tient en deux filtres SVG
-  (`ChartFilters`), et en deux seulement : l'**ombre d'une donnée**, le relief à k = 1/9 posé sur un
-  trait de 2 px — au-delà de 1/4 elle s'en détache et se donne pour une seconde courbe ; et le
-  **sertissage** d'un graphique, à k = 1/3, l'ombre du creux seule, sans reflet clair ni rebord, qui
-  le loge dans la page.
+- **Un graphique n'est ni une commande ni une zone.** Son relief tient dans `ChartFilters`.
+- **Une marque de graphique est ENTAILLÉE, point** — qu'elle soit un trait, une aire, un symbole de
+  nuage, un rectangle de barre ou une part de camembert. On ne choisit pas, marque par marque, entre
+  être posé sur la page et y être gravé : toutes les marques d'un graphique disent la même chose,
+  elles doivent la dire de la même façon. Et **toutes** les séries, non la seule principale : le
+  sillon n'est pas une mise en avant mais l'appartenance d'une donnée à la page. Deux rainures qui se
+  croisent se lisent sans peine, la teinte et les tirets les distinguant ; elles ne se confondent un
+  peu que là où deux traits courent côte à côte à moins d'un sillon d'écart.
+- **…et toutes à la MÊME PROFONDEUR. La géométrie ne change pas d'une marque à l'autre ; l'encre,
+  si.** C'est la règle qu'il faut retenir, et elle a deux moitiés :
+
+  **La géométrie est celle de la marque la plus FINE du graphique**, et elle vaut pour toutes. Au-delà
+  de la largeur du trait, les parois sortent de la marque et redeviennent deux courbes fantômes :
+  c'est un PLAFOND, pas une proportion. On ne redimensionne donc pas la rainure par marque — une barre
+  de 30 px porterait une entaille de 30 px à côté d'une courbe entaillée de 2, et les deux ne se
+  compareraient plus. Une rainure a **une** profondeur par graphique.
+
+  **L'encre compense ce que la marque PERD de son ombre.** Une ombre portée est la silhouette
+  décalée et floutée : une marque mince n'en dépose qu'une part, une marque pleine la dépose entière.
+  Mesuré dans Chrome, à rainure constante, l'ombre déposée par pixel de bord rapportée à celle d'une
+  marque épaisse :
+
+  | épaisseur de la marque | 1 px | 2 px | 3 px | 6 px | ≥ 9 px |
+  |---|---|---|---|---|---|
+  | ombre réellement déposée | 27 % | **40 %** | 89 % | 99 % | **100 %** |
+
+  Une marque cesse donc de perdre son ombre **dès 3 px**. D'où deux encres et un seul seuil :
+  un **trait** (1 à 2 px) prend l'encre dense `--neu-data` / `--neu-data-light`, qui lui rend les
+  trois cinquièmes que sa minceur lui coûte ; une **marque pleine** (3 px et plus) prend la même
+  encre **à 40 %** (`--neu-data-fill` / `--neu-data-fill-light`), n'ayant rien à compenser. Sans
+  cette correction, une barre dépose **2,4 fois** l'ombre de la courbe d'à côté ; avec elle,
+  exactement la sienne — rapport **1,00** pour une barre de 14 px comme de 30 px, dans les **deux
+  thèmes**. Recoupement : en thème clair, `--neu-dark` / `--neu-data` vaut **0,38**. L'encre du
+  relief d'une surface *est*, à deux points près, l'encre d'une donnée à 40 % — `--neu-data` n'a
+  jamais été une encre à part, c'est l'encre du relief divisée par ce qu'un trait en perd.
+- **Le flou d'une rainure vaut la largeur du trait.** Un creux se loge dans une surface, où il range
+  ses deux ombres internes ; un trait n'a pas d'intérieur où les ranger, et la rainure les met donc
+  dehors, de part et d'autre. Ses deux parois sont alors séparées par le trait lui-même : plus
+  larges que lui, elles se recouvrent et s'annulent. Le flou du creux valant 48 k, la règle est
+  **k = largeur / 48** — 1/24 pour un trait de 2 px, 1/48 pour 1 px, 1/12 pour 4 px, qui donnent la
+  même image à l'échelle près. Le modèle d'ombre n'est pas touché : c'est le creux, retourné, à
+  l'échelle que sa largeur commande.
 - **Un trait ne retient qu'un tiers de son ombre.** Le pic d'une ombre floutée vaut la largeur de ce
   qui la porte divisée par σ√2π : sous un trait de 2 px, l'encre du relief tombe au seuil du visible,
-  et sous 16 % — le thème clair — disparaît. L'ombre d'une donnée a donc son encre à elle,
-  `--neu-data`, plus dense (95 % en sombre, 42 % en clair) pour peser autant qu'une ombre de surface.
-  Le sertissage garde l'encre du relief : une surface la retient entière.
+  et sous 16 % — le thème clair — disparaît. Les parois d'une rainure ont donc leurs encres à elles,
+  `--neu-data` et `--neu-data-light`, plus denses (95 % et 30 % en sombre, 42 % et 100 % en clair) —
+  une paroi de deux pixels ne retient pas plus un rehaut qu'une ombre. Le sertissage garde l'encre du
+  relief : une surface la retient entière. En thème clair, la paroi éclairée reste invisible malgré
+  tout — sur un fond déjà presque blanc, il n'y a pas de place au-dessus. C'est alors le SENS de la
+  paroi sombre qui dit la rainure : au-dessus du trait pour une gravure, en dessous pour un objet
+  posé, comme sur le papier.
+- **Un filtre se cite en attribut, jamais par une règle CSS.** WebKit résout le fragment d'un
+  `url(#…)` écrit dans une feuille séparée contre l'URL de la feuille et non contre celle du
+  document : le filtre disparaît alors sans la moindre erreur.
 - **Les images ne remplacent jamais la surface d'un bouton.** Elles en sont le contenu, posées
   au-dessus de ses ombres : pastille, sertie, logo et nom, ou logo serti et nom.
 
@@ -56,12 +163,13 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `SetImage` | image sertie hors bouton (un portrait) : le chaton seul, sans relief, initiales à défaut d'image |
 | `Input`, `Select`, `Checkbox` | champs, en relief au repos, creusés engagés |
 | `SearchField` | champ de recherche, loupe qui s'allume, bouton Effacer |
-| `MenuBar` | barre de menu creusée, pastille qui glisse sous la destination courante |
-| `FlatSelector` | sélecteur multiple plat : un choix parmi quelques-uns dans un cadre creusé ; `multiline`, les choix se replient sur plusieurs lignes et remplacent une liste déroulante |
+| `MenuBar` | barre de menu creusée, pastille qui glisse sous la destination courante — *où l'on est dans l'app* |
+| `FlatSelector` | **le sous-menu du DS** : un choix parmi quelques-uns, même cadre et même pastille — *ce qu'on regarde là où l'on est*. Toute bascule entre contenus passe par lui ; `multiline`, ses choix se replient sur plusieurs lignes et remplacent une liste déroulante |
 | `ButtonBar` | rangée de commandes répartie sur toute la largeur (l'écart suit le conteneur, pas une constante), qui se replie quand la place manque |
 | `FoldingGrid` | grille repliée à une ligne, dépliée ligne par ligne avec le pop des boutons |
-| `ChartFilters` | le relief d'un graphique : l'ombre d'une donnée (`#ds-chart-shadow`, k = 1/9, encre `--neu-data`) et le sertissage (`#ds-chart-set`, k = 1/3), en filtres SVG |
+| `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'un trait (`#ds-chart-groove`, k = 1/24 pour 2 px), **la même rainure pour une marque pleine** (`#ds-chart-groove-fill` : même géométrie, encre à 40 %) et le sertissage du graphique entier (`#ds-chart-set`, k = 1/3). `#ds-chart-shadow` est **déprécié** — plus aucune marque ne s'en sert |
 | `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile |
+| `Slides` | les écrans côte à côte : changer de destination fait glisser le ruban à gauche ou à droite, tous restés montés, les autres `inert` |
 | `Spinner`, `Notice`, `Zone`, `Icon` | chargement, message, zone bordée, icônes (Symbols Nerd Font) |
 
 ## Utiliser le paquet dans une app
@@ -83,14 +191,26 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 
 Le build d'une app (Cloudflare, CI) a besoin du même `NODE_AUTH_TOKEN` dans ses variables.
 
+**L'app n'a rien à faire pour la densité** : le DS lit le pointeur. Sur **téléphone**, le rendu est
+**identique au pixel** à celui de la maquette (`pointer: coarse` ⇒ échelle confortable) ; ce qui
+change d'une version à l'autre, c'est le rendu sur un **navigateur de bureau**, à l'échelle
+compacte — en 0.6.0 elle passe de 25 à 33 px, d'où une mineure : tout consommateur en est changé.
+Une app qui veut l'échelle de la maquette partout pose `data-density="comfortable"` sur `<html>`, une
+app de bureau tactile (borne, écran de salle) peut au contraire forcer `"compact"` ; l'attribut a
+toujours le dernier mot sur la détection.
+
 Les **graphiques** font exception à la règle « un composant, un rendu » : le DS n'en dessine aucun,
 il n'en règle que le relief. `ChartFilters` se rend une fois par page — ses identifiants sont fixes
 —, puis n'importe quel SVG les cite, recharts compris :
 
 ```tsx
 <ChartFilters />
-<Line stroke={VALUE_COLOR} strokeWidth={2} filter="url(#ds-chart-shadow)" />
-<Pie data={parts} innerRadius="58%" outerRadius="86%" filter="url(#ds-chart-set)" />
+{/* un TRAIT : la rainure, encre dense */}
+<Line stroke={VALUE_COLOR} strokeWidth={2} filter="url(#ds-chart-groove)" />
+{/* des MARQUES PLEINES : la même rainure, encre à 40 % */}
+<Bar dataKey="waiting" filter="url(#ds-chart-groove-fill)" />
+<Scatter data={points} filter="url(#ds-chart-groove-fill)" />
+<Pie data={parts} innerRadius="58%" outerRadius="86%" filter="url(#ds-chart-groove-fill)" />
 ```
 
 Les valeurs des filtres sont en unités de tracé, qui sont les pixels de l'écran dans un graphique
@@ -108,7 +228,10 @@ npm run build        # dist/index.js, dist/types, dist/styles
 ## Page de démonstration
 
 `site/` est une app Vite toute simple, bâtie sur les composants du paquet : chaque famille en
-situation, avec un sélecteur de thème (appareil, sombre, clair). Pas de Storybook : sur iPhone,
+situation, avec un sélecteur de thème (appareil, sombre, clair) et un sélecteur de **densité**
+(pointeur, compacte, confortable). Attention, `pointer: coarse` **ne se déclenche pas** en
+redimensionnant la fenêtre : il faut l'émulation d'appareil de DevTools — ou le sélecteur. Pas de
+Storybook : sur iPhone,
 Safari n'y jouait pas les animations (rebond, pop), alors qu'une page ordinaire les joue, comme
 les apps.
 

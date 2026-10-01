@@ -6,7 +6,7 @@ import { Checkbox, Input, Select } from '../src/components/Field'
 import { FlatSelector } from '../src/components/FlatSelector'
 import { FoldingGrid } from '../src/components/FoldingGrid'
 import { ImageButton, type ImageButtonVariant } from '../src/components/ImageButton'
-import { Body, ButtonBar, Footer, Header, Screen } from '../src/components/Layout'
+import { Body, ButtonBar, Footer, Header, Screen, Slides } from '../src/components/Layout'
 import { MenuBar, type MenuItem } from '../src/components/MenuBar'
 import { SearchField } from '../src/components/SearchField'
 import { SetImage } from '../src/components/SetImage'
@@ -21,6 +21,14 @@ const THEMES: { id: Theme; label: string }[] = [
   { id: 'light', label: 'Clair' },
 ]
 
+type Density = 'system' | 'compact' | 'comfortable'
+
+const DENSITIES: { id: Density; label: string }[] = [
+  { id: 'system', label: 'Du pointeur' },
+  { id: 'compact', label: 'Compacte' },
+  { id: 'comfortable', label: 'Confortable' },
+]
+
 const SECTIONS = [
   { id: 'fondations', title: 'Fondations' },
   { id: 'boutons', title: 'Boutons' },
@@ -32,6 +40,7 @@ const SECTIONS = [
   { id: 'selecteur', title: 'Sélecteur multiple plat' },
   { id: 'ecran', title: 'Écran' },
   { id: 'rangee', title: 'Rangée de commandes' },
+  { id: 'glissement', title: 'Écrans qui glissent' },
   { id: 'grille', title: 'Grille dépliante' },
   { id: 'retours', title: 'Zones et messages' },
 ]
@@ -78,7 +87,7 @@ function Charts() {
         <figure className="charts-demo-courbe">
           <svg viewBox={`0 0 ${largeur} ${hauteur}`} role="img" aria-label="Une progression de neuf points">
             <line className="charts-demo-axe" x1="8" y1={hauteur - 14} x2={largeur - 8} y2={hauteur - 14} />
-            <path className="charts-demo-trait" d={courbe} filter="url(#ds-chart-shadow)" />
+            <path className="charts-demo-trait" d={courbe} filter="url(#ds-chart-groove)" />
           </svg>
           <figcaption>L'ombre d'une donnée, k = 1/9, à l'encre des données.</figcaption>
         </figure>
@@ -132,6 +141,29 @@ function ButtonBarDemo() {
   )
 }
 
+/** Trois écrans dans un cadre, et la barre de menu qui les choisit : le ruban glisse. */
+function SlidesDemo() {
+  const items: MenuItem<string>[] = [
+    { id: 'un', icon: 'weather_sunny', label: 'Aperçu' },
+    { id: 'deux', icon: 'map_marker_radius', label: 'Carte' },
+    { id: 'trois', icon: 'leaf', label: 'Air' },
+  ]
+  const [at, setAt] = useState('un')
+  const index = items.findIndex((item) => item.id === at)
+  return (
+    <div className="slides-demo">
+      <Slides at={index}>
+        {items.map((item) => (
+          <div key={item.id} className="slides-card">
+            {item.label}
+          </div>
+        ))}
+      </Slides>
+      <MenuBar label="Écrans" items={items} active={at} onSelect={setAt} />
+    </div>
+  )
+}
+
 function Demo({ id, title, intro, children }: { id: string; title: string; intro: string; children: ReactNode }) {
   return (
     <section className="demo" id={id} aria-labelledby={`${id}-title`}>
@@ -142,25 +174,30 @@ function Demo({ id, title, intro, children }: { id: string; title: string; intro
   )
 }
 
-function useTheme(): [Theme, (theme: Theme) => void] {
-  const [theme, setTheme] = useState<Theme>(() => {
+/**
+ * Un réglage de la démo posé sur <html>, où le DS lit le thème ET la densité : `'system'` retire
+ * l'attribut et rend la main à la détection (`prefers-color-scheme`, `pointer: coarse`), toute
+ * autre valeur la force. Mémorisé d'une visite à l'autre quand le stockage est disponible.
+ */
+function useRootSetting<T extends string>(attribute: 'theme' | 'density', storageKey: string): [T, (value: T) => void] {
+  const [value, setValue] = useState<T>(() => {
     try {
-      return (localStorage.getItem('ds-theme') as Theme | null) ?? 'system'
+      return (localStorage.getItem(storageKey) as T | null) ?? ('system' as T)
     } catch {
-      return 'system'
+      return 'system' as T
     }
   })
   useEffect(() => {
     const root = document.documentElement
-    if (theme === 'system') delete root.dataset.theme
-    else root.dataset.theme = theme
+    if (value === 'system') delete root.dataset[attribute]
+    else root.dataset[attribute] = value
     try {
-      localStorage.setItem('ds-theme', theme)
+      localStorage.setItem(storageKey, value)
     } catch {
-      // Sans stockage, le thème vaut pour la visite.
+      // Sans stockage, le réglage vaut pour la visite.
     }
-  }, [theme])
-  return [theme, setTheme]
+  }, [attribute, storageKey, value])
+  return [value, setValue]
 }
 
 function SoundToggle() {
@@ -275,6 +312,7 @@ function ScreenDemo() {
   const [query, setQuery] = useState('')
   const [active, setActive] = useState<'home' | 'search' | 'profile'>('search')
   return (
+    <>
     <div className="screen-frame">
       <Screen>
         <Header>
@@ -294,6 +332,12 @@ function ScreenDemo() {
         </Footer>
       </Screen>
     </div>
+    <p className="legend">
+      Le cadre a la largeur d'un iPhone, pas sa densité : celle-ci se règle à la racine de la page.
+      Pour voir cet écran tel qu'un téléphone le rend, choisissez « Confortable » ci-dessus, ou
+      émulez un appareil tactile.
+    </p>
+    </>
   )
 }
 
@@ -331,7 +375,8 @@ function Platforms() {
 const COLORS = ['--color-bg', '--color-text', '--color-muted', '--color-primary', '--color-danger', '--color-border', '--grad-solar-to', '--grad-fern-to']
 
 export function App() {
-  const [theme, setTheme] = useTheme()
+  const [theme, setTheme] = useRootSetting<Theme>('theme', 'ds-theme')
+  const [density, setDensity] = useRootSetting<Density>('density', 'ds-density')
   return (
     <main className="site">
       <header className="site-head">
@@ -343,6 +388,13 @@ export function App() {
         <div className="site-toolbar" role="group" aria-label="Thème">
           {THEMES.map((option) => (
             <Button key={option.id} size="sm" active={theme === option.id} aria-pressed={theme === option.id} onClick={() => setTheme(option.id)}>
+              {option.label}
+            </Button>
+          ))}
+        </div>
+        <div className="site-toolbar" role="group" aria-label="Densité">
+          {DENSITIES.map((option) => (
+            <Button key={option.id} size="sm" active={density === option.id} aria-pressed={density === option.id} onClick={() => setDensity(option.id)}>
               {option.label}
             </Button>
           ))}
@@ -458,7 +510,7 @@ export function App() {
       <Demo
         id="graphiques"
         title="Graphiques"
-        intro="Un graphique n'est ni une commande ni une zone : deux filtres lui suffisent. L'ombre d'une donnée, à l'échelle des plus petits éléments, sur un trait — à l'encre des données, plus dense, car un trait de 2 px ne retient qu'un tiers de l'ombre qu'il porte ; le sertissage, à l'échelle d'une surface, pour loger le graphique dans la page — l'ombre du creux seule, sans son reflet clair, qui délaverait les teintes."
+        intro="Un graphique n'est ni une commande ni une zone : trois filtres lui suffisent. La rainure, pour une courbe — le creux retourné, ses deux ombres posées de part et d'autre du trait faute d'un dedans où les loger, à une échelle que la largeur du trait donne : le flou vaut cette largeur, soit k = largeur / 48. Le sertissage, pour une surface, qui loge le graphique dans la page — l'ombre du creux seule, sans son reflet clair, qui délaverait les teintes. Et l'ombre d'une donnée, que la rainure a remplacée sur les courbes, pour ce qui doit rester posé sur la page."
       >
         <Charts />
       </Demo>
@@ -467,7 +519,7 @@ export function App() {
         <Fields />
       </Demo>
 
-      <Demo id="menu" title="Barre de menu" intro="Un cadre creusé ; une pastille en relief sous la destination courante, qui montre son libellé. D'une destination à l'autre, la pastille s'étire puis se rétracte. Chaque destination est une commande de 50 px.">
+      <Demo id="menu" title="Barre de menu" intro="Un cadre creusé ; une pastille en relief sous la destination courante, qui montre son libellé. D'une destination à l'autre, la pastille s'étire puis se rétracte. Chaque destination est une commande, à la hauteur de l'échelle du support.">
         <Menu />
       </Demo>
 
@@ -496,6 +548,14 @@ export function App() {
         intro="Des commandes réparties sur toute la largeur qu'on leur donne : la place libre se partage à parts égales entre elles et aux deux bouts. L'écart est une mesure du conteneur, pas une constante — la même rangée, ici, dans trois largeurs. Quand la place manque, l'écart tombe à la marge des ombres, puis la rangée se replie."
       >
         <ButtonBarDemo />
+      </Demo>
+
+      <Demo
+        id="glissement"
+        title="Écrans qui glissent"
+        intro="Les écrans d'une app sont côte à côte : changer de destination fait glisser le ruban à gauche ou à droite selon l'ordre du menu — le mouvement dit où l'on va, pas seulement qu'on a changé. Tous restent montés (une carte garde son contexte) ; seul celui qu'on regarde est atteignable au doigt et au lecteur d'écran."
+      >
+        <SlidesDemo />
       </Demo>
 
       <Demo

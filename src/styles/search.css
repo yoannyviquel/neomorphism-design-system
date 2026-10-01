@@ -4,7 +4,7 @@
    la destination courante du menu : l'icône prend la couleur active et sa lueur. */
 
 .ds-search {
-  --search-pad: 8px;
+  --search-pad: var(--control-pad);
   --sink: 0;
   -webkit-tap-highlight-color: transparent;
   --sink-lift: calc(max(0, 1 - 2 * max(0, var(--sink))) + max(0, -1 * var(--sink)) * var(--sink-over) + var(--sink-depth));
@@ -37,10 +37,10 @@
 
 .ds-search-icon {
   position: absolute;
-  left: calc(var(--search-pad) + 12px);
+  left: calc(var(--search-pad) + 1.5 * var(--control-pad));
   top: 50%;
   transform: translateY(-50%);
-  font-size: 20px;
+  font-size: var(--control-icon);
   color: var(--color-muted);
   pointer-events: none;
   transition:
@@ -61,7 +61,9 @@
   flex: 1;
   min-width: 0;
   height: var(--control-inner);
-  padding: 0 8px 0 42px;
+  /* À gauche, la place de l'icône : sa marge au cadre (1,5 pad), sa largeur, et 2 px de respiration
+     avant le texte — le tout depuis le bord du champ, lui-même à 1 pad du cadre. */
+  padding: 0 var(--control-pad) 0 calc(var(--control-pad) + 1.5 * var(--control-pad) + var(--control-icon) + 2px);
   border: none;
   border-radius: var(--control-radius-inner);
   outline: none;

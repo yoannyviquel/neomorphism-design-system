@@ -62,7 +62,8 @@ export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>
   tone?: ButtonTone
 }
 
-/** Bouton-icône : un carré de 44 px, rayon 14. */
+/** Bouton-icône : un carré de la hauteur d'une commande (--control-height : 50 px au doigt, 33 à la
+ *  souris), au rayon des commandes (--control-radius). */
 export function IconButton({ icon, label, active, large = false, tone = 'default', className, type = 'button', ...rest }: IconButtonProps) {
   const { pressed, handlers } = usePress(rest)
   return (

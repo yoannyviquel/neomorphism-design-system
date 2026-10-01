@@ -37,7 +37,7 @@
 .ds-fold-toggle {
   display: flex;
   margin: var(--shadow-room) auto 0;
-  font-size: 22px;
+  font-size: var(--control-icon);
 }
 
 /* Repliés, les boutons du dessous sont à plat : ni ombre, ni image — le fond de la page. */

@@ -8,17 +8,31 @@ import { Checkbox, Select } from './Field'
 import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
 import { ImageButton } from './ImageButton'
 import { FlatSelector } from './FlatSelector'
-import { Body, ButtonBar, Footer, Header, Screen } from './Layout'
+import { Body, ButtonBar, Footer, Header, Screen, Slides } from './Layout'
 import { MENU_RELEASE_DELAY_MS, MenuBar } from './MenuBar'
 import { SearchField } from './SearchField'
 import { SetImage } from './SetImage'
 import { PRESS_HOLD_MS } from './usePress'
 
 describe('ChartFilters', () => {
-  it("rend les deux filtres d'un graphique, chacun à son échelle", () => {
+  it("rend les trois filtres d'un graphique, chacun à son échelle", () => {
     const { container } = render(<ChartFilters />)
 
-    // L'ombre d'une donnée : le relief à k = 1/9 (28 et 50 réduits).
+    // La rainure : le creux à k = 1/24, dont le flou vaut la largeur du trait — 48 × 1/24 = 2 px,
+    // soit σ = 1. C'est la règle entière, et c'est elle que ce test garde.
+    const sombre = container.querySelector('#ds-chart-groove feDropShadow.ds-groove-dark')
+    const claire = container.querySelector('#ds-chart-groove feDropShadow.ds-groove-light')
+    expect(sombre).toHaveAttribute('dx', '-1.08')
+    expect(sombre).toHaveAttribute('stdDeviation', '1')
+    // L'ombre du côté d'où vient la lumière, le rehaut du côté opposé : les signes sont opposés.
+    expect(claire).toHaveAttribute('dx', '1.29')
+    expect(Number(sombre?.getAttribute('dx')) * Number(claire?.getAttribute('dx'))).toBeLessThan(0)
+    // Le tracé passe au-dessus de ses deux parois.
+    const fusion = container.querySelectorAll('#ds-chart-groove feMergeNode')
+    expect(fusion[fusion.length - 1]).toHaveAttribute('in', 'SourceGraphic')
+
+    // L'ombre d'une donnée : le relief à k = 1/9 (28 et 50 réduits). Déprécié, mais conservé tant
+    // que des apps le citent : ce test garde l'identifiant vivant et sa géométrie intacte.
     expect(container.querySelector('#ds-chart-shadow feDropShadow')).toHaveAttribute('dx', '3.11')
     expect(container.querySelector('#ds-chart-shadow feDropShadow')).toHaveAttribute('stdDeviation', '2.78')
 
@@ -29,6 +43,28 @@ describe('ChartFilters', () => {
 
     // Le porteur ne s'annonce pas : il n'existe que pour ses définitions.
     expect(container.querySelector('svg')).toHaveAttribute('aria-hidden', 'true')
+  })
+
+  it("entaille une marque pleine à la MÊME profondeur qu'un trait : même géométrie, autre encre", () => {
+    const { container } = render(<ChartFilters />)
+    const geometrie = (id: string, paroi: string) => {
+      const noeud = container.querySelector(`#${id} feDropShadow.${paroi}`)
+      return ['dx', 'dy', 'stdDeviation'].map((a) => noeud?.getAttribute(a))
+    }
+
+    // LE CŒUR DE LA RÈGLE : une rainure n'a qu'une profondeur par graphique. Si ces deux
+    // géométries divergent un jour, une barre et une courbe cesseront de se comparer — c'est
+    // exactement ce que ce test interdit.
+    expect(geometrie('ds-chart-groove-fill', 'ds-groove-dark')).toEqual(geometrie('ds-chart-groove', 'ds-groove-dark'))
+    expect(geometrie('ds-chart-groove-fill', 'ds-groove-light')).toEqual(geometrie('ds-chart-groove', 'ds-groove-light'))
+
+    // Ce qui les distingue est l'ENCRE, et elle vient du thème (chart.css), pas des attributs :
+    // le filtre ne porte aucune couleur, c'est son identifiant qui la lui vaut.
+    expect(container.querySelector('#ds-chart-groove-fill feDropShadow')).not.toHaveAttribute('flood-color')
+
+    // Le tracé passe au-dessus de ses deux parois, ici aussi.
+    const fusion = container.querySelectorAll('#ds-chart-groove-fill feMergeNode')
+    expect(fusion[fusion.length - 1]).toHaveAttribute('in', 'SourceGraphic')
   })
 })
 
@@ -237,6 +273,41 @@ describe('Screen', () => {
       'div.ds-body',
       'footer.ds-footer',
     ])
+  })
+})
+
+describe('Slides', () => {
+  const trois = (
+    <Slides at={1}>
+      <div>un</div>
+      <div>deux</div>
+      <div>trois</div>
+    </Slides>
+  )
+
+  it('pose les écrans côte à côte et glisse le ruban sur l’écran courant', () => {
+    const { container } = render(trois)
+    const track = container.querySelector<HTMLElement>('.ds-slides-track')!
+    expect(track.style.getPropertyValue('--slides-at')).toBe('1')
+    expect(track.children).toHaveLength(3)
+    // tous MONTÉS : une carte garde son contexte, une liste sa position
+    expect(track.textContent).toBe('undeuxtrois')
+  })
+
+  it('rend INERTES les écrans qu’on ne regarde pas (ni doigt, ni focus, ni lecteur d’écran)', () => {
+    const { container } = render(trois)
+    const slides = [...container.querySelectorAll('.ds-slide')]
+    expect(slides.map((slide) => slide.hasAttribute('inert'))).toEqual([true, false, true])
+  })
+
+  it('borne l’index : un écran hors liste ne déraille pas le ruban', () => {
+    const { container } = render(
+      <Slides at={9}>
+        <div>un</div>
+        <div>deux</div>
+      </Slides>,
+    )
+    expect(container.querySelector<HTMLElement>('.ds-slides-track')!.style.getPropertyValue('--slides-at')).toBe('1')
   })
 })
 
