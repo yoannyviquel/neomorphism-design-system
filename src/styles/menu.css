@@ -84,13 +84,15 @@
   opacity: 0;
   transform: translateX(-8px);
   font-size: 14px;
-  /* La boîte de ligne vaut le texte, et rien de plus : un choix logé fait --control-inner (17 px à
-     la souris) et l'interligne normal d'un 14 px en réclame 21, qui dépassent d'un pixel en haut et
-     en bas — rognés par l'`overflow: hidden` du choix. C'est le sélecteur plat que ça regarde (ses
+  /* La boîte de ligne vaut le texte, et rien de plus. C'est le sélecteur plat que ça regarde (ses
      choix montrent leur libellé à --control-inner) ; la barre de menu, dont les destinations font
-     une hauteur de commande, a la place de toute façon. L'encre, elle, tient largement (13 px
-     mesurés pour le plus haut de nos libellés) : c'est la BOÎTE qu'on ramène à sa taille, pas le
-     texte. Même raison que le `line-height: 1` du glyphe, juste au-dessus. */
+     une hauteur de commande, a la place de toute façon. À 17 px de choix — l'ancienne échelle
+     compacte — la boîte en ligne d'un 14 px, haute de 19 px, dépassait de deux pixels, que
+     l'`overflow: hidden` du choix rognait. À 23 px (33 − 2 × 5) elle entre, et l'encre encore
+     mieux : 13,75 px mesurés pour le plus haut de nos libellés, avec 6,6 px de jeu en haut et 2,6
+     en bas. La règle reste, elle n'a plus rien à sauver qu'une police plus grande : c'est la BOÎTE
+     qu'on ramène à sa taille, pas le texte. Même raison que le `line-height: 1` du glyphe,
+     juste au-dessus. */
   line-height: 1;
   font-weight: 700;
   white-space: nowrap;
@@ -124,12 +126,12 @@
    recherche. La rapetisser pour que le cadre s'aligne sur un bouton reviendrait à payer la
    navigation de l'app — ce qu'on y touche le plus — pour un alignement qu'elle n'a de toute façon
    pas à tenir, seule au pied de l'écran. Le cadre fait donc une hauteur de commande PLUS ses deux
-   marges : 66 px au doigt, 33 à la souris.
+   marges : 66 px au doigt, 43 à la souris.
    La MARGE INTERNE, elle, donne sa respiration au libellé de la destination courante — sans elle,
    dans une colonne à la largeur de son contenu, il n'y a aucun espace libre à distribuer et le
    libellé colle aux bords de la pastille puis se fait rogner. Une destination inactive fait donc
    l'icône + 3 × la marge de cadre : 20 + 24 = 44 px au doigt (cinq tiennent encore sur un
-   téléphone : 5 × 44 + 4 × 8 de gouttière + 16 de marge du cadre = 268 px), 16 + 12 = 28 px à la
+   téléphone : 5 × 44 + 4 × 8 de gouttière + 16 de marge du cadre = 268 px), 18 + 15 = 33 px à la
    souris. */
 .ds-menu-bar .ds-menu-item {
   height: var(--control-height);

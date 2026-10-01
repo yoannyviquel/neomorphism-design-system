@@ -14,18 +14,19 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 - **Une échelle d'ombres.** Toutes les ombres réduisent la maquette (shadow 2 en relief, shadow 4 en
   creux) d'un facteur k : **1/3** pour les commandes ordinaires, **1/2** pour les grandes (barre de
   menu, recherche), **1/9** pour les creux fixes (le chaton d'un bouton serti) — **multipliés par
-  `--neu-density`**, l'amplitude du relief de l'échelle en cours (1 au doigt, 1/2 à la souris). k
-  n'a jamais dépendu que de la taille de l'élément : une commande deux fois plus petite ne porte pas
+  `--neu-density`**, l'amplitude du relief de l'échelle en cours (1 au doigt, **2/3** à la souris).
+  k n'a jamais dépendu que de la taille de l'élément : une commande plus petite ne porte pas
   l'ombre d'une grande, et la règle n'est pas cassée, elle est précisée. Marge autour d'une
-  commande : **72 px × k**, soit 24 / 36 px au doigt et **12 / 18 px à la souris**. Un élément
-  enfoncé garde son rebord : son ombre en relief.
+  commande : **72 px × k**, soit 24 / 36 px au doigt et **16 / 24 px à la souris**. Elle couvre :
+  mesurée dans Chrome, l'ombre d'un bouton porte à 14 px à la souris et 21 au doigt, celle d'un
+  cadre (k = 1/2) à 21 et 31. Un élément enfoncé garde son rebord : son ombre en relief.
 - **Le rebond.** Les boutons s'enfoncent et se relâchent avec la courbe réglée dans l'atelier « Pop
   du bouton » (`--sink-ease`) : dépassement ×1,8, creux, second rebond, posé, en 1 s. Les
   animations passent par des nombres enregistrés (`@property --sink`, `--pop`, `--menu-at`) :
   Safari n'interpole pas des listes d'ombres écrites en variables.
 - **Deux échelles, choisies par le POINTEUR.** Le DS a été dessiné pour le pouce ; à la souris, qui
-  vise au pixel, la même maquette est deux fois trop grosse. L'échelle **compacte** (commande de
-  **25 px**) est donc le **défaut**, et l'échelle **confortable** (**50 px**, la maquette au pixel
+  vise au pixel, la même maquette est trop grosse. L'échelle **compacte** (commande de
+  **33 px**) est donc le **défaut**, et l'échelle **confortable** (**50 px**, la maquette au pixel
   près) revient sur `@media (pointer: coarse)` — doigt, stylet. Pas de `resolution` / `dppx` : un
   écran Retina est un écran de bureau, et se vise à la souris. `data-density="compact"` ou
   `"comfortable"` sur `<html>` force l'une ou l'autre, comme `data-theme` force le thème.
@@ -34,19 +35,25 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 
   | jeton | confortable (doigt) | compact (souris) |
   |---|---|---|
-  | `--control-height` (= `-lg`) | 50 | 25 |
-  | `--control-pad` — la marge d'un cadre | 8 | 4 |
-  | `--control-icon` — le glyphe d'une commande | 20 | 16 |
-  | `--control-check` — la case à cocher | 22 | 16 |
-  | `--control-radius` | 14 | 7 |
-  | `--neu-density` — l'amplitude du relief | 1 | 0,5 |
-  | *dérivé* `--control-inner` (hauteur − 2 marges) | 34 | 17 |
-  | *dérivé* `--control-radius-inner` (rayon − marge) | 6 | 3 |
-  | *dérivé* `--shadow-room` / `-lg` | 24 / 36 | 12 / 18 |
+  | `--control-height` (= `-lg`) | 50 | 33 |
+  | `--control-pad` — la marge d'un cadre | 8 | 5 |
+  | `--control-icon` — le glyphe d'une commande | 20 | 18 |
+  | `--control-check` — la case à cocher | 22 | 18 |
+  | `--control-radius` | 14 | 9 |
+  | `--neu-density` — l'amplitude du relief | 1 | `calc(2 / 3)` |
+  | *dérivé* `--control-inner` (hauteur − 2 marges) | 34 | 23 |
+  | *dérivé* `--control-radius-inner` (rayon − marge) | 6 | 4 |
+  | *dérivé* `--shadow-room` / `-lg` | 24 / 36 | 16 / 24 |
+
+  **Le rapport est 2/3, pas la moitié.** Une commande de 25 px faisait trop petit à l'écran. Et
+  les deux tiers sont le seul rapport simple qui rende `--shadow-room` **entier aux deux k**
+  (72 × 1/3 × 2/3 = 16, 72 × 1/2 × 2/3 = 24), ce que ni 0,625 ni 0,66 ne font : ce n'est pas une
+  ombre mais une **gouttière de mise en page**, posée en marge et en `gap` par les apps, elle doit
+  tomber juste. D'où `calc(2 / 3)`, écrit en fraction et non en décimale.
 
   **La typographie ne bouge pas** : 14 / 15 / 16 px restent lisibles à 60 cm, et c'est pourquoi
-  l'échelle n'est pas un simple multiplicateur. Les icônes et la case ne sont pas divisées par deux
-  non plus (16, et non 10 ou 11) : ce sont des glyphes, ils vivent avec un texte resté à 14 px.
+  l'échelle n'est pas un simple multiplicateur. Les glyphes ne suivent pas non plus le rapport des
+  boîtes (18, et non 13) : ils vivent avec un texte resté à 14 px.
 
   Les jetons dérivés sont déclarés **sur le même élément** que les primitives : une densité par
   sous-arbre n'est pas supportée (le `calc()` y serait déjà substitué). La densité est une affaire
@@ -59,7 +66,7 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   **barre de menu** est la seule exception, et c'est une exception de FOND, pas de forme : une
   destination n'est pas un contenu logé mais une **commande à part entière** — on la vise, on la
   presse, c'est la cible la plus sollicitée de l'app. Elle garde donc `--control-height`, et la
-  barre fait une hauteur de commande *plus* ses deux marges (66 / 33 px). Elle le peut : seule au
+  barre fait une hauteur de commande *plus* ses deux marges (66 / 43 px). Elle le peut : seule au
   pied de l'écran, elle n'a rien à aligner à côté d'elle.
 
   | | ce qu'il loge | le logé | le cadre |
@@ -82,8 +89,9 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 - **Une cible tactile fait 44 px — sur pointeur grossier**, et c'est là que la règle s'applique. Les
   commandes y sont par leur hauteur (50 px) ; la case à cocher, seule exception à 22 px, y arrive
   par un débord invisible de sa zone sensible, déduit de sa taille (`(44px - --control-check) / -2`)
-  et posé sous `@media (pointer: coarse)`. À la souris, les commandes font 25 px et la case 16, sans
-  débord : un curseur vise juste.
+  et posé sous `@media (pointer: coarse)`. À la souris, les commandes font 33 px et la case 18, sans
+  débord : un curseur vise juste. Le débord se déduisant de la case, il suit même un
+  `data-density="compact"` forcé sur un écran tactile : case de 18, débord de −13, cible de 44.
 - **Un toucher bref se voit** : le bouton reste enfoncé jusqu'au premier sommet du rebond (280 ms),
   puis se relâche avec le sien (`usePress`, classe `ds-pressed`).
 - **L'ombre d'un bouton est un élément** (`<span class="ds-shade">`, rendu par les composants ;
@@ -184,9 +192,10 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 Le build d'une app (Cloudflare, CI) a besoin du même `NODE_AUTH_TOKEN` dans ses variables.
 
 **L'app n'a rien à faire pour la densité** : le DS lit le pointeur. Sur **téléphone**, le rendu est
-**identique au pixel** à celui d'avant (`pointer: coarse` ⇒ échelle confortable) ; ce qui change,
-c'est l'aperçu sur un **navigateur de bureau**, qui passe à l'échelle compacte — c'est l'objet de la
-version. Une app qui veut l'ancien rendu partout pose `data-density="comfortable"` sur `<html>`, une
+**identique au pixel** à celui de la maquette (`pointer: coarse` ⇒ échelle confortable) ; ce qui
+change d'une version à l'autre, c'est le rendu sur un **navigateur de bureau**, à l'échelle
+compacte — en 0.6.0 elle passe de 25 à 33 px, d'où une mineure : tout consommateur en est changé.
+Une app qui veut l'échelle de la maquette partout pose `data-density="comfortable"` sur `<html>`, une
 app de bureau tactile (borne, écran de salle) peut au contraire forcer `"compact"` ; l'attribut a
 toujours le dernier mot sur la détection.
 

@@ -9,7 +9,7 @@
 }
 
 /* Compact : le point à sa taille, plus une marge de cadre de part et d'autre — 38 px au doigt,
-   comme avant, 24 à la souris, où une commande n'en fait plus que 25. */
+   comme avant, 28 à la souris, où une commande n'en fait plus que 33. */
 .ds-spinner-compact {
   display: inline-flex;
   justify-content: center;

@@ -34,11 +34,13 @@
        k = 1/2 — grandes commandes, ~64 px et plus, ou barre sur toute la largeur ;
        k = 1/9 — creux fixes logés dans une commande (le chaton d'un bouton à image serti).
      Le rebord d'un élément enfoncé (son ombre extérieure) est son ombre en relief, au même k.
-     MARGE : autour d'une commande, 72 px × k (24 px à 1/3, 36 px à 1/2), pour que l'ombre ne soit
-     ni rognée par le bord d'une zone qui défile, ni recouverte par la voisine.
+     MARGE : autour d'une commande, 72 px × k — 24 px à 1/3 et 36 px à 1/2 au doigt, 16 et 24 à la
+     souris —, pour que l'ombre ne soit ni rognée par le bord d'une zone qui défile, ni recouverte
+     par la voisine. Elle couvre : l'ombre d'un bouton porte à 14 px à la souris et 21 au doigt
+     (mesuré dans Chrome, la portée étant la distance où elle tombe à un dixième de son pic).
      k ne dépendant que de la TAILLE de l'élément, il suit l'échelle du support : --neu-density
-     (1 au doigt, 0,5 à la souris, cf. plus bas) le multiplie. Une commande deux fois plus petite
-     ne porte pas l'ombre d'une grande. Toutes les ombres du DS en découlent — y compris celles que
+     (1 au doigt, 2/3 à la souris, cf. plus bas) le multiplie. Une commande plus petite ne porte pas
+     l'ombre d'une grande. Toutes les ombres du DS en découlent — y compris celles que
      field.css, search.css et image-button.css réécrivent à la main sur k. */
   --neu-k: calc(1 / 3 * var(--neu-density));
   --neu-k-lg: calc(1 / 2 * var(--neu-density));
@@ -89,10 +91,15 @@
   --shadow-room-lg: calc(72px * var(--neu-k-lg));
   /* ÉCHELLE DU SUPPORT — compacte à la souris, confortable au doigt.
      Le DS a été dessiné pour le pouce : 50 px de haut, 8 px de cadre, 14 px de rayon. À la souris,
-     qui vise au pixel, c'est deux fois trop gros. Le DÉFAUT passe donc à l'échelle COMPACTE, et
+     qui vise au pixel, c'est trop gros. Le DÉFAUT passe donc à l'échelle COMPACTE, et
      l'échelle CONFORTABLE — celle de la maquette, au pixel près — revient sur les POINTEURS
      GROSSIERS (`pointer: coarse` : doigt, stylet). `data-density` sur <html> force l'une ou l'autre,
      comme `data-theme` force le thème, et de la même façon.
+     LE RAPPORT EST 2/3, et non la moitié : une commande de 25 px faisait trop petit à l'écran. Les
+     DEUX TIERS sont le seul rapport simple qui rende --shadow-room ENTIER aux deux k — 72 × 1/3 ×
+     2/3 = 16, 72 × 1/2 × 2/3 = 24 —, ce que ni 0,625 ni 0,66 ne font. Ce n'est pas une ombre mais
+     une GOUTTIÈRE de mise en page, que les apps consommatrices posent en marge et en `gap` : elle
+     doit tomber juste. D'où --neu-density: calc(2 / 3), écrit en fraction et non en décimale.
      PAS de `resolution` / `dppx` : un écran Retina est un écran de bureau, et se vise à la souris.
      LA TYPOGRAPHIE NE BOUGE PAS — ce qui change, ce sont les BOÎTES, les GLYPHES de commande et
      l'AMPLITUDE DU RELIEF. SIX NOMBRES, tout le reste en découle.
@@ -100,13 +107,16 @@
      bouton-icône, champ, sélecteur, logo et nom) ou d'un cadre qui en contient (recherche, barre de
      menu) ; les tuiles à image sont des carrés de même côté. UN RAYON, celui des boutons-icônes,
      pour tout ce qui fait la hauteur d'une commande ; ce qui est logé dans un cadre, à --control-pad
-     de son bord, prend rayon − marge : les arrondis restent parallèles. */
-  --control-height: 25px;
-  --control-pad: 4px;
-  --control-icon: 16px;
-  --control-check: 16px;
-  --control-radius: 7px;
-  --neu-density: 0.5;
+     de son bord, prend rayon − marge : les arrondis restent parallèles.
+     D'où les six : 33 = 50 × 2/3 ; 5 ≈ 8 × 2/3, qui pose --control-inner à 23 ; 9 ≈ 14 × 2/3, qui
+     pose --control-radius-inner à 4 ; 18 pour les GLYPHES, entre les 16 d'avant et les 20 du doigt
+     — un glyphe vit avec un texte resté à 14 px, il ne suit pas le rapport des boîtes. */
+  --control-height: 33px;
+  --control-pad: 5px;
+  --control-icon: 18px;
+  --control-check: 18px;
+  --control-radius: 9px;
+  --neu-density: calc(2 / 3);
 
   /* DÉRIVÉS — déclarés sur le MÊME élément que les primitives. La cascade élit d'abord la valeur de
      --control-height, le calc() n'est substitué qu'ensuite. Ce n'est vrai que sur le même élément :
