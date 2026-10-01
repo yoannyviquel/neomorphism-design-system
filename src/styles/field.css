@@ -101,7 +101,10 @@
   height: var(--control-check);
   margin: 0;
   border: none;
-  border-radius: 7px;
+  /* Proportionnel à la case, comme sa coche : les 7 px d'origine valaient 0,318 d'une case de 22.
+     En px fixes, la même valeur aurait fait 44 % d'une case de 16 — une pastille, là où le DS
+     dessine un carré adouci. */
+  border-radius: calc(var(--control-check) * 0.318);
   background: var(--color-bg);
   cursor: pointer;
 }
