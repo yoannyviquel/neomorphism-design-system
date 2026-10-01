@@ -41,7 +41,7 @@
 
 /* LE NOM, à côté de l'image. Il tient sur UNE LIGNE et se tronque par des points de suspension : un
    bouton a la hauteur d'une commande, pas celle de son contenu, et un nom long qui passait à la
-   ligne débordait de la plaque — 42 px de texte dans 25 px de bouton à l'échelle compacte (le
+   ligne débordait de la plaque — 42 px de texte dans 33 px de bouton à l'échelle compacte (le
    relief ne rogne rien, il laisse baver sur la page). `min-width: 0` est ce qui l'autorise à
    rétrécir : sans lui, un élément flexible refuse de descendre sous la largeur de son contenu, et
    `overflow` n'a jamais rien à rogner. `white-space: nowrap` va avec `text-overflow` : des points de

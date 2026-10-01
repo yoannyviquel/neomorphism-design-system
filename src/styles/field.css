@@ -62,8 +62,8 @@
   width: 100%;
   /* La place du chevron, DÉDUITE de la sienne : il est posé à --control-radius du bord droit et
      occupe --control-icon ; reste la respiration avant le texte. Rend les 40 px d'origine au doigt
-     (14 + 20 + 6), et 26 à la souris — un 5 × --control-pad, qui rendait aussi 40, laissait le
-     texte passer 3 px SOUS le chevron à l'échelle compacte (mesuré). */
+     (14 + 20 + 6), et 30,75 à la souris (9 + 18 + 3,75) — un 5 × --control-pad, qui rendait aussi
+     40, laissait le texte passer SOUS le chevron à l'échelle compacte (mesuré). */
   padding-right: calc(var(--control-radius) + var(--control-icon) + 0.75 * var(--control-pad));
   cursor: pointer;
 }
@@ -135,8 +135,10 @@
    déborde donc jusque-là par un pseudo-élément — l'aspect ne bouge pas, et le clic sur le débord
    appartient à la case, comme tout pseudo-élément. `::after` porte déjà la coche : c'est `::before`
    qui sert ici, sur les seuls pointeurs grossiers (une souris vise juste, et à l'échelle compacte
-   la case fait 16 px sans débord). Le débord se DÉDUIT de la taille de la case au lieu d'être
-   calculé de tête : 44 moins la case, de part et d'autre (−11 px pour une case de 22). */
+   la case fait 18 px sans débord). Le débord se DÉDUIT de la taille de la case au lieu d'être
+   calculé de tête : 44 moins la case, de part et d'autre (−11 px pour une case de 22, et −13 pour
+   une case de 18 si l'app force la densité compacte sur un écran tactile : la cible fait 44 dans
+   les deux cas). */
 @media (pointer: coarse) {
   .ds-checkbox::before {
     content: '';
