@@ -89,15 +89,41 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 - **L'ombre d'un bouton est un élément** (`<span class="ds-shade">`, rendu par les composants ;
   `Shade` pour un bouton écrit à la main), pas un pseudo-élément : il hérite des nombres animés du
   bouton, ce que Safari ne fait pas pour `::after`.
-- **Un graphique n'est ni une commande ni une zone.** Son relief tient en trois filtres SVG
-  (`ChartFilters`) : la **rainure** d'une courbe, le **sertissage** d'une surface, et l'**ombre
-  d'une donnée** que la rainure a remplacée sur les courbes. Une courbe est *entaillée* dans la page
-  comme un camembert y est serti — les deux disent la même chose de la même façon, ce que l'ombre,
-  qui posait la courbe par-dessus, ne savait pas faire. **Toutes** les séries d'un graphique, et non
-  la seule principale : le sillon n'est pas une mise en avant mais l'appartenance d'une donnée à la
-  page. Deux rainures qui se croisent se lisent sans peine, la teinte et les tirets les distinguant ;
-  elles ne se confondent un peu que là où deux traits courent côte à côte à moins d'un sillon
-  d'écart.
+- **Un graphique n'est ni une commande ni une zone.** Son relief tient dans `ChartFilters`.
+- **Une marque de graphique est ENTAILLÉE, point** — qu'elle soit un trait, une aire, un symbole de
+  nuage, un rectangle de barre ou une part de camembert. On ne choisit pas, marque par marque, entre
+  être posé sur la page et y être gravé : toutes les marques d'un graphique disent la même chose,
+  elles doivent la dire de la même façon. Et **toutes** les séries, non la seule principale : le
+  sillon n'est pas une mise en avant mais l'appartenance d'une donnée à la page. Deux rainures qui se
+  croisent se lisent sans peine, la teinte et les tirets les distinguant ; elles ne se confondent un
+  peu que là où deux traits courent côte à côte à moins d'un sillon d'écart.
+- **…et toutes à la MÊME PROFONDEUR. La géométrie ne change pas d'une marque à l'autre ; l'encre,
+  si.** C'est la règle qu'il faut retenir, et elle a deux moitiés :
+
+  **La géométrie est celle de la marque la plus FINE du graphique**, et elle vaut pour toutes. Au-delà
+  de la largeur du trait, les parois sortent de la marque et redeviennent deux courbes fantômes :
+  c'est un PLAFOND, pas une proportion. On ne redimensionne donc pas la rainure par marque — une barre
+  de 30 px porterait une entaille de 30 px à côté d'une courbe entaillée de 2, et les deux ne se
+  compareraient plus. Une rainure a **une** profondeur par graphique.
+
+  **L'encre compense ce que la marque PERD de son ombre.** Une ombre portée est la silhouette
+  décalée et floutée : une marque mince n'en dépose qu'une part, une marque pleine la dépose entière.
+  Mesuré dans Chrome, à rainure constante, l'ombre déposée par pixel de bord rapportée à celle d'une
+  marque épaisse :
+
+  | épaisseur de la marque | 1 px | 2 px | 3 px | 6 px | ≥ 9 px |
+  |---|---|---|---|---|---|
+  | ombre réellement déposée | 27 % | **40 %** | 89 % | 99 % | **100 %** |
+
+  Une marque cesse donc de perdre son ombre **dès 3 px**. D'où deux encres et un seul seuil :
+  un **trait** (1 à 2 px) prend l'encre dense `--neu-data` / `--neu-data-light`, qui lui rend les
+  trois cinquièmes que sa minceur lui coûte ; une **marque pleine** (3 px et plus) prend la même
+  encre **à 40 %** (`--neu-data-fill` / `--neu-data-fill-light`), n'ayant rien à compenser. Sans
+  cette correction, une barre dépose **2,4 fois** l'ombre de la courbe d'à côté ; avec elle,
+  exactement la sienne — rapport **1,00** pour une barre de 14 px comme de 30 px, dans les **deux
+  thèmes**. Recoupement : en thème clair, `--neu-dark` / `--neu-data` vaut **0,38**. L'encre du
+  relief d'une surface *est*, à deux points près, l'encre d'une donnée à 40 % — `--neu-data` n'a
+  jamais été une encre à part, c'est l'encre du relief divisée par ce qu'un trait en perd.
 - **Le flou d'une rainure vaut la largeur du trait.** Un creux se loge dans une surface, où il range
   ses deux ombres internes ; un trait n'a pas d'intérieur où les ranger, et la rainure les met donc
   dehors, de part et d'autre. Ses deux parois sont alors séparées par le trait lui-même : plus
@@ -133,7 +159,7 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `FlatSelector` | **le sous-menu du DS** : un choix parmi quelques-uns, même cadre et même pastille — *ce qu'on regarde là où l'on est*. Toute bascule entre contenus passe par lui |
 | `ButtonBar` | rangée de commandes répartie sur toute la largeur (l'écart suit le conteneur, pas une constante), qui se replie quand la place manque |
 | `FoldingGrid` | grille repliée à une ligne, dépliée ligne par ligne avec le pop des boutons |
-| `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'une courbe (`#ds-chart-groove`, k = 1/24 pour un trait de 2 px), le sertissage d'une surface (`#ds-chart-set`, k = 1/3) et l'ombre d'une donnée (`#ds-chart-shadow`, k = 1/9), que la rainure a remplacée sur les courbes |
+| `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'un trait (`#ds-chart-groove`, k = 1/24 pour 2 px), **la même rainure pour une marque pleine** (`#ds-chart-groove-fill` : même géométrie, encre à 40 %) et le sertissage du graphique entier (`#ds-chart-set`, k = 1/3). `#ds-chart-shadow` est **déprécié** — plus aucune marque ne s'en sert |
 | `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile |
 | `Slides` | les écrans côte à côte : changer de destination fait glisser le ruban à gauche ou à droite, tous restés montés, les autres `inert` |
 | `Spinner`, `Notice`, `Zone`, `Icon` | chargement, message, zone bordée, icônes (Symbols Nerd Font) |
@@ -170,8 +196,12 @@ il n'en règle que le relief. `ChartFilters` se rend une fois par page — ses i
 
 ```tsx
 <ChartFilters />
+{/* un TRAIT : la rainure, encre dense */}
 <Line stroke={VALUE_COLOR} strokeWidth={2} filter="url(#ds-chart-groove)" />
-<Pie data={parts} innerRadius="58%" outerRadius="86%" filter="url(#ds-chart-set)" />
+{/* des MARQUES PLEINES : la même rainure, encre à 40 % */}
+<Bar dataKey="waiting" filter="url(#ds-chart-groove-fill)" />
+<Scatter data={points} filter="url(#ds-chart-groove-fill)" />
+<Pie data={parts} innerRadius="58%" outerRadius="86%" filter="url(#ds-chart-groove-fill)" />
 ```
 
 Les valeurs des filtres sont en unités de tracé, qui sont les pixels de l'écran dans un graphique
