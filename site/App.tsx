@@ -21,6 +21,14 @@ const THEMES: { id: Theme; label: string }[] = [
   { id: 'light', label: 'Clair' },
 ]
 
+type Density = 'system' | 'compact' | 'comfortable'
+
+const DENSITIES: { id: Density; label: string }[] = [
+  { id: 'system', label: 'Du pointeur' },
+  { id: 'compact', label: 'Compacte' },
+  { id: 'comfortable', label: 'Confortable' },
+]
+
 const SECTIONS = [
   { id: 'fondations', title: 'Fondations' },
   { id: 'boutons', title: 'Boutons' },
@@ -166,25 +174,30 @@ function Demo({ id, title, intro, children }: { id: string; title: string; intro
   )
 }
 
-function useTheme(): [Theme, (theme: Theme) => void] {
-  const [theme, setTheme] = useState<Theme>(() => {
+/**
+ * Un réglage de la démo posé sur <html>, où le DS lit le thème ET la densité : `'system'` retire
+ * l'attribut et rend la main à la détection (`prefers-color-scheme`, `pointer: coarse`), toute
+ * autre valeur la force. Mémorisé d'une visite à l'autre quand le stockage est disponible.
+ */
+function useRootSetting<T extends string>(attribute: 'theme' | 'density', storageKey: string): [T, (value: T) => void] {
+  const [value, setValue] = useState<T>(() => {
     try {
-      return (localStorage.getItem('ds-theme') as Theme | null) ?? 'system'
+      return (localStorage.getItem(storageKey) as T | null) ?? ('system' as T)
     } catch {
-      return 'system'
+      return 'system' as T
     }
   })
   useEffect(() => {
     const root = document.documentElement
-    if (theme === 'system') delete root.dataset.theme
-    else root.dataset.theme = theme
+    if (value === 'system') delete root.dataset[attribute]
+    else root.dataset[attribute] = value
     try {
-      localStorage.setItem('ds-theme', theme)
+      localStorage.setItem(storageKey, value)
     } catch {
-      // Sans stockage, le thème vaut pour la visite.
+      // Sans stockage, le réglage vaut pour la visite.
     }
-  }, [theme])
-  return [theme, setTheme]
+  }, [attribute, storageKey, value])
+  return [value, setValue]
 }
 
 function SoundToggle() {
@@ -277,6 +290,7 @@ function ScreenDemo() {
   const [query, setQuery] = useState('')
   const [active, setActive] = useState<'home' | 'search' | 'profile'>('search')
   return (
+    <>
     <div className="screen-frame">
       <Screen>
         <Header>
@@ -296,6 +310,12 @@ function ScreenDemo() {
         </Footer>
       </Screen>
     </div>
+    <p className="legend">
+      Le cadre a la largeur d'un iPhone, pas sa densité : celle-ci se règle à la racine de la page.
+      Pour voir cet écran tel qu'un téléphone le rend, choisissez « Confortable » ci-dessus, ou
+      émulez un appareil tactile.
+    </p>
+    </>
   )
 }
 
@@ -333,7 +353,8 @@ function Platforms() {
 const COLORS = ['--color-bg', '--color-text', '--color-muted', '--color-primary', '--color-danger', '--color-border', '--grad-solar-to', '--grad-fern-to']
 
 export function App() {
-  const [theme, setTheme] = useTheme()
+  const [theme, setTheme] = useRootSetting<Theme>('theme', 'ds-theme')
+  const [density, setDensity] = useRootSetting<Density>('density', 'ds-density')
   return (
     <main className="site">
       <header className="site-head">
@@ -345,6 +366,13 @@ export function App() {
         <div className="site-toolbar" role="group" aria-label="Thème">
           {THEMES.map((option) => (
             <Button key={option.id} size="sm" active={theme === option.id} aria-pressed={theme === option.id} onClick={() => setTheme(option.id)}>
+              {option.label}
+            </Button>
+          ))}
+        </div>
+        <div className="site-toolbar" role="group" aria-label="Densité">
+          {DENSITIES.map((option) => (
+            <Button key={option.id} size="sm" active={density === option.id} aria-pressed={density === option.id} onClick={() => setDensity(option.id)}>
               {option.label}
             </Button>
           ))}
@@ -469,7 +497,7 @@ export function App() {
         <Fields />
       </Demo>
 
-      <Demo id="menu" title="Barre de menu" intro="Un cadre creusé ; une pastille en relief sous la destination courante, qui montre son libellé. D'une destination à l'autre, la pastille s'étire puis se rétracte. Chaque destination est une commande de 50 px.">
+      <Demo id="menu" title="Barre de menu" intro="Un cadre creusé ; une pastille en relief sous la destination courante, qui montre son libellé. D'une destination à l'autre, la pastille s'étire puis se rétracte. Chaque destination est une commande, à la hauteur de l'échelle du support.">
         <Menu />
       </Demo>
 

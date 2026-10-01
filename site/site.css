@@ -120,7 +120,8 @@ code {
   font-size: 12px;
 }
 
-.after-fold {
+.after-fold,
+.legend {
   margin: 12px 0 0;
   color: var(--color-muted);
   font-size: 14px;

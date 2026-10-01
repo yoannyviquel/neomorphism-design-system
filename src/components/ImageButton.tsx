@@ -66,7 +66,7 @@ export function ImageButton({ variant = 'set', name, src, pressed, fold, classNa
     >
       <Shade />
       {variant === 'set' || variant === 'label-set' ? <span className="ds-well">{image}</span> : image}
-      {labelled && <span>{name}</span>}
+      {labelled && <span className="ds-image-name">{name}</span>}
     </button>
   )
 }

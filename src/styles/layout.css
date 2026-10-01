@@ -2,7 +2,8 @@
 
      .ds-screen — l'écran : une colonne, sur toute la hauteur (--app-height si l'app la connaît
                   mieux que 100dvh, cf. l'app installée sur iPhone) ;
-     .ds-header — l'en-tête (une barre de recherche…) : sous la barre d'état, 16 px plus bas ;
+     .ds-header — l'en-tête (une barre de recherche…) : sous la barre d'état, deux marges de cadre
+                  plus bas (16 px au doigt, 8 à la souris) ;
      .ds-body   — le corps, SEUL à défiler : il passe sous l'en-tête et sous le pied, en s'effaçant
                   en fondu (8 px) au lieu d'être coupé net ;
      .ds-footer — le pied (la barre de menu) : au-dessus de la zone sûre du bas d'iPhone ;
@@ -17,7 +18,7 @@
 
 .ds-screen {
   --ds-fade: 8px;
-  --ds-edge-top: calc(16px + env(safe-area-inset-top));
+  --ds-edge-top: calc(2 * var(--control-pad) + env(safe-area-inset-top));
   --ds-edge-x: max(var(--shadow-room), env(safe-area-inset-left), env(safe-area-inset-right));
   position: relative;
   isolation: isolate;

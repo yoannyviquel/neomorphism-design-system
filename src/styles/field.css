@@ -26,7 +26,7 @@
 .ds-input {
   min-width: 0;
   height: var(--control-height);
-  padding: 0 12px;
+  padding: 0 calc(1.5 * var(--control-pad));
   border: none;
   border-radius: var(--control-radius);
   background: var(--color-bg);
@@ -60,7 +60,11 @@
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  padding-right: 40px;
+  /* La place du chevron, DÉDUITE de la sienne : il est posé à --control-radius du bord droit et
+     occupe --control-icon ; reste la respiration avant le texte. Rend les 40 px d'origine au doigt
+     (14 + 20 + 6), et 26 à la souris — un 5 × --control-pad, qui rendait aussi 40, laissait le
+     texte passer 3 px SOUS le chevron à l'échelle compacte (mesuré). */
+  padding-right: calc(var(--control-radius) + var(--control-icon) + 0.75 * var(--control-pad));
   cursor: pointer;
 }
 
@@ -73,10 +77,12 @@
 
 .ds-select-chevron {
   position: absolute;
-  right: 14px;
+  /* Le chevron suit l'arc du coin : il est à la distance du rayon, et son centre tombe donc sur la
+     diagonale du congé. */
+  right: var(--control-radius);
   top: 50%;
   transform: translateY(-50%);
-  font-size: 20px;
+  font-size: var(--control-icon);
   color: color-mix(in srgb, var(--btn-active-color) 50%, transparent);
   pointer-events: none;
 }
@@ -91,11 +97,14 @@
   -webkit-appearance: none;
   position: relative;
   flex: 0 0 auto;
-  width: 22px;
-  height: 22px;
+  width: var(--control-check);
+  height: var(--control-check);
   margin: 0;
   border: none;
-  border-radius: 7px;
+  /* Proportionnel à la case, comme sa coche : les 7 px d'origine valaient 0,318 d'une case de 22.
+     En px fixes, la même valeur aurait fait 44 % d'une case de 16 — une pastille, là où le DS
+     dessine un carré adouci. */
+  border-radius: calc(var(--control-check) * 0.318);
   background: var(--color-bg);
   cursor: pointer;
 }
@@ -105,29 +114,34 @@
   transition: --sink 1s var(--sink-ease);
 }
 
-/* Coche dessinée à l'angle d'une bordure : ni image ni police à charger. */
+/* Coche dessinée à l'angle d'une bordure : ni image ni police à charger. Ses mesures sont celles de
+   la BOÎTE, en pourcentages (le trait, qu'un pourcentage ne sait pas exprimer, en onzième) : elle
+   suit --control-check d'une échelle à l'autre. À 22 px, elles rendent au pixel près le dessin
+   d'origine — 8 / 4 / 4 × 9, trait de 2. */
 .ds-checkbox:checked::after {
   content: '';
   position: absolute;
-  left: 8px;
-  top: 4px;
-  width: 4px;
-  height: 9px;
+  left: 36.364%;
+  top: 18.182%;
+  width: 18.182%;
+  height: 40.909%;
   border: solid var(--color-primary);
-  border-width: 0 2px 2px 0;
+  border-width: 0 calc(var(--control-check) / 11) calc(var(--control-check) / 11) 0;
   transform: rotate(45deg);
   filter: var(--check-glow);
 }
 
-/* AU DOIGT, une case de 22 px se vise mal : les recommandations tactiles demandent 44. Sa zone
-   sensible déborde donc jusque-là par un pseudo-élément — l'aspect ne bouge pas, et le clic sur le
-   débord appartient à la case, comme tout pseudo-élément. `::after` porte déjà la coche : c'est
-   `::before` qui sert ici, sur les seuls pointeurs grossiers (une souris vise juste). */
+/* AU DOIGT, une case se vise mal : les recommandations tactiles demandent 44 px. Sa zone sensible
+   déborde donc jusque-là par un pseudo-élément — l'aspect ne bouge pas, et le clic sur le débord
+   appartient à la case, comme tout pseudo-élément. `::after` porte déjà la coche : c'est `::before`
+   qui sert ici, sur les seuls pointeurs grossiers (une souris vise juste, et à l'échelle compacte
+   la case fait 16 px sans débord). Le débord se DÉDUIT de la taille de la case au lieu d'être
+   calculé de tête : 44 moins la case, de part et d'autre (−11 px pour une case de 22). */
 @media (pointer: coarse) {
   .ds-checkbox::before {
     content: '';
     position: absolute;
-    inset: -11px;
+    inset: calc((44px - var(--control-check)) / -2);
   }
 }
 
