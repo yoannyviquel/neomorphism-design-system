@@ -5,11 +5,13 @@
    composant (MenuBar) en pose les bords, mesurés sur les destinations ; l'ancienne reste allumée
    (.ds-trail) le temps que la pastille la quitte.
    Deux usages, la même mécanique (PillBar) :
-     .ds-menu-bar      — la barre de menu (MenuBar) : chaque destination est une commande, à la
-                         hauteur de l'échelle du support (--control-height) ;
+   Les deux sont des CADRES, et un cadre fait UNE hauteur de commande (--control-height), pas une de
+   plus : posé à côté d'un bouton ou d'une recherche, il s'aligne dessus. Ce qu'il contient est une
+   commande LOGÉE, à --control-inner.
+     .ds-menu-bar      — la barre de menu (MenuBar) : chaque destination est une commande logée ;
      .ds-flat-selector — le sélecteur multiple plat (FlatSelector) : un choix parmi quelques-uns,
-                         dans la hauteur d'une commande (le choix fait --control-inner). Un choix à
-                         libellé seul (.ds-plain) le montre toujours.
+                         logés de la même façon. Un choix à libellé seul (.ds-plain) le montre
+                         toujours.
    L'app place la barre de menu (marges, zone sûre du bas d'iPhone). */
 
 .ds-menu {
@@ -77,6 +79,12 @@
   opacity: 0;
   transform: translateX(-8px);
   font-size: 14px;
+  /* La boîte de ligne vaut le texte, et rien de plus : une destination logée fait --control-inner
+     (17 px à la souris) et l'interligne normal d'un 14 px en réclame 21, qui dépassaient d'un pixel
+     en haut et en bas — rognés par l'`overflow: hidden` de la destination. L'encre, elle, tient
+     largement (13 px mesurés pour le plus haut de nos libellés) : c'est la BOÎTE qu'on ramène à sa
+     taille, pas le texte. Même raison que le `line-height: 1` du glyphe, juste au-dessus. */
+  line-height: 1;
   font-weight: 700;
   white-space: nowrap;
   transition:
@@ -104,14 +112,18 @@
   outline-offset: 2px;
 }
 
-/* La barre de menu : des destinations de la hauteur d'une commande, avec une marge interne qui
-   donne sa respiration au libellé de la destination courante — sans elle, dans une colonne à la
-   largeur de son contenu, il n'y a aucun espace libre à distribuer et le libellé colle aux bords
-   de la pastille puis se fait rogner. Une destination inactive fait donc l'icône + 3 × la marge de
-   cadre : 20 + 24 = 44 px au doigt (cinq tiennent encore sur un téléphone : 5 × 44 + 4 × 8 de
-   gouttière + 16 de marge du cadre = 268 px), 16 + 12 = 28 px à la souris. */
+/* La barre de menu : UN CADRE, donc la hauteur d'une commande et pas une de plus — comme la
+   recherche, et comme le bouton posé à côté d'elle. Ses destinations sont des commandes LOGÉES :
+   elles font --control-inner, par la règle de base ci-dessus, et le cadre leur ajoute ses deux
+   marges pour retomber sur --control-height. Rien à poser ici pour la hauteur ; c'est une règle qui
+   la forçait à --control-height qui gonflait le cadre d'une marge de trop (66 px au lieu de 50).
+   Ne reste que la MARGE INTERNE, qui donne sa respiration au libellé de la destination courante —
+   sans elle, dans une colonne à la largeur de son contenu, il n'y a aucun espace libre à distribuer
+   et le libellé colle aux bords de la pastille puis se fait rogner. Une destination inactive fait
+   donc l'icône + 3 × la marge de cadre : 20 + 24 = 44 px au doigt (cinq tiennent encore sur un
+   téléphone : 5 × 44 + 4 × 8 de gouttière + 16 de marge du cadre = 268 px), 16 + 12 = 28 px à la
+   souris. */
 .ds-menu-bar .ds-menu-item {
-  height: var(--control-height);
   padding: 0 calc(1.5 * var(--control-pad));
 }
 

@@ -52,8 +52,11 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   sous-arbre n'est pas supportée (le `calc()` y serait déjà substitué). La densité est une affaire
   de racine.
 - **Une hauteur** : `--control-height` pour tout — commandes (bouton, lien d'action, bouton-icône,
-  champ, sélecteur, logo et nom), cadres qui en contiennent (recherche, barre de menu, où la
-  commande fait `--control-inner`), tuiles à image (des carrés du même côté).
+  champ, sélecteur, logo et nom), cadres qui en contiennent (recherche, barre de menu), tuiles à
+  image (des carrés du même côté). **Un cadre fait UNE hauteur de commande, pas une de plus** : posé
+  à côté d'un bouton, il s'aligne dessus. Ce qu'il loge, à une marge de cadre de son bord, fait donc
+  `--control-inner` — le champ de la recherche, les destinations du menu, les choix du sélecteur
+  plat, tous à la même hauteur.
 - **Un rayon** : `--control-radius`, celui des boutons-icônes, pour tout ce qui fait la hauteur
   d'une commande (cadres de la recherche et du menu compris) ; rayon − marge de cadre pour ce qui y
   est logé (`--control-radius-inner`), si bien que les arrondis restent parallèles.
