@@ -38,8 +38,11 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   (`ChartFilters`) : la **rainure** d'une courbe, le **sertissage** d'une surface, et l'**ombre
   d'une donnée** que la rainure a remplacée sur les courbes. Une courbe est *entaillée* dans la page
   comme un camembert y est serti — les deux disent la même chose de la même façon, ce que l'ombre,
-  qui posait la courbe par-dessus, ne savait pas faire. Une seule série par graphique : deux
-  rainures qui se croisent se brouillent au croisement.
+  qui posait la courbe par-dessus, ne savait pas faire. **Toutes** les séries d'un graphique, et non
+  la seule principale : le sillon n'est pas une mise en avant mais l'appartenance d'une donnée à la
+  page. Deux rainures qui se croisent se lisent sans peine, la teinte et les tirets les distinguant ;
+  elles ne se confondent un peu que là où deux traits courent côte à côte à moins d'un sillon
+  d'écart.
 - **Le flou d'une rainure vaut la largeur du trait.** Un creux se loge dans une surface, où il range
   ses deux ombres internes ; un trait n'a pas d'intérieur où les ranger, et la rainure les met donc
   dehors, de part et d'autre. Ses deux parois sont alors séparées par le trait lui-même : plus

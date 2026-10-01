@@ -18,7 +18,11 @@
  *     s'éteignent. Le filtre ci-dessous est réglé pour les 2 px d'usage ; une autre largeur demande
  *     son propre filtre, sur la même règle.
  *
- *     Une SEULE série par graphique : deux rainures qui se croisent se brouillent au croisement.
+ *     TOUTES les séries d'un graphique, et non la seule principale : le sillon n'est pas une mise
+ *     en avant, c'est l'appartenance d'une donnée à la page. Une série qui y échapperait se
+ *     donnerait pour autre chose qu'une donnée. Deux rainures qui se croisent se lisent sans peine —
+ *     chacune garde la sienne, et ce sont la teinte et les tirets qui les distinguent ; elles ne se
+ *     confondent un peu que là où deux traits courent côte à côte à moins d'un sillon d'écart.
  *
  *     EN THÈME CLAIR, la paroi éclairée ne se voit pas : la surface étant déjà presque blanche, il
  *     n'y a pas de place au-dessus d'elle. C'est la paroi à l'ombre qui porte seule, et c'est son
