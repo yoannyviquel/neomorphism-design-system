@@ -55,6 +55,22 @@
      paroi large de deux pixels ne retient pas plus un rehaut qu'une ombre. Le rehaut d'une surface,
      à 5 % en sombre, n'y laisserait rien. */
   --neu-data-light: rgba(255, 255, 255, 0.3);
+  /* L'ENCRE D'UNE MARQUE PLEINE — les deux encres ci-dessus, RENDUES À LEUR VALEUR DE SURFACE.
+     --neu-data n'est pas une encre à part : c'est l'encre du relief DIVISÉE par ce qu'un trait perd
+     de son ombre. Une marque pleine — un symbole de nuage, un rectangle de barre, une part de
+     camembert — ne perd rien : elle rend donc le facteur. Sans quoi elle porterait, à géométrie de
+     rainure égale, DEUX FOIS ET DEMIE l'ombre de la courbe d'à côté, et le même graphique se
+     lirait gravé à deux profondeurs.
+     LE FACTEUR EST MESURÉ, et c'est le seul nombre de la règle. Dans Chrome, à rainure constante,
+     l'ombre déposée hors de la marque par pixel de bord, rapportée à celle d'une marque épaisse :
+     1 px → 27 %, 2 px → 40 %, 3 px → 89 %, 6 px → 99 %, 9 px et au-delà → 100 %. Une marque cesse
+     donc de perdre son ombre dès 3 px ; le trait de 2 px du DS en perd les trois cinquièmes, d'où
+     ces deux cinquièmes. Vérifié : à 40 %, une barre de 14 px et une de 30 px déposent exactement
+     l'ombre d'un trait de 2 px (rapport 1,00), dans les DEUX thèmes.
+     Recoupement : en thème clair, --neu-dark / --neu-data vaut 0,38. L'encre du relief d'une
+     surface EST, à deux points près, l'encre d'une donnée à 40 % — le modèle se tient tout seul. */
+  --neu-data-fill: color-mix(in srgb, var(--neu-data) 40%, transparent);
+  --neu-data-fill-light: color-mix(in srgb, var(--neu-data-light) 40%, transparent);
   --neu-raised:
     calc(28px * var(--neu-k)) calc(28px * var(--neu-k)) calc(50px * var(--neu-k)) var(--neu-dark),
     calc(-23px * var(--neu-k)) calc(-23px * var(--neu-k)) calc(45px * var(--neu-k)) var(--neu-light);

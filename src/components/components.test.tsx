@@ -31,7 +31,8 @@ describe('ChartFilters', () => {
     const fusion = container.querySelectorAll('#ds-chart-groove feMergeNode')
     expect(fusion[fusion.length - 1]).toHaveAttribute('in', 'SourceGraphic')
 
-    // L'ombre d'une donnée : le relief à k = 1/9 (28 et 50 réduits).
+    // L'ombre d'une donnée : le relief à k = 1/9 (28 et 50 réduits). Déprécié, mais conservé tant
+    // que des apps le citent : ce test garde l'identifiant vivant et sa géométrie intacte.
     expect(container.querySelector('#ds-chart-shadow feDropShadow')).toHaveAttribute('dx', '3.11')
     expect(container.querySelector('#ds-chart-shadow feDropShadow')).toHaveAttribute('stdDeviation', '2.78')
 
@@ -42,6 +43,28 @@ describe('ChartFilters', () => {
 
     // Le porteur ne s'annonce pas : il n'existe que pour ses définitions.
     expect(container.querySelector('svg')).toHaveAttribute('aria-hidden', 'true')
+  })
+
+  it("entaille une marque pleine à la MÊME profondeur qu'un trait : même géométrie, autre encre", () => {
+    const { container } = render(<ChartFilters />)
+    const geometrie = (id: string, paroi: string) => {
+      const noeud = container.querySelector(`#${id} feDropShadow.${paroi}`)
+      return ['dx', 'dy', 'stdDeviation'].map((a) => noeud?.getAttribute(a))
+    }
+
+    // LE CŒUR DE LA RÈGLE : une rainure n'a qu'une profondeur par graphique. Si ces deux
+    // géométries divergent un jour, une barre et une courbe cesseront de se comparer — c'est
+    // exactement ce que ce test interdit.
+    expect(geometrie('ds-chart-groove-fill', 'ds-groove-dark')).toEqual(geometrie('ds-chart-groove', 'ds-groove-dark'))
+    expect(geometrie('ds-chart-groove-fill', 'ds-groove-light')).toEqual(geometrie('ds-chart-groove', 'ds-groove-light'))
+
+    // Ce qui les distingue est l'ENCRE, et elle vient du thème (chart.css), pas des attributs :
+    // le filtre ne porte aucune couleur, c'est son identifiant qui la lui vaut.
+    expect(container.querySelector('#ds-chart-groove-fill feDropShadow')).not.toHaveAttribute('flood-color')
+
+    // Le tracé passe au-dessus de ses deux parois, ici aussi.
+    const fusion = container.querySelectorAll('#ds-chart-groove-fill feMergeNode')
+    expect(fusion[fusion.length - 1]).toHaveAttribute('in', 'SourceGraphic')
   })
 })
 
