@@ -103,10 +103,15 @@
   outline-offset: 2px;
 }
 
-/* La barre de menu : des destinations de la hauteur d'une commande (leur largeur minimale reste
-   celle d'une commande logée, pour tenir cinq destinations sur un téléphone). */
+/* La barre de menu : des destinations de la hauteur d'une commande, avec une marge interne qui
+   donne sa respiration au libellé de la destination courante — sans elle, dans une colonne à la
+   largeur de son contenu, il n'y a aucun espace libre à distribuer et le libellé colle aux bords
+   de la pastille puis se fait rogner. Une destination inactive fait donc 20 px d'icône + 24 px de
+   marge = 44 px : cinq tiennent encore sur un téléphone (5 × 44 + 4 × 8 de gouttière + 16 de marge
+   du cadre = 268 px). */
 .ds-menu-bar .ds-menu-item {
   height: var(--control-height);
+  padding: 0 12px;
 }
 
 /* Le sélecteur multiple plat : chaque choix à sa largeur (son libellé), aucun ne grandit. */
