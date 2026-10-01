@@ -35,12 +35,31 @@ export const MENU_RELEASE_MS = 420
 const easeOut = (p: number) => 1 - (1 - Math.min(1, Math.max(0, p))) ** 4
 const lerp = (from: number, to: number, p: number) => from + (to - from) * p
 
+/** Les bords d'un choix dans la barre : gauche, haut, droite, bas. */
+type Edges = [number, number, number, number]
+
+const measure = (bar: HTMLElement, index: number): Edges => {
+  const item = bar.querySelectorAll<HTMLElement>('.ds-menu-item')[index]
+  return item ? [item.offsetLeft, item.offsetTop, item.offsetLeft + item.offsetWidth, item.offsetTop + item.offsetHeight] : [0, 0, 0, 0]
+}
+
+const draw = (indicator: HTMLElement, [left, top, right, bottom]: Edges) => {
+  indicator.style.left = `${left}px`
+  indicator.style.top = `${top}px`
+  indicator.style.width = `${Math.max(0, right - left)}px`
+  indicator.style.height = `${Math.max(0, bottom - top)}px`
+}
+
 /**
  * Le cœur de la barre de menu et du sélecteur multiple plat : un cadre creusé, et dedans UNE
  * pastille en relief sous le choix courant. Changer de choix ne fait pas glisser la pastille : elle
  * S'ÉTIRE d'abord jusqu'au nouveau (qui s'allume, et s'élargit s'il montre alors son libellé), puis
  * SE RÉTRACTE depuis l'ancien (qui s'éteint et se resserre). Ses bords suivent ceux des choix,
  * mesurés à chaque image, pendant que ceux-ci changent de largeur.
+ *
+ * Ses QUATRE bords : sur une ligne, le haut et le bas ne bougent pas ; quand les choix se replient
+ * sur plusieurs lignes, la pastille s'étire aussi en hauteur, jusqu'à la ligne du nouveau choix,
+ * puis se rétracte de celle de l'ancien. Les bords qui mènent sont ceux du côté où l'on va.
  */
 export function PillBar<Id extends string>({ items, active, onSelect, className, as: Root, rootProps, itemProps }: PillBarProps<Id>) {
   const at = Math.max(0, items.findIndex((item) => item.id === active))
@@ -52,20 +71,16 @@ export function PillBar<Id extends string>({ items, active, onSelect, className,
   const nav = useRef<HTMLElement>(null)
   const pill = useRef<HTMLSpanElement>(null)
   const from = useRef(at)
-  const edges = useRef<[number, number] | null>(null)
+  const edges = useRef<Edges | null>(null)
 
   useLayoutEffect(() => {
     const bar = nav.current
     const indicator = pill.current
     if (!bar || !indicator) return
-    const rect = (index: number): [number, number] => {
-      const item = bar.querySelectorAll<HTMLElement>('.ds-menu-item')[index]
-      return item ? [item.offsetLeft, item.offsetLeft + item.offsetWidth] : [0, 0]
-    }
-    const place = ([left, right]: [number, number]) => {
-      edges.current = [left, right]
-      indicator.style.left = `${left}px`
-      indicator.style.width = `${Math.max(0, right - left)}px`
+    const rect = (index: number) => measure(bar, index)
+    const place = (next: Edges) => {
+      edges.current = next
+      draw(indicator, next)
     }
 
     const start = from.current
@@ -79,19 +94,25 @@ export function PillBar<Id extends string>({ items, active, onSelect, className,
     } else {
       // Là où la pastille se trouve (au repos sur l'ancienne, ou en plein mouvement si l'on
       // change d'avis), rapporté aux bords de l'ancienne : on suit ceux-ci en gardant l'écart.
-      const [oldLeft, oldRight] = rect(start)
-      const [offLeft, offRight] = [edges.current[0] - oldLeft, edges.current[1] - oldRight]
-      const rightward = at > start
+      const old = rect(start)
+      const off = edges.current.map((edge, side) => edge - old[side])
+      // Le sens se lit sur la position des choix, non sur leur rang : passer du bout d'une ligne au
+      // début de la suivante va vers la gauche, et vers le bas.
+      const target = rect(at)
+      const rightward = target[0] > old[0] || (target[0] === old[0] && at > start)
+      const downward = target[1] > old[1]
       const t0 = performance.now()
       const step = (now: number) => {
         const t = now - t0
         const stretch = easeOut(t / MENU_STRETCH_MS)
         const release = easeOut((t - MENU_RELEASE_DELAY_MS) / MENU_RELEASE_MS)
-        const [aLeft, aRight] = rect(start)
-        const [bLeft, bRight] = rect(at)
+        const [aLeft, aTop, aRight, aBottom] = rect(start)
+        const [bLeft, bTop, bRight, bBottom] = rect(at)
         place([
-          lerp(aLeft + offLeft, bLeft, rightward ? release : stretch),
-          lerp(aRight + offRight, bRight, rightward ? stretch : release),
+          lerp(aLeft + off[0], bLeft, rightward ? release : stretch),
+          lerp(aTop + off[1], bTop, downward ? release : stretch),
+          lerp(aRight + off[2], bRight, rightward ? stretch : release),
+          lerp(aBottom + off[3], bBottom, downward ? stretch : release),
         ])
         if (t < MENU_RELEASE_DELAY_MS + MENU_RELEASE_MS) frame = requestAnimationFrame(step)
       }
@@ -105,17 +126,16 @@ export function PillBar<Id extends string>({ items, active, onSelect, className,
     }
   }, [at])
 
-  // Au repos, la pastille suit la barre si elle change de largeur (rotation, fenêtre).
+  // Au repos, la pastille suit la barre si elle change de largeur (rotation, fenêtre) — et le choix
+  // courant, s'il passe alors d'une ligne à l'autre.
   useLayoutEffect(() => {
     const bar = nav.current
     if (!bar || typeof ResizeObserver !== 'function') return
     const observer = new ResizeObserver(() => {
-      const item = bar.querySelectorAll<HTMLElement>('.ds-menu-item')[from.current]
       const indicator = pill.current
-      if (!item || !indicator || bar.querySelector('.ds-menu-item.ds-trail')) return
-      edges.current = [item.offsetLeft, item.offsetLeft + item.offsetWidth]
-      indicator.style.left = `${item.offsetLeft}px`
-      indicator.style.width = `${item.offsetWidth}px`
+      if (!indicator || bar.querySelector('.ds-menu-item.ds-trail')) return
+      edges.current = measure(bar, from.current)
+      draw(indicator, edges.current)
     })
     observer.observe(bar)
     return () => observer.disconnect()

@@ -8,7 +8,8 @@
      .ds-menu-bar      — la barre de menu (MenuBar) : chaque destination est une commande de 50 px ;
      .ds-flat-selector — le sélecteur multiple plat (FlatSelector) : un choix parmi quelques-uns,
                          dans la hauteur d'une commande (50 px, choix de 34 px). Un choix à libellé
-                         seul (.ds-plain) le montre toujours.
+                         seul (.ds-plain) le montre toujours. Multiligne (.ds-multiline), les choix
+                         se replient : la pastille s'étire alors aussi d'une ligne à l'autre.
    L'app place la barre de menu (marges, zone sûre du bas d'iPhone). */
 
 .ds-menu {
@@ -26,12 +27,13 @@
   box-shadow: var(--neu-inset-lg);
 }
 
+/* Le composant en pose les quatre bords, mesurés sur le choix courant. */
 .ds-menu-indicator {
   position: absolute;
   top: var(--menu-pad);
-  bottom: var(--menu-pad);
   left: var(--menu-pad);
   width: 0;
+  height: 0;
   border-radius: var(--control-radius-inner);
   background: var(--color-bg);
   box-shadow: var(--neu-raised-lg);
@@ -117,6 +119,21 @@
 .ds-flat-selector .ds-menu-item {
   flex: 1 1 auto;
   padding: 0 10px;
+}
+
+/* Multiligne : les choix se replient, 8 px entre les lignes comme entre les choix. Chaque ligne
+   occupe toute la largeur ; la dernière reste à gauche, comme celle d'un texte justifié — un dernier
+   choix seul sur sa ligne ne s'étire pas sur toute la largeur. C'est le rôle de ce butoir : il prend
+   la place libre de la dernière ligne, et sa marge négative annule l'écart qui le précède, pour
+   qu'il ne crée jamais à lui seul une ligne de plus. */
+.ds-flat-selector.ds-multiline {
+  flex-wrap: wrap;
+}
+
+.ds-flat-selector.ds-multiline::after {
+  content: '';
+  flex: 1000 1 0;
+  margin-left: calc(-1 * var(--menu-gap));
 }
 
 /* Un choix à libellé seul : toujours visible. */

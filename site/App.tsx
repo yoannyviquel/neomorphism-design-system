@@ -249,6 +249,28 @@ function RangeDemo() {
   )
 }
 
+const PAYS = [
+  { id: 'DE', label: 'Allemagne' },
+  { id: 'BE', label: 'Belgique' },
+  { id: 'CA', label: 'Canada' },
+  { id: 'ES', label: 'Espagne' },
+  { id: 'US', label: 'États-Unis' },
+  { id: 'FR', label: 'France' },
+  { id: 'IT', label: 'Italie' },
+  { id: 'JP', label: 'Japon' },
+  { id: 'GB', label: 'Royaume-Uni' },
+  { id: 'CH', label: 'Suisse' },
+]
+
+function CountryDemo() {
+  const [country, setCountry] = useState('FR')
+  return (
+    <div style={{ maxWidth: 420 }}>
+      <FlatSelector label="Pays" multiline value={country} onChange={setCountry} options={PAYS} />
+    </div>
+  )
+}
+
 function ScreenDemo() {
   const [query, setQuery] = useState('')
   const [active, setActive] = useState<'home' | 'search' | 'profile'>('search')
@@ -452,9 +474,12 @@ export function App() {
       <Demo
         id="selecteur"
         title="Sélecteur multiple plat"
-        intro="Un choix parmi quelques-uns, côte à côte dans un cadre creusé : la pastille en relief s'étire jusqu'au nouveau choix puis se rétracte de l'ancien, comme la barre de menu, dans la hauteur d'une commande."
+        intro="Un choix parmi quelques-uns, côte à côte dans un cadre creusé : la pastille en relief s'étire jusqu'au nouveau choix puis se rétracte de l'ancien, comme la barre de menu, dans la hauteur d'une commande. Multiligne, les choix se replient sur autant de lignes qu'il en faut, et la pastille s'étire d'une ligne à l'autre : tous restent visibles, un toucher suffit, là où une liste déroulante en cache une douzaine."
       >
+        <h3>Sur une ligne</h3>
         <RangeDemo />
+        <h3>Multiligne</h3>
+        <CountryDemo />
       </Demo>
 
       <Demo

@@ -289,5 +289,28 @@ describe('FlatSelector', () => {
     expect(screen.getByRole('radio', { name: '7j' })).toHaveClass('ds-plain')
     await user.click(screen.getByRole('radio', { name: '7j' }))
     expect(change).toHaveBeenCalledWith('week')
+    // Sur une ligne par défaut.
+    expect(group).not.toHaveClass('ds-multiline')
+  })
+
+  it('multiligne, replie ses choix et reste un groupe de boutons radio', async () => {
+    const change = vi.fn()
+    const user = userEvent.setup()
+    const pays = ['Allemagne', 'Belgique', 'Canada', 'Espagne', 'France', 'Italie', 'Japon', 'Suisse']
+    render(
+      <FlatSelector
+        label="Pays"
+        multiline
+        value="France"
+        onChange={change}
+        options={pays.map((name) => ({ id: name, label: name }))}
+      />,
+    )
+    const group = screen.getByRole('radiogroup', { name: 'Pays' })
+    expect(group).toHaveClass('ds-menu', 'ds-flat-selector', 'ds-multiline')
+    expect(screen.getAllByRole('radio')).toHaveLength(pays.length)
+    expect(screen.getByRole('radio', { name: 'France' })).toHaveAttribute('aria-checked', 'true')
+    await user.click(screen.getByRole('radio', { name: 'Japon' }))
+    expect(change).toHaveBeenCalledWith('Japon')
   })
 })
