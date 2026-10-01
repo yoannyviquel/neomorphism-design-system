@@ -5,17 +5,18 @@
    composant (MenuBar) en pose les bords, mesurés sur les destinations ; l'ancienne reste allumée
    (.ds-trail) le temps que la pastille la quitte.
    Deux usages, la même mécanique (PillBar) :
-     .ds-menu-bar      — la barre de menu (MenuBar) : chaque destination est une commande de 50 px ;
+     .ds-menu-bar      — la barre de menu (MenuBar) : chaque destination est une commande, à la
+                         hauteur de l'échelle du support (--control-height) ;
      .ds-flat-selector — le sélecteur multiple plat (FlatSelector) : un choix parmi quelques-uns,
-                         dans la hauteur d'une commande (50 px, choix de 34 px). Un choix à libellé
-                         seul (.ds-plain) le montre toujours.
+                         dans la hauteur d'une commande (le choix fait --control-inner). Un choix à
+                         libellé seul (.ds-plain) le montre toujours.
    L'app place la barre de menu (marges, zone sûre du bas d'iPhone). */
 
 .ds-menu {
   /* Ce que la destination courante prend de largeur en plus (0,8 = 1,8 fois une autre). */
   --menu-grow: 0.8;
-  --menu-gap: 8px;
-  --menu-pad: 8px;
+  --menu-gap: var(--control-pad);
+  --menu-pad: var(--control-pad);
   position: relative;
   display: flex;
   align-items: center;
@@ -64,8 +65,8 @@
 
 .ds-menu-item .nf {
   flex: 0 0 auto;
-  width: 20px;
-  font-size: 20px;
+  width: var(--control-icon);
+  font-size: var(--control-icon);
   line-height: 1;
   text-align: center;
 }
@@ -93,7 +94,7 @@
 
 .ds-menu-item.ds-active .ds-menu-label {
   max-width: 120px;
-  margin-left: 8px;
+  margin-left: var(--control-pad);
   opacity: 1;
   transform: translateX(0);
 }
@@ -106,12 +107,12 @@
 /* La barre de menu : des destinations de la hauteur d'une commande, avec une marge interne qui
    donne sa respiration au libellé de la destination courante — sans elle, dans une colonne à la
    largeur de son contenu, il n'y a aucun espace libre à distribuer et le libellé colle aux bords
-   de la pastille puis se fait rogner. Une destination inactive fait donc 20 px d'icône + 24 px de
-   marge = 44 px : cinq tiennent encore sur un téléphone (5 × 44 + 4 × 8 de gouttière + 16 de marge
-   du cadre = 268 px). */
+   de la pastille puis se fait rogner. Une destination inactive fait donc l'icône + 3 × la marge de
+   cadre : 20 + 24 = 44 px au doigt (cinq tiennent encore sur un téléphone : 5 × 44 + 4 × 8 de
+   gouttière + 16 de marge du cadre = 268 px), 16 + 12 = 28 px à la souris. */
 .ds-menu-bar .ds-menu-item {
   height: var(--control-height);
-  padding: 0 12px;
+  padding: 0 calc(1.5 * var(--control-pad));
 }
 
 /* Le sélecteur multiple plat : chaque choix à sa largeur (son libellé), aucun ne grandit. */

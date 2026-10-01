@@ -13,22 +13,55 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   liste, message) n'a qu'une bordure fine.
 - **Une échelle d'ombres.** Toutes les ombres réduisent la maquette (shadow 2 en relief, shadow 4 en
   creux) d'un facteur k : **1/3** pour les commandes ordinaires, **1/2** pour les grandes (barre de
-  menu, recherche), **1/9** pour les creux fixes (le chaton d'un bouton serti). Marge autour d'une
-  commande : **72 px × k** (24 px, 36 px). Un élément enfoncé garde son rebord : son ombre en relief.
+  menu, recherche), **1/9** pour les creux fixes (le chaton d'un bouton serti) — **multipliés par
+  `--neu-density`**, l'amplitude du relief de l'échelle en cours (1 au doigt, 1/2 à la souris). k
+  n'a jamais dépendu que de la taille de l'élément : une commande deux fois plus petite ne porte pas
+  l'ombre d'une grande, et la règle n'est pas cassée, elle est précisée. Marge autour d'une
+  commande : **72 px × k**, soit 24 / 36 px au doigt et **12 / 18 px à la souris**. Un élément
+  enfoncé garde son rebord : son ombre en relief.
 - **Le rebond.** Les boutons s'enfoncent et se relâchent avec la courbe réglée dans l'atelier « Pop
   du bouton » (`--sink-ease`) : dépassement ×1,8, creux, second rebond, posé, en 1 s. Les
   animations passent par des nombres enregistrés (`@property --sink`, `--pop`, `--menu-at`) :
   Safari n'interpole pas des listes d'ombres écrites en variables.
-- **Une hauteur** : 50 px pour tout — commandes (bouton, lien d'action, bouton-icône, champ,
-  sélecteur, logo et nom), cadres qui en contiennent (recherche, barre de menu, où la commande fait
-  34 px à 8 px de marge), tuiles à image (carrés de 50) — `--control-height`, `--control-height-lg`,
-  `--control-inner`.
-- **Un rayon** : 14 px, celui des boutons-icônes, pour tout ce qui fait la hauteur d'une commande
-  (cadres de la recherche et du menu compris) ; 6 px pour ce qui y est logé, à 8 px du bord
-  (`--control-radius`, `--control-radius-inner`).
-- **Une cible tactile fait 44 px.** Les commandes y sont par leur hauteur (50 px) ; la case à
-  cocher, seule exception à 22 px, y arrive par un débord invisible de sa zone sensible, sur les
-  seuls pointeurs grossiers (`@media (pointer: coarse)`).
+- **Deux échelles, choisies par le POINTEUR.** Le DS a été dessiné pour le pouce ; à la souris, qui
+  vise au pixel, la même maquette est deux fois trop grosse. L'échelle **compacte** (commande de
+  **25 px**) est donc le **défaut**, et l'échelle **confortable** (**50 px**, la maquette au pixel
+  près) revient sur `@media (pointer: coarse)` — doigt, stylet. Pas de `resolution` / `dppx` : un
+  écran Retina est un écran de bureau, et se vise à la souris. `data-density="compact"` ou
+  `"comfortable"` sur `<html>` force l'une ou l'autre, comme `data-theme` force le thème.
+
+  Six jetons littéraux par échelle, **tout le reste en découle** :
+
+  | jeton | confortable (doigt) | compact (souris) |
+  |---|---|---|
+  | `--control-height` (= `-lg`) | 50 | 25 |
+  | `--control-pad` — la marge d'un cadre | 8 | 4 |
+  | `--control-icon` — le glyphe d'une commande | 20 | 16 |
+  | `--control-check` — la case à cocher | 22 | 16 |
+  | `--control-radius` | 14 | 7 |
+  | `--neu-density` — l'amplitude du relief | 1 | 0,5 |
+  | *dérivé* `--control-inner` (hauteur − 2 marges) | 34 | 17 |
+  | *dérivé* `--control-radius-inner` (rayon − marge) | 6 | 3 |
+  | *dérivé* `--shadow-room` / `-lg` | 24 / 36 | 12 / 18 |
+
+  **La typographie ne bouge pas** : 14 / 15 / 16 px restent lisibles à 60 cm, et c'est pourquoi
+  l'échelle n'est pas un simple multiplicateur. Les icônes et la case ne sont pas divisées par deux
+  non plus (16, et non 10 ou 11) : ce sont des glyphes, ils vivent avec un texte resté à 14 px.
+
+  Les jetons dérivés sont déclarés **sur le même élément** que les primitives : une densité par
+  sous-arbre n'est pas supportée (le `calc()` y serait déjà substitué). La densité est une affaire
+  de racine.
+- **Une hauteur** : `--control-height` pour tout — commandes (bouton, lien d'action, bouton-icône,
+  champ, sélecteur, logo et nom), cadres qui en contiennent (recherche, barre de menu, où la
+  commande fait `--control-inner`), tuiles à image (des carrés du même côté).
+- **Un rayon** : `--control-radius`, celui des boutons-icônes, pour tout ce qui fait la hauteur
+  d'une commande (cadres de la recherche et du menu compris) ; rayon − marge de cadre pour ce qui y
+  est logé (`--control-radius-inner`), si bien que les arrondis restent parallèles.
+- **Une cible tactile fait 44 px — sur pointeur grossier**, et c'est là que la règle s'applique. Les
+  commandes y sont par leur hauteur (50 px) ; la case à cocher, seule exception à 22 px, y arrive
+  par un débord invisible de sa zone sensible, déduit de sa taille (`(44px - --control-check) / -2`)
+  et posé sous `@media (pointer: coarse)`. À la souris, les commandes font 25 px et la case 16, sans
+  débord : un curseur vise juste.
 - **Un toucher bref se voit** : le bouton reste enfoncé jusqu'au premier sommet du rebond (280 ms),
   puis se relâche avec le sien (`usePress`, classe `ds-pressed`).
 - **L'ombre d'un bouton est un élément** (`<span class="ds-shade">`, rendu par les composants ;
@@ -101,6 +134,13 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 
 Le build d'une app (Cloudflare, CI) a besoin du même `NODE_AUTH_TOKEN` dans ses variables.
 
+**L'app n'a rien à faire pour la densité** : le DS lit le pointeur. Sur **téléphone**, le rendu est
+**identique au pixel** à celui d'avant (`pointer: coarse` ⇒ échelle confortable) ; ce qui change,
+c'est l'aperçu sur un **navigateur de bureau**, qui passe à l'échelle compacte — c'est l'objet de la
+version. Une app qui veut l'ancien rendu partout pose `data-density="comfortable"` sur `<html>`, une
+app de bureau tactile (borne, écran de salle) peut au contraire forcer `"compact"` ; l'attribut a
+toujours le dernier mot sur la détection.
+
 Les **graphiques** font exception à la règle « un composant, un rendu » : le DS n'en dessine aucun,
 il n'en règle que le relief. `ChartFilters` se rend une fois par page — ses identifiants sont fixes
 —, puis n'importe quel SVG les cite, recharts compris :
@@ -126,7 +166,10 @@ npm run build        # dist/index.js, dist/types, dist/styles
 ## Page de démonstration
 
 `site/` est une app Vite toute simple, bâtie sur les composants du paquet : chaque famille en
-situation, avec un sélecteur de thème (appareil, sombre, clair). Pas de Storybook : sur iPhone,
+situation, avec un sélecteur de thème (appareil, sombre, clair) et un sélecteur de **densité**
+(pointeur, compacte, confortable). Attention, `pointer: coarse` **ne se déclenche pas** en
+redimensionnant la fenêtre : il faut l'émulation d'appareil de DevTools — ou le sélecteur. Pas de
+Storybook : sur iPhone,
 Safari n'y jouait pas les animations (rebond, pop), alors qu'une page ordinaire les joue, comme
 les apps.
 

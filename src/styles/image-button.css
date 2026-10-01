@@ -35,7 +35,7 @@
   align-items: center;
   gap: 10px;
   height: var(--control-height);
-  padding: 0 16px 0 8px;
+  padding: 0 calc(2 * var(--control-pad)) 0 var(--control-pad);
   font-size: 14px;
 }
 
@@ -58,7 +58,7 @@
 .ds-image-chip .ds-image {
   width: calc(var(--control-height-lg) * 0.567);
   height: calc(var(--control-height-lg) * 0.567);
-  border-radius: 9px;
+  border-radius: var(--control-radius-inner);
 }
 
 .ds-image-label .ds-image {
@@ -67,10 +67,10 @@
   border-radius: var(--control-radius-inner);
 }
 
-/* Logo serti et nom : le logo remplit un chaton de la hauteur d'une commande logée (34 px), à
-   8 px du bord, sous l'ombre du creux. */
+/* Logo serti et nom : le logo remplit un chaton de la hauteur d'une commande logée
+   (--control-inner), à une marge de cadre du bord, sous l'ombre du creux. */
 .ds-image-label-set {
-  padding-left: 8px;
+  padding-left: var(--control-pad);
 }
 
 .ds-image-label-set .ds-well {
@@ -102,7 +102,7 @@
   place-items: center;
   width: calc(var(--control-height-lg) * 2 / 3);
   height: calc(var(--control-height-lg) * 2 / 3);
-  border-radius: 10px;
+  border-radius: var(--control-radius);
 }
 
 .ds-well::after {

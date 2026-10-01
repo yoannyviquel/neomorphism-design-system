@@ -25,8 +25,9 @@ export interface MenuBarProps<Id extends string> {
 /**
  * Barre de menu : les destinations de l'app, des icônes ; celle où l'on est s'étire pour montrer
  * son libellé, sous la pastille qui s'étire puis se rétracte d'une destination à l'autre (cf.
- * PillBar). Chaque destination est une commande de 50 px, la hauteur de toutes les commandes du
- * DS. L'app la place (marges, zone sûre) — dans un Footer.
+ * PillBar). Chaque destination est une commande à --control-height, la hauteur de toutes les
+ * commandes du DS (50 px au doigt, 25 à la souris). L'app la place (marges, zone sûre) — dans un
+ * Footer.
  */
 export function MenuBar<Id extends string>({ items, active, onSelect, label, className }: MenuBarProps<Id>) {
   return (
