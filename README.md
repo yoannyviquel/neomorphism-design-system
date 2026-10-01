@@ -164,7 +164,7 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `Input`, `Select`, `Checkbox` | champs, en relief au repos, creusés engagés |
 | `SearchField` | champ de recherche, loupe qui s'allume, bouton Effacer |
 | `MenuBar` | barre de menu creusée, pastille qui glisse sous la destination courante — *où l'on est dans l'app* |
-| `FlatSelector` | **le sous-menu du DS** : un choix parmi quelques-uns, même cadre et même pastille — *ce qu'on regarde là où l'on est*. Toute bascule entre contenus passe par lui |
+| `FlatSelector` | **le sous-menu du DS** : un choix parmi quelques-uns, même cadre et même pastille — *ce qu'on regarde là où l'on est*. Toute bascule entre contenus passe par lui ; `multiline`, ses choix se replient sur plusieurs lignes et remplacent une liste déroulante |
 | `ButtonBar` | rangée de commandes répartie sur toute la largeur (l'écart suit le conteneur, pas une constante), qui se replie quand la place manque |
 | `FoldingGrid` | grille repliée à une ligne, dépliée ligne par ligne avec le pop des boutons |
 | `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'un trait (`#ds-chart-groove`, k = 1/24 pour 2 px), **la même rainure pour une marque pleine** (`#ds-chart-groove-fill` : même géométrie, encre à 40 %) et le sertissage du graphique entier (`#ds-chart-set`, k = 1/3). `#ds-chart-shadow` est **déprécié** — plus aucune marque ne s'en sert |
