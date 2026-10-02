@@ -294,4 +294,6 @@ git push --follow-tags
 ```
 
 Le workflow « Publier » construit et publie le tag sur GitHub Packages. Il se lance aussi à la main
-(onglet Actions, « Run workflow ») et publie alors la version inscrite dans `package.json`.
+(onglet Actions, « Run workflow ») : il publie alors la version inscrite dans `package.json`, puis
+pose le tag `v<version>` s'il manque. Le champ « commit » vise un commit antérieur ; une version
+déjà publiée n'est pas republiée, seul son tag est posé.
