@@ -59,6 +59,14 @@
   content: '\f012d';
 }
 
+.nf-md-checkbox_blank_outline::before {
+  content: '\f0131';
+}
+
+.nf-md-checkbox_marked_outline::before {
+  content: '\f0135';
+}
+
 .nf-md-chevron_down::before {
   content: '\f0140';
 }

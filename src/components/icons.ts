@@ -11,6 +11,8 @@ export const ICONS = [
   'chart_line',
   'check',
   'check_all',
+  'checkbox_blank_outline',
+  'checkbox_marked_outline',
   'chevron_down',
   'close',
   'cloud',
