@@ -19,9 +19,28 @@ export interface FoldStep {
   at: number
 }
 
-/** Le dépli, une ligne par étape : les poussées s'enchaînent, sans attendre la fin des pops. */
-export function foldSchedule(extraRows: number): FoldStep[] {
-  return Array.from({ length: Math.max(0, extraRows) }, (_, i) => ({ rows: i + 1, at: i * PUSH_S }))
+/**
+ * Le dépli, une ligne par étape : les poussées s'enchaînent, sans attendre la fin des pops.
+ * `push` est la durée d'une poussée — celle de la grille par défaut ; la section dépliante la
+ * raccourcit quand elle a beaucoup de lignes (cf. foldPush).
+ */
+export function foldSchedule(extraRows: number, push = PUSH_S): FoldStep[] {
+  return Array.from({ length: Math.max(0, extraRows) }, (_, i) => ({ rows: i + 1, at: i * push }))
+}
+
+/**
+ * Durée totale des poussées au-delà de laquelle elles se resserrent, en secondes : quatre lignes
+ * de grille. Une grille a deux ou trois lignes à déplier ; un groupe de réglages en a trente, et
+ * trente poussées de 0,3 s feraient neuf secondes d'attente. Au-delà de ce plafond, les poussées
+ * se partagent le temps — le dépli reste ligne par ligne, il va plus vite.
+ */
+export const FOLD_MAX_S = 4 * PUSH_S
+/** En deçà, une poussée ne se voit plus comme une poussée. */
+export const PUSH_MIN_S = 0.04
+
+/** Durée d'une poussée pour `rows` lignes : celle de la grille, resserrée au-delà du plafond. */
+export function foldPush(rows: number): number {
+  return rows <= 0 ? PUSH_S : Math.max(PUSH_MIN_S, Math.min(PUSH_S, FOLD_MAX_S / rows))
 }
 
 /** Marge avant de recouvrir une ligne repartie au fond, en secondes. */
@@ -40,12 +59,12 @@ export interface FoldBackStep {
  * rejouent leur pop à rebours et retournent au fond ; le cadre ne la recouvre qu'ensuite. Les pops
  * inversés partent en cascade, une ligne toutes les PUSH_S, comme au dépli.
  */
-export function foldBackSchedule(extraRows: number): FoldBackStep[] {
+export function foldBackSchedule(extraRows: number, push = PUSH_S): FoldBackStep[] {
   return Array.from({ length: Math.max(0, extraRows) }, (_, i) => ({
     rows: extraRows - i - 1,
-    unpopAt: i * PUSH_S,
+    unpopAt: i * push,
     // Une marge : l'animation part à l'image suivant le changement de classe ; sans elle, le cadre
     // recouvrirait des boutons pas tout à fait au fond.
-    pullAt: i * PUSH_S + POP_S + SETTLE_S,
+    pullAt: i * push + POP_S + SETTLE_S,
   }))
 }

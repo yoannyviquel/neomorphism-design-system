@@ -70,27 +70,33 @@ describe('ChartFilters', () => {
 })
 
 describe('Disclosure', () => {
-  it('ouvre et referme, et son en-tête porte le relief de son état', async () => {
+  it("se déplie par le chevron de la grille, sous l'intitulé, enfoncé tant que tout est affiché", async () => {
     render(
       <Disclosure title="Portefeuille" hint="D'où viennent les prix">
         <button type="button">Un réglage</button>
       </Disclosure>,
     )
-    const entete = screen.getByRole('button', { name: /Portefeuille/ })
+    // L'intitulé est un titre, pas une commande : la seule commande est le chevron.
+    expect(screen.getByRole('heading', { name: 'Portefeuille' })).toBeInTheDocument()
+    const chevron = screen.getByRole('button', { name: 'Portefeuille' })
+    expect(chevron).toHaveClass('ds-fold-toggle')
 
-    // Repliée : l'en-tête est en relief (pas `ds-active`) et le contenu est hors d'atteinte.
-    expect(entete).toHaveAttribute('aria-expanded', 'false')
-    expect(entete).not.toHaveClass('ds-active')
-    const corps = document.getElementById(entete.getAttribute('aria-controls') ?? '')
-    expect(corps).toHaveAttribute('inert')
+    // Repliée : le chevron en relief, le contenu hors d'atteinte.
+    expect(chevron).toHaveAttribute('aria-expanded', 'false')
+    expect(chevron).not.toHaveClass('ds-active')
+    const contenu = document.getElementById(chevron.getAttribute('aria-controls') ?? '')
+    expect(contenu).toHaveAttribute('inert')
 
-    await userEvent.click(entete)
+    await userEvent.click(chevron)
 
-    // Dépliée : l'en-tête est ENFONCÉ, parce que déplié est son état actif.
-    expect(entete).toHaveAttribute('aria-expanded', 'true')
-    expect(entete).toHaveClass('ds-active')
-    expect(corps).not.toHaveAttribute('inert')
+    // Dépliée : le chevron ENFONCÉ, comme celui de la grille.
+    expect(chevron).toHaveAttribute('aria-expanded', 'true')
+    expect(chevron).toHaveClass('ds-active')
+    expect(contenu).not.toHaveAttribute('inert')
     expect(screen.getByRole('button', { name: 'Un réglage' })).toBeInTheDocument()
+
+    await userEvent.click(chevron)
+    expect(chevron).toHaveAttribute('aria-expanded', 'false')
   })
 
   it("s'ouvre d'emblée quand on le demande", () => {
@@ -99,7 +105,7 @@ describe('Disclosure', () => {
         <p>Le bien</p>
       </Disclosure>,
     )
-    expect(screen.getByRole('button', { name: /Immobilier/ })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('button', { name: 'Immobilier' })).toHaveAttribute('aria-expanded', 'true')
   })
 })
 

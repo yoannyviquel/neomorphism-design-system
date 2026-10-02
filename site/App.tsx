@@ -234,7 +234,7 @@ function ImageRow({ variant }: { variant: ImageButtonVariant }) {
 function Depliantes() {
   return (
     <div className="stack">
-      <Disclosure title="Portefeuille" hint="L'origine des prix et la famille des supports" icon="chart_donut" defaultOpen>
+      <Disclosure title="Portefeuille" hint="L'origine des prix et la famille des supports" icon="chart_donut">
         <div className="stack">
           <Select
             aria-label="Origine des prix"
@@ -244,12 +244,21 @@ function Depliantes() {
               { value: 'releve', label: 'VL de mes relevés' },
             ]}
           />
+          <p style={{ margin: 0, color: 'var(--color-muted)', fontSize: 13 }}>Plus frais, mais un cours de bourse n'est pas la valeur de part retenue par votre contrat.</p>
+          <div className="row">
+            <Button>Actions</Button>
+            <Button>Obligations</Button>
+            <Button>Fonds euros</Button>
+          </div>
         </div>
       </Disclosure>
       <Disclosure title="Immobilier" hint="Le bien, les travaux, le prêt et le marché" icon="home">
         <div className="stack">
           <Input aria-label="Prix d'achat" defaultValue="245 000 €" />
           <Input aria-label="Frais de notaire" defaultValue="18 400 €" />
+          <label className="row" style={{ gap: 12 }}>
+            <Checkbox defaultChecked /> Résidence principale
+          </label>
         </div>
       </Disclosure>
       <Disclosure title="Mes données" hint="Sauvegarde, restauration, effacement" icon="cloud">
@@ -549,7 +558,7 @@ export function App() {
       <Demo
         id="depliantes"
         title="Sections dépliantes"
-        intro="Un long formulaire se range en groupes, un groupe par section. L'en-tête est un bouton, et la règle de relief vaut : en relief replié, enfoncé déplié, puisque déplié est son état actif — on voit donc d'un coup d'œil ce qui est ouvert. L'indication sous l'intitulé dit ce que le groupe règle, pour décider sans ouvrir. Le contenu n'est pas une zone : c'est l'en-tête enfoncé au-dessus qui dit à qui il appartient."
+        intro="Le système de la grille dépliante, pour un contenu quelconque : un intitulé, le contenu replié, et dessous le chevron de la grille, enfoncé tant que tout est affiché. Le dépli va ligne par ligne — un titre, un champ avec son libellé, une rangée de commandes côte à côte — et chaque commande poppe sitôt sa place faite. Le repli est le dépli à l'envers, depuis le bas."
       >
         <Depliantes />
       </Demo>

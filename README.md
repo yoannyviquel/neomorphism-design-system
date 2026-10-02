@@ -151,12 +151,17 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 - **Un filtre se cite en attribut, jamais par une règle CSS.** WebKit résout le fragment d'un
   `url(#…)` écrit dans une feuille séparée contre l'URL de la feuille et non contre celle du
   document : le filtre disparaît alors sans la moindre erreur.
-- **Un long réglage se range en groupes, pas en liste.** Une `Disclosure` par groupe : son en-tête
-  est un bouton, donc en relief replié et enfoncé déplié — déplié *est* son état actif, et la règle
-  de relief n'a pas d'exception à faire. On voit d'un coup d'œil ce qui est ouvert. L'indication
-  sous l'intitulé dit ce que le groupe règle, pour décider sans ouvrir. Le contenu n'est pas une
-  zone : ni bordure ni cadre, c'est l'en-tête enfoncé au-dessus qui dit à qui il appartient. Replié,
-  il est `inert` — une commande qu'on atteint à la tabulation sans la voir est pire qu'absente.
+- **Ce qui se déplie se déplie comme la grille.** Une `Disclosure` reprend le système de la
+  `FoldingGrid` pour un contenu quelconque : un intitulé toujours visible, le contenu replié, et
+  dessous le même chevron, enfoncé tant que tout est affiché. Le dépli va ligne par ligne — le
+  cadre pousse la page pour faire la place d'une ligne, puis ses commandes poppent, pendant que la
+  suivante se découvre —, et le repli est le dépli à l'envers, depuis le bas. Les lignes d'un
+  formulaire ne sont pas données comme celles d'une grille : elles sont relevées dans la mise en
+  page (`foldLines`) — un titre, un champ avec son libellé, une note, ou une rangée de commandes
+  côte à côte, qui poppent ensemble. Un texte se découvre sans popper : seul ce qui s'actionne a
+  un relief à reprendre. Au-delà de quatre lignes, les poussées se resserrent pour que le dépli
+  entier tienne dans le temps de quatre lignes de grille (`foldPush`) : trente poussées de 0,3 s
+  feraient neuf secondes.
 - **Les images ne remplacent jamais la surface d'un bouton.** Elles en sont le contenu, posées
   au-dessus de ses ombres : pastille, sertie, logo et nom, ou logo serti et nom.
 
@@ -177,7 +182,7 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'un trait (`#ds-chart-groove`, k = 1/24 pour 2 px), **la même rainure pour une marque pleine** (`#ds-chart-groove-fill` : même géométrie, encre à 40 %) et le sertissage du graphique entier (`#ds-chart-set`, k = 1/3). `#ds-chart-shadow` est **déprécié** — plus aucune marque ne s'en sert |
 | `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile — **et qui ne coupe que s'il défile** : quand il tient dans sa place, le corps laisse déborder les ombres de ses boutons, l'en-tête et le pied rendent leur fond |
 =======
-| `Disclosure` | section dépliante : en-tête en relief replié, enfoncé déplié ; contenu `inert` tant qu'il est replié |
+| `Disclosure` | section dépliante, sur le système de la grille : un intitulé, le chevron dessous, un dépli ligne par ligne où chaque commande poppe |
 | `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'une courbe (`#ds-chart-groove`, k = 1/24 pour un trait de 2 px), le sertissage d'une surface (`#ds-chart-set`, k = 1/3) et l'ombre d'une donnée (`#ds-chart-shadow`, k = 1/9), que la rainure a remplacée sur les courbes |
 | `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile |
 >>>>>>> 2ae9de1 (Sections dépliantes : un long réglage se range en groupes (0.4.0))

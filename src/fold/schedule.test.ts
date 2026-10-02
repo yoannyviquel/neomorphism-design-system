@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { foldBackSchedule, foldSchedule, POP_S, PUSH_S, SETTLE_S } from './schedule'
+import { FOLD_MAX_S, foldBackSchedule, foldPush, foldSchedule, POP_S, PUSH_MIN_S, PUSH_S, SETTLE_S } from './schedule'
 
 describe('foldSchedule', () => {
   it('déplie une ligne par étape, tout du long, les poussées enchaînées sans attendre les pops', () => {
@@ -23,5 +23,24 @@ describe('foldBackSchedule', () => {
     const back = foldBackSchedule(5)
     const forward = foldSchedule(5)
     expect(back[back.length - 1].pullAt + PUSH_S).toBeCloseTo(forward[forward.length - 1].at + PUSH_S + POP_S + SETTLE_S)
+  })
+})
+
+describe('foldPush', () => {
+  it("garde la poussée de la grille tant que le dépli tient en quatre lignes, et la resserre au-delà", () => {
+    expect(foldPush(1)).toBeCloseTo(PUSH_S)
+    expect(foldPush(4)).toBeCloseTo(PUSH_S)
+    // Huit lignes : le temps de quatre, partagé.
+    expect(foldPush(8)).toBeCloseTo(FOLD_MAX_S / 8)
+    expect(8 * foldPush(8)).toBeCloseTo(FOLD_MAX_S)
+    // Jamais au point qu'une poussée ne se voie plus.
+    expect(foldPush(500)).toBeCloseTo(PUSH_MIN_S)
+  })
+
+  it('règle le rythme du dépli et du repli quand on la leur passe', () => {
+    const push = foldPush(10)
+    expect(foldSchedule(10, push)[9].at).toBeCloseTo(9 * push)
+    expect(foldBackSchedule(10, push)[1]).toMatchObject({ rows: 8 })
+    expect(foldBackSchedule(10, push)[1].unpopAt).toBeCloseTo(push)
   })
 })

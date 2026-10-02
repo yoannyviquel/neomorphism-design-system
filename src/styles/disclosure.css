@@ -1,12 +1,9 @@
-/* Section dépliante (Disclosure).
-   L'en-tête est un bouton du DS : la règle de relief vaut ici comme ailleurs — en relief replié,
-   enfoncé déplié, puisque déplié est son état actif. Le contenu, lui, n'est pas une zone : ni
-   bordure ni cadre, c'est l'en-tête enfoncé juste au-dessus qui dit à qui il appartient. */
+/* Section dépliante (Disclosure) : le système de la grille dépliante, appliqué à un contenu
+   quelconque. Un intitulé ; dessous, le cadre qui se déplie ligne par ligne ; dessous encore, le
+   chevron de la grille (.ds-fold-toggle), enfoncé tant que tout est affiché. Les commandes d'une
+   ligne poppent une fois sa place faite, du pop de la grille (ds-pop, fold.css). */
 
 .ds-disclosure {
-  /* La même poussée que la grille dépliante : une section qui s'ouvre et une ligne qui apparaît
-     écartent la page du même geste. */
-  --fold-duration: 0.3s;
   --fold-ease: cubic-bezier(0.45, 0, 0.55, 1);
   display: block;
 }
@@ -17,77 +14,118 @@
   }
 }
 
-/* Un en-tête n'est pas une commande ordinaire : il tient toute la largeur, son libellé est à
-   gauche et peut passer à la ligne, et sa hauteur suit son contenu sans descendre sous la cible
-   tactile. */
-.ds-disclosure-head.ds-button {
+/* L'intitulé n'est pas une commande : c'est le chevron qui l'est. Il se lit donc comme un titre,
+   sans relief, l'icône de sa destination devant. */
+.ds-disclosure-heading {
   display: flex;
-  width: 100%;
-  min-height: var(--control-height);
-  height: auto;
-  padding: 11px 16px;
+  align-items: flex-start;
   gap: 12px;
-  justify-content: flex-start;
-  text-align: left;
-  white-space: normal;
-}
-
-.ds-disclosure-titles {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.ds-disclosure-title {
-  font-size: 15px;
-  font-weight: 700;
-}
-
-/* L'indication se lit sans ouvrir : elle dit ce que le groupe règle, donc s'il faut l'ouvrir.
-   Elle ne s'allume pas avec le reste — c'est un commentaire, pas l'intitulé. */
-.ds-disclosure-hint {
-  color: var(--color-muted);
-  font-size: 12.5px;
-  font-weight: 400;
-  line-height: 1.35;
-  /* Le halo d'un bouton allumé s'arrête à l'intitulé : une indication n'est pas ce qu'on allume,
-     et sur deux lignes serrées le halo la rendait floue. */
-  text-shadow: none;
 }
 
 .ds-disclosure-icon {
   flex: 0 0 auto;
+  margin-top: 1px;
+  color: var(--color-muted);
   font-size: 19px;
 }
 
-/* Le chevron dit l'état par sa direction, et non par sa seule présence : vers le bas replié,
-   vers le haut déplié. Il tourne du temps de la poussée, pour n'être pas en avance sur elle. */
-.ds-disclosure-chevron {
-  flex: 0 0 auto;
-  font-size: 18px;
-  transition: transform var(--fold-duration) var(--fold-ease);
+.ds-disclosure-titles {
+  min-width: 0;
 }
 
-.ds-disclosure.ds-open .ds-disclosure-chevron {
-  transform: rotate(180deg);
+.ds-disclosure-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
 }
 
-.ds-disclosure-body {
+/* Ce que la section contient, pour décider sans déplier. */
+.ds-disclosure-hint {
+  margin: 3px 0 0;
+  color: var(--color-muted);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+/* Le cadre de la grille : sa marge intérieure laisse aux ombres de quoi s'étaler sans être rognées,
+   sa marge négative rend la place à la page. La hauteur, posée par le composant ligne après ligne,
+   est celle du contenu découvert ; repliée, elle est nulle. */
+.ds-disclosure-frame {
+  box-sizing: content-box;
   overflow: hidden;
-  transition: height var(--fold-duration) var(--fold-ease);
+  padding: var(--shadow-room);
+  margin: calc(-1 * var(--shadow-room));
+  transition: height var(--fold-duration, 0.3s) var(--fold-ease);
 }
 
-/* La marge est DANS le contenu et non sur le corps : mesurée avec lui, elle se replie avec lui.
-   Posée sur le corps, elle survivrait à la fermeture et laisserait un blanc sous l'en-tête. */
+/* Le contenu prend ses distances avec l'intitulé ; la marge est DANS le contenu, mesurée avec lui,
+   pour qu'une section repliée ne laisse aucun blanc entre l'intitulé et le chevron. */
 .ds-disclosure-content {
-  padding-top: 20px;
+  padding-top: 18px;
+}
+
+.ds-disclosure-content.ds-folded {
+  visibility: hidden;
+}
+
+/* Une ligne pas encore découverte — ou déjà recouverte — ne se montre pas, même dans la marge que
+   le cadre réserve aux ombres : on n'y verrait que le haut de la ligne suivante, coupé. */
+.ds-disclosure [data-fold-hidden] {
+  visibility: hidden;
+}
+
+/* LE POP. --pop est la hauteur de la commande : 0 au fond, 1 à son relief, 1,8 au plus haut du
+   rebond. À plat avant de popper, elle monte une poussée plus tard (--pop-delay), sitôt sa place
+   faite ; au repli, elle rejoue la courbe à l'envers et retourne au fond. */
+.ds-disclosure [data-fold='folded'] {
+  --pop: 0;
+}
+
+.ds-disclosure [data-fold='pop'] {
+  animation:
+    ds-pop 1s linear both var(--pop-delay, 0.3s),
+    ds-pop-scale 1s linear both var(--pop-delay, 0.3s);
+}
+
+.ds-disclosure [data-fold='unpop'] {
+  animation:
+    ds-pop 1s linear reverse both,
+    ds-pop-scale 1s linear reverse both;
+}
+
+/* Le relief suit --pop, quelle que soit la commande : un bouton le porte sur son calque d'ombre, un
+   sélecteur sur son champ, un champ ou une case sur eux-mêmes. Un bouton enfoncé garde son creux,
+   comme dans la grille. */
+.ds-disclosure .ds-button[data-fold]:not(.ds-active) > .ds-shade,
+.ds-disclosure .ds-select[data-fold] > .ds-input,
+.ds-disclosure :is(.ds-input, .ds-checkbox)[data-fold] {
+  box-shadow:
+    calc(28px * var(--neu-k) * var(--pop)) calc(28px * var(--neu-k) * var(--pop)) calc(50px * var(--neu-k) * var(--pop)) var(--neu-dark),
+    calc(-23px * var(--neu-k) * var(--pop)) calc(-23px * var(--neu-k) * var(--pop)) calc(45px * var(--neu-k) * var(--pop)) var(--neu-light);
+}
+
+.ds-disclosure [data-fold] .ds-well {
+  --well: clamp(0, var(--pop), 1);
+}
+
+.ds-disclosure [data-fold='folded'] .ds-image {
+  opacity: 0;
+}
+
+.ds-disclosure [data-fold='pop'] .ds-image {
+  animation: ds-image-in 1s linear both var(--pop-delay, 0.3s);
+}
+
+.ds-disclosure [data-fold='unpop'] .ds-image {
+  animation: ds-image-in 1s linear reverse both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ds-disclosure-body,
-  .ds-disclosure-chevron {
+  .ds-disclosure-frame {
     transition: none;
+  }
+
+  .ds-disclosure [data-fold] {
+    animation: none;
   }
 }
