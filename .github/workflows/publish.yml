@@ -1,20 +1,32 @@
 name: Publier
 
 # Une version = un tag : `npm version patch` (ou minor, major), puis `git push --follow-tags`.
-# Ou à la main (onglet Actions, « Run workflow ») : publie la version inscrite dans package.json.
+# Ou à la main (onglet Actions, « Run workflow ») : publie la version inscrite dans package.json,
+# puis pose le tag `v<version>` s'il manque. Le champ « commit » publie ou tague un commit
+# antérieur ; une version déjà publiée n'est pas republiée, seul son tag est posé.
 on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Commit, branche ou tag à publier (vide : la branche choisie)'
+        required: false
+        default: ''
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      # Écriture : pousser le tag de la version. Un tag poussé par ce jeton ne relance pas ce workflow.
+      contents: write
       packages: write
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -22,9 +34,34 @@ jobs:
           scope: '@yoannyviquel'
       # npm 10 bute sur la résolution des dépendances pair à l'installation : npm 11 (npm ci, lui, passe).
       - run: npm install -g npm@11
-      - run: npm ci
-      - run: npm test
-      - run: npm run build
-      - run: npm publish
+      - id: version
+        run: |
+          name=$(node -p "require('./package.json').name")
+          version=$(node -p "require('./package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if npm view "$name@$version" version > /dev/null 2>&1; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "$name@$version est déjà publiée : seul le tag sera posé."
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.version.outputs.published == 'false'
+        run: npm ci
+      - if: steps.version.outputs.published == 'false'
+        run: npm test
+      - if: steps.version.outputs.published == 'false'
+        run: npm run build
+      - if: steps.version.outputs.published == 'false'
+        run: npm publish
+      - name: Poser le tag
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: v${{ steps.version.outputs.version }}
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" > /dev/null; then
+            echo "$TAG existe déjà."
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898283+github-actions[bot]@users.noreply.github.com'
+          git tag -a "$TAG" -m "${TAG#v}"
+          git push origin "refs/tags/$TAG"
