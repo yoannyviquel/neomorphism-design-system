@@ -58,22 +58,26 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   Les jetons dérivés sont déclarés **sur le même élément** que les primitives : une densité par
   sous-arbre n'est pas supportée (le `calc()` y serait déjà substitué). La densité est une affaire
   de racine.
-- **Une hauteur** : `--control-height` pour **toute commande** — bouton, lien d'action,
-  bouton-icône, champ, sélecteur, logo et nom, **et destination de la barre de menu** ; les tuiles à
-  image sont des carrés du même côté. Un **cadre** qui *loge* une commande (la recherche, le
-  sélecteur plat) ne la rapetisse pas pour rien : il la pose à `--control-inner` et retombe ainsi
-  lui-même sur `--control-height`, si bien qu'il s'aligne sur le bouton posé à côté de lui. La
-  **barre de menu** est la seule exception, et c'est une exception de FOND, pas de forme : une
-  destination n'est pas un contenu logé mais une **commande à part entière** — on la vise, on la
-  presse, c'est la cible la plus sollicitée de l'app. Elle garde donc `--control-height`, et la
-  barre fait une hauteur de commande *plus* ses deux marges (66 / 43 px). Elle le peut : seule au
-  pied de l'écran, elle n'a rien à aligner à côté d'elle.
+- **Une hauteur, et un cadre fait ce qu'il loge plus ses deux marges.** C'est tout l'invariant, et
+  il n'a qu'une question : *ce qui est dedans, est-ce qu'on le PRESSE ou est-ce qu'on le LIT ?*
+
+  **Ce qu'on presse pour agir est une commande et fait `--control-height`** (33 / 50) — bouton,
+  lien d'action, bouton-icône, champ, sélecteur, logo et nom, **destination de la barre de menu,
+  choix du sélecteur plat** ; les tuiles à image sont des carrés du même côté. **Ce qu'on lit ou ce
+  dans quoi on écrit est un contenu et fait `--control-inner`** (23 / 34).
+
+  Un cadre ne rapetisse donc jamais ce qu'il loge pour s'aligner sur le bouton d'à côté : la cible
+  offerte au pointeur passe avant le bord. Les deux cadres qui logent des commandes — barre de menu
+  et sélecteur plat — font une hauteur de commande *plus* leurs deux marges, **43 / 66 px**. **Seule
+  la recherche loge un contenu** (son champ, où l'on écrit), et c'est le seul cadre qui retombe sur
+  `--control-height` tout compris, 33 / 50. Son bouton Effacer n'est pas une exception à la règle :
+  il est l'accessoire du champ et prend sa taille, `--control-inner`.
 
   | | ce qu'il loge | le logé | le cadre |
   |---|---|---|---|
-  | `SearchField` | un champ, du contenu | `--control-inner` | `--control-height` |
-  | `FlatSelector` | des choix, du contenu | `--control-inner` | `--control-height` |
-  | `MenuBar` | des destinations, des **commandes** | `--control-height` | `--control-height` + 2 marges |
+  | `MenuBar` | des destinations, des **commandes** | `--control-height` | 43 / 66 |
+  | `FlatSelector` | des choix, des **commandes** | `--control-height` | 43 / 66 |
+  | `SearchField` | un champ, du **contenu** (+ son bouton Effacer) | `--control-inner` | 33 / 50 |
 - **Un sous-menu, c'est `FlatSelector`.** Toute bascule entre contenus d'un même écran — Build /
   Run, Courant / Priorisation, une période, un mode d'affichage — **se fait avec le sélecteur
   multiple plat du DS, et avec rien d'autre** : pas de « segmented toggle » maison, pas de rangée de
@@ -178,14 +182,9 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `FlatSelector` | **le sous-menu du DS** : un choix parmi quelques-uns, même cadre et même pastille — *ce qu'on regarde là où l'on est*. Toute bascule entre contenus passe par lui ; `multiline`, ses choix se replient sur plusieurs lignes et remplacent une liste déroulante |
 | `ButtonBar` | rangée de commandes répartie sur toute la largeur (l'écart suit le conteneur, pas une constante), qui se replie quand la place manque |
 | `FoldingGrid` | grille repliée à une ligne, dépliée ligne par ligne avec le pop des boutons |
-<<<<<<< HEAD
+| `Disclosure` | section dépliante, sur le système de la grille : un intitulé, le chevron dessous, un dépli ligne par ligne où chaque commande poppe |
 | `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'un trait (`#ds-chart-groove`, k = 1/24 pour 2 px), **la même rainure pour une marque pleine** (`#ds-chart-groove-fill` : même géométrie, encre à 40 %) et le sertissage du graphique entier (`#ds-chart-set`, k = 1/3). `#ds-chart-shadow` est **déprécié** — plus aucune marque ne s'en sert |
 | `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile — **et qui ne coupe que s'il défile** : quand il tient dans sa place, le corps laisse déborder les ombres de ses boutons, l'en-tête et le pied rendent leur fond |
-=======
-| `Disclosure` | section dépliante, sur le système de la grille : un intitulé, le chevron dessous, un dépli ligne par ligne où chaque commande poppe |
-| `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'une courbe (`#ds-chart-groove`, k = 1/24 pour un trait de 2 px), le sertissage d'une surface (`#ds-chart-set`, k = 1/3) et l'ombre d'une donnée (`#ds-chart-shadow`, k = 1/9), que la rainure a remplacée sur les courbes |
-| `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile |
->>>>>>> 2ae9de1 (Sections dépliantes : un long réglage se range en groupes (0.4.0))
 | `Slides` | les écrans côte à côte : changer de destination fait glisser le ruban à gauche ou à droite, tous restés montés, les autres `inert` |
 | `Spinner`, `Notice`, `Zone`, `Icon` | chargement, message, zone bordée, icônes (Symbols Nerd Font) |
 
