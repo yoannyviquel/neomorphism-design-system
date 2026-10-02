@@ -274,6 +274,29 @@ describe('Screen', () => {
       'footer.ds-footer',
     ])
   })
+
+  // `data-fits` est ce que le CSS attend pour cesser de couper et rendre leur fond à l'en-tête et
+  // au pied : sans lui, un bouton posé au ras du pied perd son ombre, tranchée sur sa ligne.
+  it('dit que le corps TIENT dans sa place quand rien ne déborde', () => {
+    const { container } = render(
+      <Screen>
+        <Body>milieu</Body>
+      </Screen>,
+    )
+    expect(container.querySelector('.ds-body')).toHaveAttribute('data-fits')
+  })
+
+  it('ne le dit PAS quand le corps déborde : là, le découpage retient le contenu', () => {
+    vi.spyOn(Element.prototype, 'scrollHeight', 'get').mockReturnValue(500)
+    vi.spyOn(Element.prototype, 'clientHeight', 'get').mockReturnValue(200)
+    const { container } = render(
+      <Screen>
+        <Body>milieu</Body>
+      </Screen>,
+    )
+    expect(container.querySelector('.ds-body')).not.toHaveAttribute('data-fits')
+    vi.restoreAllMocks()
+  })
 })
 
 describe('Slides', () => {

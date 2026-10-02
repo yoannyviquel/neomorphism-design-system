@@ -14,7 +14,11 @@
    d'une ombre. Sur les côtés, le corps garde la même marge, où débordent les ombres de ce qu'il
    contient (un défilement rogne tout ce qui dépasse de sa boîte). Sans en-tête, le corps prend
    lui-même la marge du haut, sous la barre d'état. L'en-tête et le pied restent au-dessus du
-   corps : rien n'est collé (sticky), rien ne défile avec eux. */
+   corps : rien n'est collé (sticky), rien ne défile avec eux.
+
+   Tout cela vaut tant que le corps DÉFILE. Quand il tient dans sa place, il cesse de couper et
+   l'en-tête comme le pied rendent leur fond : il n'y a plus de contenu à retenir, seulement des
+   ombres à ne pas trancher (cf. `data-fits`, plus bas). */
 
 .ds-screen {
   --ds-fade: 8px;
@@ -57,6 +61,25 @@
 /* Sous un en-tête, le corps commence par son seul fondu. */
 .ds-header + .ds-body {
   padding-top: var(--ds-fade);
+}
+
+/* QUAND LE CORPS TIENT DANS SA PLACE, IL NE COUPE PLUS RIEN. Le découpage et le fondu servent au
+   DÉFILEMENT : ils retiennent le contenu qui passerait par-dessus l'en-tête et le pied. Un corps
+   qui ne défile pas n'a rien à retenir — il ne coupe plus que les OMBRES de ce qu'il porte, et un
+   bouton posé au ras du pied y perdait la sienne, tranchée net sur la ligne du pied.
+   L'en-tête et le pied rendent alors leur fond : leur opacité ne masque plus rien, et elle
+   repeindrait par-dessus l'ombre qui déborde désormais chez eux.
+   `data-fits` vient de `Body`, qui MESURE : aucune requête CSS ne sait dire si une boîte défile
+   (il faudrait `scroll-state()`, que Safari ne connaît pas encore). */
+.ds-body[data-fits] {
+  overflow: visible;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.ds-header:has(+ .ds-body[data-fits]),
+.ds-body[data-fits] + .ds-footer {
+  background: none;
 }
 
 /* UNE RANGÉE DE COMMANDES, RÉPARTIE SUR SA LARGEUR. `space-evenly` donne la même place entre deux

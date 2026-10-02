@@ -1,4 +1,14 @@
-import { Children, type CSSProperties, type HTMLAttributes, type Ref } from 'react'
+import {
+  Children,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type HTMLAttributes,
+  type Ref,
+  type RefObject,
+} from 'react'
 import { cx } from './cx'
 
 type Props<E extends HTMLElement> = HTMLAttributes<E> & { ref?: Ref<E> }
@@ -16,9 +26,49 @@ export function Header({ className, ...rest }: Props<HTMLElement>) {
 /**
  * Le corps, seul à défiler, entre l'en-tête et le pied : il passe sous eux en s'effaçant en fondu.
  * Sans en-tête, il prend lui-même la marge du haut, sous la barre d'état.
+ *
+ * IL NE COUPE QUE CE QU'IL DOIT. Un corps qui défile se coupe net sur ses bords — sans quoi son
+ * contenu passerait par-dessus l'en-tête et le pied. Mais ce découpage n'a rien à cacher quand il
+ * NE DÉFILE PAS : il ne coupe plus alors que les OMBRES de ce qu'il porte, et un bouton posé au ras
+ * du pied y perdait la sienne, tranchée sur la ligne du pied. Le corps le dit donc par `data-fits`,
+ * et la feuille de style en tire les conséquences (cf. `layout.css`) : plus de découpe, et
+ * l'en-tête comme le pied rendent leur fond opaque, qui repeindrait par-dessus l'ombre.
+ *
+ * Il faut le MESURER : aucune requête CSS ne sait dire si une boîte défile (il faudrait
+ * `scroll-state()`, que Safari ne connaît pas encore). On suit la boîte ET ses enfants — le corps
+ * tient sa taille de l'écran, elle ne bouge pas quand son contenu grandit ; c'est le contenu qui
+ * déborde. Au premier rendu on suppose qu'il défile : une ombre qui apparaît une image plus tard ne
+ * se voit pas, un contenu qui déborde du cadre le temps d'une image, si.
  */
-export function Body({ className, ...rest }: Props<HTMLDivElement>) {
-  return <div className={cx('ds-body', className)} {...rest} />
+export function Body({ className, ref, ...rest }: Props<HTMLDivElement>) {
+  const own = useRef<HTMLDivElement | null>(null)
+  const [fits, setFits] = useState(false)
+
+  const attach = useCallback(
+    (node: HTMLDivElement | null) => {
+      own.current = node
+      if (typeof ref === 'function') ref(node)
+      else if (ref) (ref as RefObject<HTMLDivElement | null>).current = node
+    },
+    [ref],
+  )
+
+  // Sans tableau de dépendances : les enfants observés changent avec le rendu.
+  useLayoutEffect(() => {
+    const body = own.current
+    if (!body) return
+    // Un pixel de garde : une hauteur de contenu fractionnaire dépasse la hauteur arrondie de la
+    // boîte sans que rien ne défile pour autant.
+    const measure = () => setFits(body.scrollHeight <= body.clientHeight + 1)
+    measure()
+    if (typeof ResizeObserver !== 'function') return
+    const observer = new ResizeObserver(measure)
+    observer.observe(body)
+    for (const child of body.children) observer.observe(child)
+    return () => observer.disconnect()
+  })
+
+  return <div ref={attach} data-fits={fits ? '' : undefined} className={cx('ds-body', className)} {...rest} />
 }
 
 /** Le pied fixe (la barre de menu), au-dessus de la zone sûre du bas d'iPhone. */
