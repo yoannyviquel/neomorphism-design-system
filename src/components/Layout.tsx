@@ -90,6 +90,17 @@ export const SLIDE_MS = 380
  * — les autres sont `inert` : ni doigt, ni focus, ni lecteur d'écran, sans quoi leurs commandes
  * apparaîtraient en double dans l'ordre de tabulation.
  *
+ * Chaque écran porte d'ordinaire son propre `Body` : il défile seul, et garde sa position quand on
+ * le quitte. Le ruban prend alors la place du corps dans l'écran — entre l'en-tête et le pied :
+ *
+ *   <Screen>
+ *     <Slides at={index}>
+ *       <Body>…</Body>
+ *       <Body>…</Body>
+ *     </Slides>
+ *     <Footer><MenuBar … /></Footer>
+ *   </Screen>
+ *
  * `at` est l'INDEX de l'écran courant : c'est au consommateur de le tenir (un store de vue, une
  * route), et il doit suivre l'ordre des enfants.
  */

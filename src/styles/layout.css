@@ -82,6 +82,13 @@
   background: none;
 }
 
+/* La même règle quand le corps est dans un ruban (Slides) : le pied n'est plus son voisin, c'est
+   le ruban qui l'est. Seul compte l'écran qu'on regarde — les autres sont `inert`. */
+.ds-header:has(+ .ds-slides > .ds-slides-track > .ds-slide:not([inert]) > .ds-body[data-fits]),
+.ds-slides:has(> .ds-slides-track > .ds-slide:not([inert]) > .ds-body[data-fits]) + .ds-footer {
+  background: none;
+}
+
 /* UNE RANGÉE DE COMMANDES, RÉPARTIE SUR SA LARGEUR. `space-evenly` donne la même place entre deux
    boutons et aux deux bouts : la rangée occupe la largeur qu'on lui donne, et l'écart se lit comme
    une mesure du conteneur plutôt que comme une constante — la même barre respire sur un iPad et se
@@ -112,6 +119,17 @@
   overflow: hidden;
 }
 
+/* Le ruban ne coupe que sur les CÔTÉS, où attendent les écrans voisins. En hauteur, il laisse
+   déborder les ombres d'un corps qui tient dans sa place, comme le fait l'écran sans ruban — sinon
+   un bouton posé au ras du pied y perdrait la sienne. `clip` sur un seul axe ne force pas l'autre à
+   défiler, là où `hidden` le ferait. */
+@supports (overflow: clip) {
+  .ds-slides {
+    overflow-x: clip;
+    overflow-y: visible;
+  }
+}
+
 .ds-slides-track {
   display: flex;
   height: 100%;
@@ -119,7 +137,13 @@
   transition: transform var(--slides-dur, 380ms) cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Un écran est une COLONNE, comme l'écran entier (.ds-screen) : le corps qu'il porte s'y étire et
+   y défile seul. Sans cela, un `Body` posé dans un écran prenait la hauteur de son contenu, débordait
+   de l'écran — que le ruban coupe — et ne défilait plus. Chaque écran a ainsi SON défilement, et le
+   retrouve en revenant. */
 .ds-slide {
+  display: flex;
+  flex-direction: column;
   flex: 0 0 100%;
   min-width: 0;
   height: 100%;
