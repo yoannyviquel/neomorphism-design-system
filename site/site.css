@@ -252,3 +252,31 @@ code {
 .charts-demo-part {
   stroke: none;
 }
+
+/* Sélection : trois blocs, un bouton à bascule chacun. */
+.selection-demo {
+  display: flex;
+  flex-direction: column;
+  /* Deux creux voisins ne se touchent pas : chacun garde ses bords. */
+  gap: 6px;
+}
+
+.selection-demo-ligne {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-block: 12px;
+}
+
+.selection-demo-texte {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.selection-demo-texte span {
+  color: var(--color-muted);
+  font-size: 13px;
+}

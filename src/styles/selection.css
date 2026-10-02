@@ -1,0 +1,41 @@
+/* Sélection (Selectable, SelectToggle).
+   Ce qui est choisi S'ENFONCE au lieu de se teinter : le relief dit l'état, comme partout. Le bloc
+   se creuse du même geste que le bouton qui le choisit — --sink, avec le rebond du DS (--sink-ease)
+   à l'enfoncement et son élan (--release-ease) au relâchement.
+   Le CREUX SEUL, sans le rebord en relief d'un bouton pressé : au repos le bloc est à plat, ce n'est
+   pas une commande. --sink déborde 1 au rebond (le creux s'y fait plus profond) et passe sous 0 au
+   relâchement, où le bloc reste à plat — d'où le max. */
+
+.ds-selectable {
+  --sink: 0;
+  --sink-depth: max(0, var(--sink));
+  /* La marge du creux : son contenu ne touche pas ses bords, et la marge négative la rend à la
+     page — le contenu reste aligné sur celui des voisins, et rien ne bouge quand il s'enfonce. */
+  --selectable-room: 12px;
+  padding-inline: var(--selectable-room);
+  margin-inline: calc(-1 * var(--selectable-room));
+  border-radius: var(--control-radius);
+  box-shadow:
+    inset calc(26px * var(--neu-k) * var(--sink-depth)) calc(26px * var(--neu-k) * var(--sink-depth)) calc(48px * var(--neu-k) * var(--sink-depth)) var(--neu-dark),
+    inset calc(-31px * var(--neu-k) * var(--sink-depth)) calc(-31px * var(--neu-k) * var(--sink-depth)) calc(43px * var(--neu-k) * var(--sink-depth)) var(--neu-light-in);
+  transition: --sink 1s var(--release-ease);
+}
+
+.ds-selectable[data-selected] {
+  --sink: 1;
+  transition: --sink 1s var(--sink-ease);
+}
+
+@supports not (transition-timing-function: linear(0, 1)) {
+  .ds-selectable,
+  .ds-selectable[data-selected] {
+    transition: --sink 0.45s cubic-bezier(0.34, 1.8, 0.64, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-selectable,
+  .ds-selectable[data-selected] {
+    transition: none;
+  }
+}

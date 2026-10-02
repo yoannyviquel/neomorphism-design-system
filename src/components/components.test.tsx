@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { Button, IconButton } from './Button'
 import { ChartFilters } from './ChartFilters'
 import { Disclosure } from './Disclosure'
+import { Selectable, SelectToggle } from './Selection'
 import { Checkbox, Select } from './Field'
 import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
 import { ImageButton } from './ImageButton'
@@ -106,6 +107,70 @@ describe('Disclosure', () => {
       </Disclosure>,
     )
     expect(screen.getByRole('button', { name: 'Immobilier' })).toHaveAttribute('aria-expanded', 'true')
+  })
+})
+
+describe('Sélection', () => {
+  function Liste() {
+    const [choisis, setChoisis] = useState<Set<string>>(new Set())
+    const basculer = (id: string) =>
+      setChoisis((avant) => {
+        const apres = new Set(avant)
+        if (apres.has(id)) apres.delete(id)
+        else apres.add(id)
+        return apres
+      })
+    return (
+      <ul>
+        {['a', 'b'].map((id) => (
+          <Selectable as="li" key={id} selected={choisis.has(id)} data-testid={`bloc-${id}`}>
+            Opération {id}
+            <SelectToggle selected={choisis.has(id)} onToggle={() => basculer(id)} label={`Sélectionner ${id}`} />
+          </Selectable>
+        ))}
+      </ul>
+    )
+  }
+
+  it("enfonce le bloc choisi, du même geste que son bouton à bascule", async () => {
+    render(<Liste />)
+    const bouton = screen.getByRole('button', { name: 'Sélectionner a' })
+    const bloc = screen.getByTestId('bloc-a')
+
+    // Au repos : le bouton en relief, la case vide ; le bloc à plat.
+    expect(bloc.tagName).toBe('LI')
+    expect(bloc).toHaveClass('ds-selectable')
+    expect(bloc).not.toHaveAttribute('data-selected')
+    expect(bouton).toHaveAttribute('aria-pressed', 'false')
+    expect(bouton).not.toHaveClass('ds-active')
+    expect(bouton.querySelector('.nf-md-checkbox_blank_outline')).toBeInTheDocument()
+
+    await userEvent.click(bouton)
+
+    // Choisi : le bouton ENFONCÉ, la case cochée ; le bloc enfoncé — et lui seul.
+    expect(bouton).toHaveAttribute('aria-pressed', 'true')
+    expect(bouton).toHaveClass('ds-active')
+    expect(bouton.querySelector('.nf-md-checkbox_marked_outline')).toBeInTheDocument()
+    expect(bloc).toHaveAttribute('data-selected')
+    expect(screen.getByTestId('bloc-b')).not.toHaveAttribute('data-selected')
+
+    await userEvent.click(bouton)
+    expect(bloc).not.toHaveAttribute('data-selected')
+  })
+
+  it('prend la balise demandée, une ligne de tableau comprise', () => {
+    render(
+      <table>
+        <tbody>
+          <Selectable as="tr" selected data-testid="ligne">
+            <td>Fonds euros</td>
+          </Selectable>
+        </tbody>
+      </table>,
+    )
+    const ligne = screen.getByTestId('ligne')
+    expect(ligne.tagName).toBe('TR')
+    expect(ligne).toHaveAttribute('data-selected')
   })
 })
 

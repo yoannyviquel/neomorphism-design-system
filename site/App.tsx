@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Button, IconButton } from '../src/components/Button'
 import { ChartFilters } from '../src/components/ChartFilters'
 import { Disclosure } from '../src/components/Disclosure'
+import { Selectable, SelectToggle } from '../src/components/Selection'
 import { Notice, Spinner, Zone } from '../src/components/Feedback'
 import { Checkbox, Input, Select } from '../src/components/Field'
 import { FlatSelector } from '../src/components/FlatSelector'
@@ -44,6 +45,7 @@ const SECTIONS = [
   { id: 'glissement', title: 'Écrans qui glissent' },
   { id: 'grille', title: 'Grille dépliante' },
   { id: 'depliantes', title: 'Sections dépliantes' },
+  { id: 'selection', title: 'Sélection' },
   { id: 'retours', title: 'Zones et messages' },
 ]
 
@@ -226,6 +228,36 @@ function ImageRow({ variant }: { variant: ImageButtonVariant }) {
         />
       ))}
       <ImageButton variant={variant} name="Sans Image" pressed={false} />
+    </div>
+  )
+}
+
+/** Trois opérations à choisir : le bloc choisi s'enfonce, du geste de son bouton. */
+function SelectionDemo() {
+  const lignes = [
+    { id: 'a', titre: 'Amundi Actions Monde ISR', detail: '08/01/2026 · achat · 200,24 €' },
+    { id: 'b', titre: 'Fonds euros', detail: '08/03/2026 · frais · 6 172,84 €' },
+    { id: 'c', titre: 'ETF S&P 500', detail: '08/02/2026 · dividende · 15 240,11 €' },
+  ]
+  const [choisis, setChoisis] = useState<Set<string>>(new Set(['b']))
+  const basculer = (id: string) =>
+    setChoisis((avant) => {
+      const apres = new Set(avant)
+      if (apres.has(id)) apres.delete(id)
+      else apres.add(id)
+      return apres
+    })
+  return (
+    <div className="selection-demo">
+      {lignes.map((ligne) => (
+        <Selectable key={ligne.id} selected={choisis.has(ligne.id)} className="selection-demo-ligne">
+          <div className="selection-demo-texte">
+            <strong>{ligne.titre}</strong>
+            <span>{ligne.detail}</span>
+          </div>
+          <SelectToggle selected={choisis.has(ligne.id)} onToggle={() => basculer(ligne.id)} label={`Sélectionner ${ligne.titre}`} />
+        </Selectable>
+      ))}
     </div>
   )
 }
@@ -561,6 +593,14 @@ export function App() {
         intro="Le système de la grille dépliante, pour un contenu quelconque : un intitulé, le contenu replié, et dessous le chevron de la grille, enfoncé tant que tout est affiché. Le dépli va ligne par ligne — un titre, un champ avec son libellé, une rangée de commandes côte à côte — et chaque commande poppe sitôt sa place faite. Le repli est le dépli à l'envers, depuis le bas."
       >
         <Depliantes />
+      </Demo>
+
+      <Demo
+        id="selection"
+        title="Sélection"
+        intro="Ce qu'on choisit s'enfonce au lieu de se teinter. Le bouton qui choisit est un bouton à bascule — en relief, puis enfoncé et allumé, la case vide devenant cochée — et le bloc se creuse du même geste, avec le même rebond. Le creux seul, sans rebord : au repos le bloc est à plat, ce n'est pas une commande."
+      >
+        <SelectionDemo />
       </Demo>
 
       <Demo id="champs" title="Champs" intro="Des commandes, pas des zones : en relief au repos, creusées une fois engagées, avec le rebond. Texte à 16 px, pour qu'iOS ne zoome pas.">
