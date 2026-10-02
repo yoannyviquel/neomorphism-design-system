@@ -151,6 +151,12 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 - **Un filtre se cite en attribut, jamais par une règle CSS.** WebKit résout le fragment d'un
   `url(#…)` écrit dans une feuille séparée contre l'URL de la feuille et non contre celle du
   document : le filtre disparaît alors sans la moindre erreur.
+- **Un long réglage se range en groupes, pas en liste.** Une `Disclosure` par groupe : son en-tête
+  est un bouton, donc en relief replié et enfoncé déplié — déplié *est* son état actif, et la règle
+  de relief n'a pas d'exception à faire. On voit d'un coup d'œil ce qui est ouvert. L'indication
+  sous l'intitulé dit ce que le groupe règle, pour décider sans ouvrir. Le contenu n'est pas une
+  zone : ni bordure ni cadre, c'est l'en-tête enfoncé au-dessus qui dit à qui il appartient. Replié,
+  il est `inert` — une commande qu'on atteint à la tabulation sans la voir est pire qu'absente.
 - **Les images ne remplacent jamais la surface d'un bouton.** Elles en sont le contenu, posées
   au-dessus de ses ombres : pastille, sertie, logo et nom, ou logo serti et nom.
 
@@ -167,8 +173,14 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `FlatSelector` | **le sous-menu du DS** : un choix parmi quelques-uns, même cadre et même pastille — *ce qu'on regarde là où l'on est*. Toute bascule entre contenus passe par lui ; `multiline`, ses choix se replient sur plusieurs lignes et remplacent une liste déroulante |
 | `ButtonBar` | rangée de commandes répartie sur toute la largeur (l'écart suit le conteneur, pas une constante), qui se replie quand la place manque |
 | `FoldingGrid` | grille repliée à une ligne, dépliée ligne par ligne avec le pop des boutons |
+<<<<<<< HEAD
 | `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'un trait (`#ds-chart-groove`, k = 1/24 pour 2 px), **la même rainure pour une marque pleine** (`#ds-chart-groove-fill` : même géométrie, encre à 40 %) et le sertissage du graphique entier (`#ds-chart-set`, k = 1/3). `#ds-chart-shadow` est **déprécié** — plus aucune marque ne s'en sert |
 | `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile — **et qui ne coupe que s'il défile** : quand il tient dans sa place, le corps laisse déborder les ombres de ses boutons, l'en-tête et le pied rendent leur fond |
+=======
+| `Disclosure` | section dépliante : en-tête en relief replié, enfoncé déplié ; contenu `inert` tant qu'il est replié |
+| `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'une courbe (`#ds-chart-groove`, k = 1/24 pour un trait de 2 px), le sertissage d'une surface (`#ds-chart-set`, k = 1/3) et l'ombre d'une donnée (`#ds-chart-shadow`, k = 1/9), que la rainure a remplacée sur les courbes |
+| `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile |
+>>>>>>> 2ae9de1 (Sections dépliantes : un long réglage se range en groupes (0.4.0))
 | `Slides` | les écrans côte à côte : changer de destination fait glisser le ruban à gauche ou à droite, tous restés montés, les autres `inert` |
 | `Spinner`, `Notice`, `Zone`, `Icon` | chargement, message, zone bordée, icônes (Symbols Nerd Font) |
 

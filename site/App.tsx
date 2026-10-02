@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Button, IconButton } from '../src/components/Button'
 import { ChartFilters } from '../src/components/ChartFilters'
+import { Disclosure } from '../src/components/Disclosure'
 import { Notice, Spinner, Zone } from '../src/components/Feedback'
 import { Checkbox, Input, Select } from '../src/components/Field'
 import { FlatSelector } from '../src/components/FlatSelector'
@@ -42,6 +43,7 @@ const SECTIONS = [
   { id: 'rangee', title: 'Rangée de commandes' },
   { id: 'glissement', title: 'Écrans qui glissent' },
   { id: 'grille', title: 'Grille dépliante' },
+  { id: 'depliantes', title: 'Sections dépliantes' },
   { id: 'retours', title: 'Zones et messages' },
 ]
 
@@ -224,6 +226,35 @@ function ImageRow({ variant }: { variant: ImageButtonVariant }) {
         />
       ))}
       <ImageButton variant={variant} name="Sans Image" pressed={false} />
+    </div>
+  )
+}
+
+/** Trois groupes de réglages, comme une page de préférences s'en donne. */
+function Depliantes() {
+  return (
+    <div className="stack">
+      <Disclosure title="Portefeuille" hint="L'origine des prix et la famille des supports" icon="chart_donut" defaultOpen>
+        <div className="stack">
+          <Select
+            aria-label="Origine des prix"
+            defaultValue="marche"
+            options={[
+              { value: 'marche', label: 'Cours de marché si plus récents' },
+              { value: 'releve', label: 'VL de mes relevés' },
+            ]}
+          />
+        </div>
+      </Disclosure>
+      <Disclosure title="Immobilier" hint="Le bien, les travaux, le prêt et le marché" icon="home">
+        <div className="stack">
+          <Input aria-label="Prix d'achat" defaultValue="245 000 €" />
+          <Input aria-label="Frais de notaire" defaultValue="18 400 €" />
+        </div>
+      </Disclosure>
+      <Disclosure title="Mes données" hint="Sauvegarde, restauration, effacement" icon="cloud">
+        <Notice>Vos saisies restent dans ce navigateur : rien n'est envoyé ni conservé sur un serveur.</Notice>
+      </Disclosure>
     </div>
   )
 }
@@ -513,6 +544,14 @@ export function App() {
         intro="Un graphique n'est ni une commande ni une zone : trois filtres lui suffisent. La rainure, pour une courbe — le creux retourné, ses deux ombres posées de part et d'autre du trait faute d'un dedans où les loger, à une échelle que la largeur du trait donne : le flou vaut cette largeur, soit k = largeur / 48. Le sertissage, pour une surface, qui loge le graphique dans la page — l'ombre du creux seule, sans son reflet clair, qui délaverait les teintes. Et l'ombre d'une donnée, que la rainure a remplacée sur les courbes, pour ce qui doit rester posé sur la page."
       >
         <Charts />
+      </Demo>
+
+      <Demo
+        id="depliantes"
+        title="Sections dépliantes"
+        intro="Un long formulaire se range en groupes, un groupe par section. L'en-tête est un bouton, et la règle de relief vaut : en relief replié, enfoncé déplié, puisque déplié est son état actif — on voit donc d'un coup d'œil ce qui est ouvert. L'indication sous l'intitulé dit ce que le groupe règle, pour décider sans ouvrir. Le contenu n'est pas une zone : c'est l'en-tête enfoncé au-dessus qui dit à qui il appartient."
+      >
+        <Depliantes />
       </Demo>
 
       <Demo id="champs" title="Champs" intro="Des commandes, pas des zones : en relief au repos, creusées une fois engagées, avec le rebond. Texte à 16 px, pour qu'iOS ne zoome pas.">

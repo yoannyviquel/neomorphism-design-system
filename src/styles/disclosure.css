@@ -1,0 +1,93 @@
+/* Section dépliante (Disclosure).
+   L'en-tête est un bouton du DS : la règle de relief vaut ici comme ailleurs — en relief replié,
+   enfoncé déplié, puisque déplié est son état actif. Le contenu, lui, n'est pas une zone : ni
+   bordure ni cadre, c'est l'en-tête enfoncé juste au-dessus qui dit à qui il appartient. */
+
+.ds-disclosure {
+  /* La même poussée que la grille dépliante : une section qui s'ouvre et une ligne qui apparaît
+     écartent la page du même geste. */
+  --fold-duration: 0.3s;
+  --fold-ease: cubic-bezier(0.45, 0, 0.55, 1);
+  display: block;
+}
+
+@supports (transition-timing-function: linear(0, 1)) {
+  .ds-disclosure {
+    --fold-ease: linear(0, 0.006 5%, 0.024 10%, 0.054 15%, 0.095 20%, 0.149 25%, 0.214 30%, 0.786 70%, 0.851 75%, 0.905 80%, 0.946 85%, 0.976 90%, 0.994 95%, 1);
+  }
+}
+
+/* Un en-tête n'est pas une commande ordinaire : il tient toute la largeur, son libellé est à
+   gauche et peut passer à la ligne, et sa hauteur suit son contenu sans descendre sous la cible
+   tactile. */
+.ds-disclosure-head.ds-button {
+  display: flex;
+  width: 100%;
+  min-height: var(--control-height);
+  height: auto;
+  padding: 11px 16px;
+  gap: 12px;
+  justify-content: flex-start;
+  text-align: left;
+  white-space: normal;
+}
+
+.ds-disclosure-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ds-disclosure-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* L'indication se lit sans ouvrir : elle dit ce que le groupe règle, donc s'il faut l'ouvrir.
+   Elle ne s'allume pas avec le reste — c'est un commentaire, pas l'intitulé. */
+.ds-disclosure-hint {
+  color: var(--color-muted);
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.35;
+  /* Le halo d'un bouton allumé s'arrête à l'intitulé : une indication n'est pas ce qu'on allume,
+     et sur deux lignes serrées le halo la rendait floue. */
+  text-shadow: none;
+}
+
+.ds-disclosure-icon {
+  flex: 0 0 auto;
+  font-size: 19px;
+}
+
+/* Le chevron dit l'état par sa direction, et non par sa seule présence : vers le bas replié,
+   vers le haut déplié. Il tourne du temps de la poussée, pour n'être pas en avance sur elle. */
+.ds-disclosure-chevron {
+  flex: 0 0 auto;
+  font-size: 18px;
+  transition: transform var(--fold-duration) var(--fold-ease);
+}
+
+.ds-disclosure.ds-open .ds-disclosure-chevron {
+  transform: rotate(180deg);
+}
+
+.ds-disclosure-body {
+  overflow: hidden;
+  transition: height var(--fold-duration) var(--fold-ease);
+}
+
+/* La marge est DANS le contenu et non sur le corps : mesurée avec lui, elle se replie avec lui.
+   Posée sur le corps, elle survivrait à la fermeture et laisserait un blanc sous l'en-tête. */
+.ds-disclosure-content {
+  padding-top: 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-disclosure-body,
+  .ds-disclosure-chevron {
+    transition: none;
+  }
+}

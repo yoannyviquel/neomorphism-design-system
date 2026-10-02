@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { Button, IconButton } from './Button'
 import { ChartFilters } from './ChartFilters'
+import { Disclosure } from './Disclosure'
 import { Checkbox, Select } from './Field'
 import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
 import { ImageButton } from './ImageButton'
@@ -65,6 +66,40 @@ describe('ChartFilters', () => {
     // Le tracé passe au-dessus de ses deux parois, ici aussi.
     const fusion = container.querySelectorAll('#ds-chart-groove-fill feMergeNode')
     expect(fusion[fusion.length - 1]).toHaveAttribute('in', 'SourceGraphic')
+  })
+})
+
+describe('Disclosure', () => {
+  it('ouvre et referme, et son en-tête porte le relief de son état', async () => {
+    render(
+      <Disclosure title="Portefeuille" hint="D'où viennent les prix">
+        <button type="button">Un réglage</button>
+      </Disclosure>,
+    )
+    const entete = screen.getByRole('button', { name: /Portefeuille/ })
+
+    // Repliée : l'en-tête est en relief (pas `ds-active`) et le contenu est hors d'atteinte.
+    expect(entete).toHaveAttribute('aria-expanded', 'false')
+    expect(entete).not.toHaveClass('ds-active')
+    const corps = document.getElementById(entete.getAttribute('aria-controls') ?? '')
+    expect(corps).toHaveAttribute('inert')
+
+    await userEvent.click(entete)
+
+    // Dépliée : l'en-tête est ENFONCÉ, parce que déplié est son état actif.
+    expect(entete).toHaveAttribute('aria-expanded', 'true')
+    expect(entete).toHaveClass('ds-active')
+    expect(corps).not.toHaveAttribute('inert')
+    expect(screen.getByRole('button', { name: 'Un réglage' })).toBeInTheDocument()
+  })
+
+  it("s'ouvre d'emblée quand on le demande", () => {
+    render(
+      <Disclosure title="Immobilier" defaultOpen>
+        <p>Le bien</p>
+      </Disclosure>,
+    )
+    expect(screen.getByRole('button', { name: /Immobilier/ })).toHaveAttribute('aria-expanded', 'true')
   })
 })
 
