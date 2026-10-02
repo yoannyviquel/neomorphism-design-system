@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
-import { IconButton, type IconButtonProps } from './Button'
+import { Button, IconButton, type IconButtonProps } from './Button'
 import { cx } from './cx'
 
 /** Le temps d'un second appui, après quoi le bouton désarme de lui-même. */
@@ -10,6 +10,11 @@ export interface DeleteButtonProps extends Omit<IconButtonProps, 'icon' | 'tone'
   onDelete: () => void
   /** Nom accessible une fois armé ; par défaut « Confirmer : » suivi du nom. */
   confirmLabel?: string
+  /** Le nom AFFICHÉ à côté de la poubelle : un bouton à libellé (« Tout effacer ») au lieu d'un
+   *  bouton-icône. Le libellé suit la poubelle : à l'encre au repos, au rouge une fois armé. */
+  withLabel?: boolean
+  /** Taille du bouton à libellé (sans effet sur le bouton-icône). */
+  size?: 'md' | 'sm'
 }
 
 /**
@@ -23,8 +28,12 @@ export interface DeleteButtonProps extends Omit<IconButtonProps, 'icon' | 'tone'
  * Armé, il désarme de lui-même au bout de `DELETE_ARM_MS`, ou dès qu'on touche ailleurs : un appui
  * oublié ne doit pas laisser un piège pour plus tard. Son nom accessible devient « Confirmer : … »,
  * pour qu'un lecteur d'écran sache que le prochain appui supprime.
+ *
+ * Avec `withLabel`, c'est un bouton à libellé — la poubelle, puis le nom —, pour une suppression
+ * qui doit se lire avant d'être touchée (« Tout effacer ») : même geste, même rouge, poubelle ET
+ * libellé.
  */
-export function DeleteButton({ onDelete, label, confirmLabel, className, disabled, ...rest }: DeleteButtonProps) {
+export function DeleteButton({ onDelete, label, confirmLabel, withLabel = false, size = 'md', large, className, disabled, ...rest }: DeleteButtonProps) {
   const [armed, setArmed] = useState(false)
   const button = useRef<HTMLButtonElement>(null)
 
@@ -45,24 +54,26 @@ export function DeleteButton({ onDelete, label, confirmLabel, className, disable
   // Désactivé, il ne montre pas une confirmation en suspens : l'état se déduit, sans effet.
   const shown = armed && !disabled
 
-  return (
-    <IconButton
-      icon="delete"
-      label={shown ? (confirmLabel ?? `Confirmer : ${label}`) : label}
-      className={cx('ds-delete', shown && 'ds-armed', className)}
-      disabled={disabled}
-      onClick={(event: MouseEvent<HTMLButtonElement>) => {
-        event.stopPropagation()
-        // L'élément, retenu à l'appui : c'est lui qu'un appui « ailleurs » doit éviter.
-        button.current = event.currentTarget
-        if (shown) {
-          setArmed(false)
-          onDelete()
-        } else {
-          setArmed(true)
-        }
-      }}
-      {...rest}
-    />
-  )
+  const accessibleName = shown ? (confirmLabel ?? `Confirmer : ${label}`) : label
+  const classes = cx('ds-delete', shown && 'ds-armed', className)
+  const onClick = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+    // L'élément, retenu à l'appui : c'est lui qu'un appui « ailleurs » doit éviter.
+    button.current = event.currentTarget
+    if (shown) {
+      setArmed(false)
+      onDelete()
+    } else {
+      setArmed(true)
+    }
+  }
+
+  if (withLabel) {
+    return (
+      <Button icon="delete" size={size} aria-label={accessibleName} className={classes} disabled={disabled} onClick={onClick} {...rest}>
+        {label}
+      </Button>
+    )
+  }
+  return <IconButton icon="delete" label={accessibleName} large={large} className={classes} disabled={disabled} onClick={onClick} {...rest} />
 }

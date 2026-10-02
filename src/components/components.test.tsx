@@ -602,6 +602,24 @@ describe('DeleteButton', () => {
     expect(onDelete).not.toHaveBeenCalled()
   })
 
+  it('avec son libellé : la poubelle et le nom, armés ensemble, puis la suppression', () => {
+    const onDelete = vi.fn()
+    render(<DeleteButton label="Tout effacer" withLabel onDelete={onDelete} />)
+    const bouton = screen.getByRole('button', { name: 'Tout effacer' })
+    expect(bouton.textContent).toBe('Tout effacer')
+    expect(bouton.classList.contains('ds-text')).toBe(true)
+    expect(bouton.querySelector('.nf-md-delete')).not.toBeNull()
+
+    fireEvent.click(bouton)
+    expect(bouton.classList.contains('ds-armed')).toBe(true)
+    expect(bouton.getAttribute('aria-label')).toBe('Confirmer : Tout effacer')
+    // Le libellé ne change pas : le bouton garde sa largeur.
+    expect(bouton.textContent).toBe('Tout effacer')
+
+    fireEvent.click(bouton)
+    expect(onDelete).toHaveBeenCalledTimes(1)
+  })
+
   it('n’arme pas quand il est désactivé', () => {
     const onDelete = vi.fn()
     render(<DeleteButton label="Supprimer" onDelete={onDelete} disabled />)

@@ -299,13 +299,15 @@ function DeleteDemo() {
           <DeleteButton label={`Supprimer ${nom}`} onDelete={() => setRestantes((avant) => avant.filter((n) => n !== nom))} />
         </div>
       ))}
-      {restantes.length < toutes.length && (
-        <div className="row">
+      <div className="row">
+        {restantes.length < toutes.length ? (
           <Button size="sm" onClick={() => setRestantes(toutes)}>
             Tout rétablir
           </Button>
-        </div>
-      )}
+        ) : (
+          <DeleteButton label="Tout effacer" withLabel size="sm" onDelete={() => setRestantes([])} />
+        )}
+      </div>
     </div>
   )
 }
@@ -654,7 +656,7 @@ export function App() {
       <Demo
         id="suppression"
         title="Suppression"
-        intro="Supprimer se fait en deux appuis, sans boîte de dialogue. Au repos, la poubelle est à l'encre des commandes — une liste n'est pas une alerte. Le premier appui fait rebondir le bouton et l'arme : la poubelle passe au rouge. Le second supprime. Armé, il désarme de lui-même au bout de trois secondes, ou dès qu'on touche ailleurs."
+        intro="Supprimer se fait en deux appuis, sans boîte de dialogue. Au repos, la poubelle est à l'encre des commandes — une liste n'est pas une alerte. Le premier appui fait rebondir le bouton et l'arme : la poubelle passe au rouge. Le second supprime. Armé, il désarme de lui-même au bout de trois secondes, ou dès qu'on touche ailleurs. Avec son libellé (« Tout effacer »), c'est un bouton à libellé, le nom rougissant avec la poubelle."
       >
         <DeleteDemo />
       </Demo>
