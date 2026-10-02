@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { Button, IconButton } from './Button'
 import { ChartFilters } from './ChartFilters'
 import { Disclosure } from './Disclosure'
+import { Reveal } from './Reveal'
 import { Selectable, SelectToggle } from './Selection'
 import { Checkbox, Select } from './Field'
 import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
@@ -107,6 +108,34 @@ describe('Disclosure', () => {
       </Disclosure>,
     )
     expect(screen.getByRole('button', { name: 'Immobilier' })).toHaveAttribute('aria-expanded', 'true')
+  })
+})
+
+describe('Reveal', () => {
+  it("se déplie et se replie au gré de l'état, sans intitulé ni chevron", () => {
+    const { rerender } = render(
+      <Reveal open={false} id="actions">
+        <button type="button">Supprimer</button>
+      </Reveal>,
+    )
+    // Repliée : ni bouton pour la commander, et un contenu hors d'atteinte.
+    const contenu = document.getElementById('actions')
+    expect(contenu).toHaveAttribute('inert')
+    expect(screen.queryByRole('button', { name: /déplier/i })).not.toBeInTheDocument()
+
+    rerender(
+      <Reveal open id="actions">
+        <button type="button">Supprimer</button>
+      </Reveal>,
+    )
+    expect(contenu).not.toHaveAttribute('inert')
+
+    rerender(
+      <Reveal open={false} id="actions">
+        <button type="button">Supprimer</button>
+      </Reveal>,
+    )
+    expect(contenu).toHaveAttribute('inert')
   })
 })
 

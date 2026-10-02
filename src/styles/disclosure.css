@@ -1,17 +1,11 @@
-/* Section dépliante (Disclosure) : le système de la grille dépliante, appliqué à un contenu
-   quelconque. Un intitulé ; dessous, le cadre qui se déplie ligne par ligne ; dessous encore, le
-   chevron de la grille (.ds-fold-toggle), enfoncé tant que tout est affiché. Les commandes d'une
-   ligne poppent une fois sa place faite, du pop de la grille (ds-pop, fold.css). */
+/* Section dépliante cachée (Reveal) et section dépliante (Disclosure).
+   Reveal est le cadre qui se déplie ligne par ligne, commandé par l'état ; Disclosure y ajoute un
+   intitulé et, dessous, le chevron de la grille (.ds-fold-toggle), enfoncé tant que tout est
+   affiché. Les commandes d'une ligne poppent une fois sa place faite, du pop de la grille
+   (ds-pop, fold.css). */
 
 .ds-disclosure {
-  --fold-ease: cubic-bezier(0.45, 0, 0.55, 1);
   display: block;
-}
-
-@supports (transition-timing-function: linear(0, 1)) {
-  .ds-disclosure {
-    --fold-ease: linear(0, 0.006 5%, 0.024 10%, 0.054 15%, 0.095 20%, 0.149 25%, 0.214 30%, 0.786 70%, 0.851 75%, 0.905 80%, 0.946 85%, 0.976 90%, 0.994 95%, 1);
-  }
 }
 
 /* L'intitulé n'est pas une commande : c'est le chevron qui l'est. Il se lit donc comme un titre,
@@ -50,7 +44,8 @@
 /* Le cadre de la grille : sa marge intérieure laisse aux ombres de quoi s'étaler sans être rognées,
    sa marge négative rend la place à la page. La hauteur, posée par le composant ligne après ligne,
    est celle du contenu découvert ; repliée, elle est nulle. */
-.ds-disclosure-frame {
+.ds-reveal {
+  --fold-ease: cubic-bezier(0.45, 0, 0.55, 1);
   box-sizing: content-box;
   overflow: hidden;
   padding: var(--shadow-room);
@@ -58,36 +53,43 @@
   transition: height var(--fold-duration, 0.3s) var(--fold-ease);
 }
 
-/* Le contenu prend ses distances avec l'intitulé ; la marge est DANS le contenu, mesurée avec lui,
-   pour qu'une section repliée ne laisse aucun blanc entre l'intitulé et le chevron. */
-.ds-disclosure-content {
-  padding-top: 18px;
+@supports (transition-timing-function: linear(0, 1)) {
+  .ds-reveal {
+    --fold-ease: linear(0, 0.006 5%, 0.024 10%, 0.054 15%, 0.095 20%, 0.149 25%, 0.214 30%, 0.786 70%, 0.851 75%, 0.905 80%, 0.946 85%, 0.976 90%, 0.994 95%, 1);
+  }
 }
 
-.ds-disclosure-content.ds-folded {
+.ds-reveal-content.ds-folded {
   visibility: hidden;
+}
+
+/* Dans une section dépliante, le contenu prend ses distances avec l'intitulé ; la marge est DANS
+   le contenu, mesurée avec lui, pour qu'une section repliée ne laisse aucun blanc entre l'intitulé
+   et le chevron. Une section cachée n'a pas d'intitulé : c'est la page qui la place. */
+.ds-disclosure .ds-reveal-content {
+  padding-top: 18px;
 }
 
 /* Une ligne pas encore découverte — ou déjà recouverte — ne se montre pas, même dans la marge que
    le cadre réserve aux ombres : on n'y verrait que le haut de la ligne suivante, coupé. */
-.ds-disclosure [data-fold-hidden] {
+.ds-reveal [data-fold-hidden] {
   visibility: hidden;
 }
 
 /* LE POP. --pop est la hauteur de la commande : 0 au fond, 1 à son relief, 1,8 au plus haut du
    rebond. À plat avant de popper, elle monte une poussée plus tard (--pop-delay), sitôt sa place
    faite ; au repli, elle rejoue la courbe à l'envers et retourne au fond. */
-.ds-disclosure [data-fold='folded'] {
+.ds-reveal [data-fold='folded'] {
   --pop: 0;
 }
 
-.ds-disclosure [data-fold='pop'] {
+.ds-reveal [data-fold='pop'] {
   animation:
     ds-pop 1s linear both var(--pop-delay, 0.3s),
     ds-pop-scale 1s linear both var(--pop-delay, 0.3s);
 }
 
-.ds-disclosure [data-fold='unpop'] {
+.ds-reveal [data-fold='unpop'] {
   animation:
     ds-pop 1s linear reverse both,
     ds-pop-scale 1s linear reverse both;
@@ -96,36 +98,36 @@
 /* Le relief suit --pop, quelle que soit la commande : un bouton le porte sur son calque d'ombre, un
    sélecteur sur son champ, un champ ou une case sur eux-mêmes. Un bouton enfoncé garde son creux,
    comme dans la grille. */
-.ds-disclosure .ds-button[data-fold]:not(.ds-active) > .ds-shade,
-.ds-disclosure .ds-select[data-fold] > .ds-input,
-.ds-disclosure :is(.ds-input, .ds-checkbox)[data-fold] {
+.ds-reveal .ds-button[data-fold]:not(.ds-active) > .ds-shade,
+.ds-reveal .ds-select[data-fold] > .ds-input,
+.ds-reveal :is(.ds-input, .ds-checkbox)[data-fold] {
   box-shadow:
     calc(28px * var(--neu-k) * var(--pop)) calc(28px * var(--neu-k) * var(--pop)) calc(50px * var(--neu-k) * var(--pop)) var(--neu-dark),
     calc(-23px * var(--neu-k) * var(--pop)) calc(-23px * var(--neu-k) * var(--pop)) calc(45px * var(--neu-k) * var(--pop)) var(--neu-light);
 }
 
-.ds-disclosure [data-fold] .ds-well {
+.ds-reveal [data-fold] .ds-well {
   --well: clamp(0, var(--pop), 1);
 }
 
-.ds-disclosure [data-fold='folded'] .ds-image {
+.ds-reveal [data-fold='folded'] .ds-image {
   opacity: 0;
 }
 
-.ds-disclosure [data-fold='pop'] .ds-image {
+.ds-reveal [data-fold='pop'] .ds-image {
   animation: ds-image-in 1s linear both var(--pop-delay, 0.3s);
 }
 
-.ds-disclosure [data-fold='unpop'] .ds-image {
+.ds-reveal [data-fold='unpop'] .ds-image {
   animation: ds-image-in 1s linear reverse both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ds-disclosure-frame {
+  .ds-reveal {
     transition: none;
   }
 
-  .ds-disclosure [data-fold] {
+  .ds-reveal [data-fold] {
     animation: none;
   }
 }

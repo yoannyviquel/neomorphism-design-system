@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Button, IconButton } from '../src/components/Button'
 import { ChartFilters } from '../src/components/ChartFilters'
 import { Disclosure } from '../src/components/Disclosure'
+import { Reveal } from '../src/components/Reveal'
 import { Selectable, SelectToggle } from '../src/components/Selection'
 import { Notice, Spinner, Zone } from '../src/components/Feedback'
 import { Checkbox, Input, Select } from '../src/components/Field'
@@ -247,8 +248,28 @@ function SelectionDemo() {
       else apres.add(id)
       return apres
     })
+  // Le compte reste celui de la dernière sélection le temps du repli : la barre ne doit pas
+  // annoncer « 0 sélectionnée » pendant qu'elle s'en va.
+  const [compte, setCompte] = useState(choisis.size)
+  if (choisis.size > 0 && choisis.size !== compte) setCompte(choisis.size)
   return (
     <div className="selection-demo">
+      <Reveal open={choisis.size > 0}>
+        <div className="selection-demo-actions">
+          <strong>
+            {compte} sélectionnée{compte > 1 ? 's' : ''}
+          </strong>
+          <div className="row">
+            <Button size="sm">Reclasser</Button>
+            <Button size="sm" tone="danger">
+              Supprimer
+            </Button>
+            <Button size="sm" onClick={() => setChoisis(new Set())}>
+              Annuler
+            </Button>
+          </div>
+        </div>
+      </Reveal>
       {lignes.map((ligne) => (
         <Selectable key={ligne.id} selected={choisis.has(ligne.id)} className="selection-demo-ligne">
           <div className="selection-demo-texte">
@@ -598,7 +619,7 @@ export function App() {
       <Demo
         id="selection"
         title="Sélection"
-        intro="Ce qu'on choisit s'enfonce au lieu de se teinter. Le bouton qui choisit est un bouton à bascule — en relief, puis enfoncé et allumé, la case vide devenant cochée — et le bloc se creuse du même geste, avec le même rebond. Le creux seul, sans rebord : au repos le bloc est à plat, ce n'est pas une commande."
+        intro="Ce qu'on choisit s'enfonce au lieu de se teinter, et ce qu'on peut en faire se déplie au-dessus, comme une section dépliante dont l'état tient lieu de chevron (Reveal). Le bouton qui choisit est un bouton à bascule — en relief, puis enfoncé et allumé, la case vide devenant cochée — et le bloc se creuse du même geste, avec le même rebond. Le creux seul, sans rebord : au repos le bloc est à plat, ce n'est pas une commande."
       >
         <SelectionDemo />
       </Demo>

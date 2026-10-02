@@ -280,3 +280,10 @@ code {
   color: var(--color-muted);
   font-size: 13px;
 }
+
+.selection-demo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 12px;
+}

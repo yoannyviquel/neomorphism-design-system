@@ -166,6 +166,11 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   un relief à reprendre. Au-delà de quatre lignes, les poussées se resserrent pour que le dépli
   entier tienne dans le temps de quatre lignes de grille (`foldPush`) : trente poussées de 0,3 s
   feraient neuf secondes.
+- **Ce qui paraît se déplie, il ne surgit pas.** Quand c'est l'état qui fait paraître un
+  contenu — les actions d'une sélection, un message —, il se déplie comme une section dépliante
+  dont l'état tiendrait le chevron : `Reveal`, la section dépliante cachée, qui est aussi le
+  moteur de `Disclosure`. Il garde ce qu'il affichait le temps de son repli : une barre
+  d'actions qui s'en va n'annonce pas « 0 sélectionnée ».
 - **Ce qui est choisi s'enfonce, il ne se teint pas.** Le relief dit l'état, ici comme ailleurs :
   un élément choisi (`Selectable`) se creuse dans la page, du même geste et du même rebond que le
   bouton qui le choisit (`SelectToggle`, un bouton-icône à bascule — case vide, puis cochée et
@@ -189,6 +194,7 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `ButtonBar` | rangée de commandes répartie sur toute la largeur (l'écart suit le conteneur, pas une constante), qui se replie quand la place manque |
 | `FoldingGrid` | grille repliée à une ligne, dépliée ligne par ligne avec le pop des boutons |
 | `Selectable`, `SelectToggle` | la sélection : un bloc (ou une ligne de tableau, `as="tr"`) qui s'enfonce quand il est choisi, et le bouton à bascule qui le choisit, case vide puis cochée |
+| `Reveal` | la section dépliante cachée : le dépli d'une `Disclosure`, sans intitulé ni chevron, commandé par l'état — les actions d'une sélection, un message qui s'impose |
 | `Disclosure` | section dépliante, sur le système de la grille : un intitulé, le chevron dessous, un dépli ligne par ligne où chaque commande poppe |
 | `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'un trait (`#ds-chart-groove`, k = 1/24 pour 2 px), **la même rainure pour une marque pleine** (`#ds-chart-groove-fill` : même géométrie, encre à 40 %) et le sertissage du graphique entier (`#ds-chart-set`, k = 1/3). `#ds-chart-shadow` est **déprécié** — plus aucune marque ne s'en sert |
 | `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile — **et qui ne coupe que s'il défile** : quand il tient dans sa place, le corps laisse déborder les ombres de ses boutons, l'en-tête et le pied rendent leur fond |
