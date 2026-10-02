@@ -1,0 +1,8 @@
+/* Le bouton qui supprime (DeleteButton). Au repos, la poubelle à l'encre des commandes, comme tout
+   bouton-icône ; ARMÉ par un premier appui, elle passe au rouge du danger, et le reste jusqu'au
+   second appui ou au désarmement. Le rebond est celui de tout bouton momentané : rien à ajouter. */
+
+.ds-delete.ds-armed {
+  --btn-active-color: var(--color-danger);
+  color: var(--color-danger);
+}

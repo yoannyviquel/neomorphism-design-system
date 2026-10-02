@@ -177,6 +177,15 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   enfoncée). Le creux seul, sans le rebord en relief d'un bouton pressé : au repos l'élément est
   à plat, ce n'est pas une commande, et c'est une région de la page qui s'enfonce, pas une touche.
   Il porte d'avance la marge et les coins d'un creux : rien ne bouge quand il s'enfonce.
+- **Supprimer se fait en deux appuis, sans boîte de dialogue** (`DeleteButton`). Au repos, la
+  poubelle est à l'encre des commandes, comme tout bouton-icône : en rouge, chaque ligne d'une
+  liste serait une alerte. Le premier appui fait rebondir le bouton, comme tout appui, et
+  l'**arme** : la poubelle passe au rouge du danger. Le second supprime. La confirmation est là
+  où était le doigt, rien d'autre ne bouge. Armé, il désarme de lui-même au bout de
+  `DELETE_ARM_MS` (3 s) ou dès qu'on touche ailleurs, et son nom accessible devient
+  « Confirmer : … ». Avec `withLabel`, c'est un bouton à libellé — la poubelle puis le nom —,
+  pour une suppression qui doit se lire avant d'être touchée (« Tout effacer ») ; le nom rougit
+  avec la poubelle, et ne change pas, pour que le bouton garde sa largeur.
 - **Les images ne remplacent jamais la surface d'un bouton.** Elles en sont le contenu, posées
   au-dessus de ses ombres : pastille, sertie, logo et nom, ou logo serti et nom.
 
@@ -193,6 +202,7 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `FlatSelector` | **le sous-menu du DS** : un choix parmi quelques-uns, même cadre et même pastille — *ce qu'on regarde là où l'on est*. Toute bascule entre contenus passe par lui ; `multiline`, ses choix se replient sur plusieurs lignes et remplacent une liste déroulante |
 | `ButtonBar` | rangée de commandes répartie sur toute la largeur (l'écart suit le conteneur, pas une constante), qui se replie quand la place manque |
 | `FoldingGrid` | grille repliée à une ligne, dépliée ligne par ligne avec le pop des boutons |
+| `DeleteButton` | le bouton qui supprime : poubelle à l'encre des commandes, armée au premier appui (rebond, poubelle rouge), qui supprime au second et désarme seule au bout de 3 s ou d'un appui ailleurs ; `withLabel`, un bouton à libellé (poubelle et nom) |
 | `Selectable`, `SelectToggle` | la sélection : un bloc (ou une ligne de tableau, `as="tr"`) qui s'enfonce quand il est choisi, et le bouton à bascule qui le choisit, case vide puis cochée |
 | `Reveal` | la section dépliante cachée : le dépli d'une `Disclosure`, sans intitulé ni chevron, commandé par l'état — les actions d'une sélection, un message qui s'impose |
 | `Disclosure` | section dépliante, sur le système de la grille : un intitulé, le chevron dessous, un dépli ligne par ligne où chaque commande poppe |

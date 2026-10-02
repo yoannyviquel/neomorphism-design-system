@@ -1,9 +1,10 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Button, IconButton } from './Button'
 import { ChartFilters } from './ChartFilters'
+import { DELETE_ARM_MS, DeleteButton } from './DeleteButton'
 import { Disclosure } from './Disclosure'
 import { Reveal } from './Reveal'
 import { Selectable, SelectToggle } from './Selection'
@@ -541,5 +542,90 @@ describe('FlatSelector', () => {
     expect(screen.getByRole('radio', { name: 'France' })).toHaveAttribute('aria-checked', 'true')
     await user.click(screen.getByRole('radio', { name: 'Japon' }))
     expect(change).toHaveBeenCalledWith('Japon')
+  })
+})
+
+describe('DeleteButton', () => {
+  afterEach(() => vi.useRealTimers())
+
+  it('arme au premier appui, poubelle au rouge, et supprime au second', () => {
+    const onDelete = vi.fn()
+    render(<DeleteButton label="Supprimer Eau" onDelete={onDelete} />)
+    const bouton = screen.getByRole('button', { name: 'Supprimer Eau' })
+    expect(bouton.classList.contains('ds-armed')).toBe(false)
+    expect(bouton.querySelector('.nf-md-delete')).not.toBeNull()
+
+    fireEvent.click(bouton)
+    expect(onDelete).not.toHaveBeenCalled()
+    expect(bouton.classList.contains('ds-armed')).toBe(true)
+    expect(bouton.getAttribute('aria-label')).toBe('Confirmer : Supprimer Eau')
+
+    fireEvent.click(bouton)
+    expect(onDelete).toHaveBeenCalledTimes(1)
+    expect(bouton.classList.contains('ds-armed')).toBe(false)
+  })
+
+  it('reste à l’encre des commandes au repos : ni ton de danger, ni bouton à bascule', () => {
+    render(<DeleteButton label="Supprimer" onDelete={() => {}} />)
+    const bouton = screen.getByRole('button', { name: 'Supprimer' })
+    expect(bouton.classList.contains('ds-danger')).toBe(false)
+    expect(bouton.classList.contains('ds-momentary')).toBe(true)
+    expect(bouton.hasAttribute('aria-pressed')).toBe(false)
+  })
+
+  it('désarme de lui-même au bout du délai', () => {
+    vi.useFakeTimers()
+    const onDelete = vi.fn()
+    render(<DeleteButton label="Supprimer" onDelete={onDelete} />)
+    const bouton = screen.getByRole('button', { name: 'Supprimer' })
+    fireEvent.click(bouton)
+    act(() => vi.advanceTimersByTime(DELETE_ARM_MS + 10))
+    expect(bouton.classList.contains('ds-armed')).toBe(false)
+    // Le prochain appui réarme, il ne supprime pas.
+    fireEvent.click(bouton)
+    expect(onDelete).not.toHaveBeenCalled()
+  })
+
+  it('désarme quand on touche ailleurs', () => {
+    const onDelete = vi.fn()
+    render(
+      <div>
+        <DeleteButton label="Supprimer" onDelete={onDelete} />
+        <button type="button">Ailleurs</button>
+      </div>,
+    )
+    const bouton = screen.getByRole('button', { name: 'Supprimer' })
+    fireEvent.click(bouton)
+    fireEvent.pointerDown(screen.getByRole('button', { name: 'Ailleurs' }))
+    expect(bouton.classList.contains('ds-armed')).toBe(false)
+    fireEvent.click(bouton)
+    expect(onDelete).not.toHaveBeenCalled()
+  })
+
+  it('avec son libellé : la poubelle et le nom, armés ensemble, puis la suppression', () => {
+    const onDelete = vi.fn()
+    render(<DeleteButton label="Tout effacer" withLabel onDelete={onDelete} />)
+    const bouton = screen.getByRole('button', { name: 'Tout effacer' })
+    expect(bouton.textContent).toBe('Tout effacer')
+    expect(bouton.classList.contains('ds-text')).toBe(true)
+    expect(bouton.querySelector('.nf-md-delete')).not.toBeNull()
+
+    fireEvent.click(bouton)
+    expect(bouton.classList.contains('ds-armed')).toBe(true)
+    expect(bouton.getAttribute('aria-label')).toBe('Confirmer : Tout effacer')
+    // Le libellé ne change pas : le bouton garde sa largeur.
+    expect(bouton.textContent).toBe('Tout effacer')
+
+    fireEvent.click(bouton)
+    expect(onDelete).toHaveBeenCalledTimes(1)
+  })
+
+  it('n’arme pas quand il est désactivé', () => {
+    const onDelete = vi.fn()
+    render(<DeleteButton label="Supprimer" onDelete={onDelete} disabled />)
+    const bouton = screen.getByRole('button', { name: 'Supprimer' })
+    fireEvent.click(bouton)
+    fireEvent.click(bouton)
+    expect(onDelete).not.toHaveBeenCalled()
   })
 })
