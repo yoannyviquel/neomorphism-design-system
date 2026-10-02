@@ -1,6 +1,7 @@
 export { Button, IconButton, type ButtonProps, type ButtonTone, type IconButtonProps } from './components/Button'
 export { ChartFilters } from './components/ChartFilters'
 export { cx } from './components/cx'
+export { DELETE_ARM_MS, DeleteButton, type DeleteButtonProps } from './components/DeleteButton'
 export { Disclosure, type DisclosureProps } from './components/Disclosure'
 export { Notice, Spinner, Zone } from './components/Feedback'
 export { Checkbox, Input, Select, type SelectOption } from './components/Field'

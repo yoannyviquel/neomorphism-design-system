@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Button, IconButton } from '../src/components/Button'
 import { ChartFilters } from '../src/components/ChartFilters'
+import { DeleteButton } from '../src/components/DeleteButton'
 import { Disclosure } from '../src/components/Disclosure'
 import { Reveal } from '../src/components/Reveal'
 import { Selectable, SelectToggle } from '../src/components/Selection'
@@ -279,6 +280,32 @@ function SelectionDemo() {
           <SelectToggle selected={choisis.has(ligne.id)} onToggle={() => basculer(ligne.id)} label={`Sélectionner ${ligne.titre}`} />
         </Selectable>
       ))}
+    </div>
+  )
+}
+
+/** Trois catégories à supprimer : un premier appui arme la poubelle, le second supprime. */
+function DeleteDemo() {
+  const toutes = ['Électricité', 'Eau', 'Internet + téléphones']
+  const [restantes, setRestantes] = useState(toutes)
+  return (
+    <div className="selection-demo">
+      {restantes.map((nom) => (
+        <div key={nom} className="selection-demo-ligne">
+          <div className="selection-demo-texte">
+            <strong>{nom}</strong>
+            <span>Un appui arme, le second supprime.</span>
+          </div>
+          <DeleteButton label={`Supprimer ${nom}`} onDelete={() => setRestantes((avant) => avant.filter((n) => n !== nom))} />
+        </div>
+      ))}
+      {restantes.length < toutes.length && (
+        <div className="row">
+          <Button size="sm" onClick={() => setRestantes(toutes)}>
+            Tout rétablir
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
@@ -622,6 +649,14 @@ export function App() {
         intro="Ce qu'on choisit s'enfonce au lieu de se teinter, et ce qu'on peut en faire se déplie au-dessus, comme une section dépliante dont l'état tient lieu de chevron (Reveal). Le bouton qui choisit est un bouton à bascule — en relief, puis enfoncé et allumé, la case vide devenant cochée — et le bloc se creuse du même geste, avec le même rebond. Le creux seul, sans rebord : au repos le bloc est à plat, ce n'est pas une commande."
       >
         <SelectionDemo />
+      </Demo>
+
+      <Demo
+        id="suppression"
+        title="Suppression"
+        intro="Supprimer se fait en deux appuis, sans boîte de dialogue. Au repos, la poubelle est à l'encre des commandes — une liste n'est pas une alerte. Le premier appui fait rebondir le bouton et l'arme : la poubelle passe au rouge. Le second supprime. Armé, il désarme de lui-même au bout de trois secondes, ou dès qu'on touche ailleurs."
+      >
+        <DeleteDemo />
       </Demo>
 
       <Demo id="champs" title="Champs" intro="Des commandes, pas des zones : en relief au repos, creusées une fois engagées, avec le rebond. Texte à 16 px, pour qu'iOS ne zoome pas.">
