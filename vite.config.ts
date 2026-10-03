@@ -6,8 +6,8 @@ import { defineConfig } from 'vite'
 /**
  * Le code : dist/index.js (ESM, React en dépendance pair). Les styles sont copiés tels quels dans
  * dist/styles (cf. scripts/copy-styles.mjs). Les apps importent l'un et l'autre :
- *   import { Button } from '@yoannyviquel/neomorphism-design-system'
- *   import '@yoannyviquel/neomorphism-design-system/styles.css'
+ *   import { Button } from '@pendrayg/neomorphism-design-system'
+ *   import '@pendrayg/neomorphism-design-system/styles.css'
  */
 export default defineConfig({
   plugins: [react()],
