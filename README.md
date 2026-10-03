@@ -1,8 +1,8 @@
 # Neomorphism design system
 
 Le design system néomorphique de mes apps (Follow, Investment, weather-ahead) : les jetons, le CSS
-et les composants React, avec une page de démonstration. Publié sur npm sous
-`@pendrayg/neomorphism-design-system`.
+et les composants React, avec une page de démonstration. Publié en privé sur GitHub Packages sous
+`@yoannyviquel/neomorphism-design-system`.
 
 ## Principes
 
@@ -213,26 +213,22 @@ et les composants React, avec une page de démonstration. Publié sur npm sous
 
 ## Utiliser le paquet dans une app
 
-Le paquet est public sur npmjs.com : ni jeton ni `.npmrc`, ni dans l'app ni dans son build
-(Cloudflare, CI).
+1. Un jeton GitHub (classic) avec le droit `read:packages`, dans l'environnement : `NODE_AUTH_TOKEN`.
+2. Un `.npmrc` à la racine de l'app :
 
-```bash
-npm install @pendrayg/neomorphism-design-system
-```
+   ```
+   @yoannyviquel:registry=https://npm.pkg.github.com
+   //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+   ```
 
-```tsx
-import '@pendrayg/neomorphism-design-system/styles.css'
-import { Button, FoldingGrid, ImageButton } from '@pendrayg/neomorphism-design-system'
-```
+3. `npm install @yoannyviquel/neomorphism-design-system`, puis :
 
-**Une app qui l'installait depuis GitHub Packages** (sous `@yoannyviquel/…`, jusqu'à la 0.16.0) :
+   ```tsx
+   import '@yoannyviquel/neomorphism-design-system/styles.css'
+   import { Button, FoldingGrid, ImageButton } from '@yoannyviquel/neomorphism-design-system'
+   ```
 
-1. retirer de son `.npmrc` les lignes de `npm.pkg.github.com`, et le fichier s'il ne reste rien ;
-2. retirer `NODE_AUTH_TOKEN` de ses variables de build (Cloudflare, CI) ;
-3. changer de paquet — `npm uninstall @yoannyviquel/neomorphism-design-system`, puis
-   `npm install @pendrayg/neomorphism-design-system` ;
-4. remplacer `@yoannyviquel/neomorphism-design-system` par `@pendrayg/neomorphism-design-system`
-   dans ses imports.
+Le build d'une app (Cloudflare, CI) a besoin du même `NODE_AUTH_TOKEN` dans ses variables.
 
 **L'app n'a rien à faire pour la densité** : le DS lit le pointeur. Sur **téléphone**, le rendu est
 **identique au pixel** à celui de la maquette (`pointer: coarse` ⇒ échelle confortable) ; ce qui
@@ -297,9 +293,7 @@ npm version minor    # ou patch, major : met à jour package.json et crée le ta
 git push --follow-tags
 ```
 
-Le workflow « Publier » construit et publie le tag sur npmjs.com, par publication de confiance :
-npm reconnaît ce workflow, déclaré dans les réglages du paquet (Settings → Trusted Publisher), et
-n'a besoin d'aucun secret. Il se lance aussi à la main
+Le workflow « Publier » construit et publie le tag sur GitHub Packages. Il se lance aussi à la main
 (onglet Actions, « Run workflow ») : il publie alors la version inscrite dans `package.json`, puis
 pose le tag `v<version>` s'il manque. Le champ « commit » vise un commit antérieur ; une version
 déjà publiée n'est pas republiée, seul son tag est posé.

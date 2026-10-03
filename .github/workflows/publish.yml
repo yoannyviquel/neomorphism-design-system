@@ -1,6 +1,5 @@
 name: Publier
 
-# Publie sur npmjs.com, en public : une app installe le paquet sans jeton ni .npmrc.
 # Une version = un tag : `npm version patch` (ou minor, major), puis `git push --follow-tags`.
 # Ou à la main (onglet Actions, « Run workflow ») : publie la version inscrite dans package.json,
 # puis pose le tag `v<version>` s'il manque. Le champ « commit » publie ou tague un commit
@@ -21,15 +20,9 @@ jobs:
     permissions:
       # Écriture : pousser le tag de la version. Un tag poussé par ce jeton ne relance pas ce workflow.
       contents: write
-      # Publication de confiance (trusted publishing) : npm échange le jeton OIDC de GitHub Actions
-      # contre le droit de publier, sans secret. Le paquet déclare ce workflow comme éditeur de
-      # confiance sur npmjs.com (Settings → Trusted Publisher).
-      id-token: write
+      packages: write
     env:
-      # Seulement pour la PREMIÈRE publication, avant que le paquet existe sur npmjs.com et qu'on
-      # puisse y déclarer l'éditeur de confiance : un jeton npm granulaire, en secret NPM_TOKEN.
-      # Le supprimer ensuite : npm tente l'OIDC d'abord et ne retombe sur un jeton qu'à défaut.
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,9 +30,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org
+          registry-url: https://npm.pkg.github.com
+          scope: '@yoannyviquel'
       # npm 10 bute sur la résolution des dépendances pair à l'installation : npm 11 (npm ci, lui, passe).
-      # La publication de confiance demande au moins npm 11.5.1.
       - run: npm install -g npm@11
       - id: version
         run: |
