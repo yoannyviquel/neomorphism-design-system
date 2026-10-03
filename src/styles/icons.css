@@ -103,6 +103,10 @@
   content: '\f0238';
 }
 
+.nf-md-filter_variant::before {
+  content: '\f0236';
+}
+
 .nf-md-format_list_bulleted::before {
   content: '\f0279';
 }

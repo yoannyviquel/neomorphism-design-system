@@ -23,6 +23,7 @@ export const ICONS = [
   'eye',
   'eye_off',
   'fire',
+  'filter_variant',
   'flash',
   'format_list_bulleted',
   'gauge',
