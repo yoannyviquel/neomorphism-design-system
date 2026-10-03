@@ -236,11 +236,12 @@ function ImageRow({ variant }: { variant: ImageButtonVariant }) {
 
 /** Trois opérations à choisir : le bloc choisi s'enfonce, du geste de son bouton. */
 function SelectionDemo() {
-  const lignes = [
+  const toutes = [
     { id: 'a', titre: 'Amundi Actions Monde ISR', detail: '08/01/2026 · achat · 200,24 €' },
     { id: 'b', titre: 'Fonds euros', detail: '08/03/2026 · frais · 6 172,84 €' },
     { id: 'c', titre: 'ETF S&P 500', detail: '08/02/2026 · dividende · 15 240,11 €' },
   ]
+  const [lignes, setLignes] = useState(toutes)
   const [choisis, setChoisis] = useState<Set<string>>(new Set(['b']))
   const basculer = (id: string) =>
     setChoisis((avant) => {
@@ -262,9 +263,15 @@ function SelectionDemo() {
           </strong>
           <div className="row">
             <Button size="sm">Reclasser</Button>
-            <Button size="sm" tone="danger">
-              Supprimer
-            </Button>
+            <DeleteButton
+              label="Supprimer"
+              withLabel
+              size="sm"
+              onDelete={() => {
+                setLignes((avant) => avant.filter((ligne) => !choisis.has(ligne.id)))
+                setChoisis(new Set())
+              }}
+            />
             <Button size="sm" onClick={() => setChoisis(new Set())}>
               Annuler
             </Button>
@@ -280,6 +287,13 @@ function SelectionDemo() {
           <SelectToggle selected={choisis.has(ligne.id)} onToggle={() => basculer(ligne.id)} label={`Sélectionner ${ligne.titre}`} />
         </Selectable>
       ))}
+      {lignes.length < toutes.length && (
+        <div className="row">
+          <Button size="sm" onClick={() => setLignes(toutes)}>
+            Tout rétablir
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
@@ -569,9 +583,7 @@ export function App() {
           <Button tone="primary" icon="check">
             Suivre
           </Button>
-          <Button tone="danger" icon="delete">
-            Effacer
-          </Button>
+          <DeleteButton label="Effacer" withLabel onDelete={() => {}} />
           <Button tone="link">Choisir mes plateformes</Button>
           <Button disabled>Indisponible</Button>
         </div>
