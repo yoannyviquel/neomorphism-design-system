@@ -18,6 +18,9 @@ export interface DisclosureProps {
   toggleLabel?: string
   /** Dépliée au premier rendu, sans animation. */
   defaultOpen?: boolean
+  /** Dépliée ou non, quand c'est l'app qui en décide (une seule section ouverte à la fois, un
+   *  repli après enregistrement…). Le chevron appelle alors `onToggle`, et l'app suit. */
+  open?: boolean
   /** Dépliée, la section S'ENFONCE tout entière — intitulé, contenu et chevron —, comme un élément
    *  choisi (`Selectable`) : du même creux, au même rebond. Elle remonte à la FIN du repli, une
    *  fois le contenu rentré, pas au premier appui. */
@@ -40,27 +43,30 @@ export interface DisclosureProps {
  * Au repli, elle reste enfoncée le temps que le contenu rentre, et ne remonte qu'à la fin.
  * Repliée, elle est à plat, alignée sur ses voisines : le creux a sa marge d'avance.
  */
-/** L'état d'une section dépliante : dépliée ou non, et enfoncée — dès le dépli, et jusqu'à la fin
- *  du repli : le creux tient le temps que le contenu rentre, puis la section remonte, à plat. */
-function useDepli(defaultOpen: boolean, onToggle?: (open: boolean) => void) {
+/** L'état d'une section dépliante : dépliée ou non — par elle-même, ou par l'app (`open`) —, et
+ *  enfoncée dès le dépli et jusqu'à la fin du repli : le creux tient le temps que le contenu rentre,
+ *  puis la section remonte, à plat. */
+function useDepli(defaultOpen: boolean, open: boolean | undefined, onToggle?: (open: boolean) => void) {
   const id = useId()
-  const [ouvert, setOuvert] = useState(defaultOpen)
-  const [enfoncee, setEnfoncee] = useState(defaultOpen)
+  const [interne, setInterne] = useState(defaultOpen)
+  const ouvert = open ?? interne
+  const [enfoncee, setEnfoncee] = useState(ouvert)
+  // Dépliée par l'app : enfoncée aussitôt, sans attendre un effet — au même rendu que le dépli.
+  if (ouvert && !enfoncee) setEnfoncee(true)
   return {
     id,
     ouvert,
     creuse: ouvert || enfoncee,
     basculer: () => {
-      if (!ouvert) setEnfoncee(true)
-      setOuvert(!ouvert)
+      if (open === undefined) setInterne(!ouvert)
       onToggle?.(!ouvert)
     },
     replie: () => setEnfoncee(false),
   }
 }
 
-export function Disclosure({ title, hint, icon, toggleLabel, defaultOpen = false, sunken = false, onToggle, className, children }: DisclosureProps) {
-  const { id, ouvert, creuse, basculer, replie } = useDepli(defaultOpen, onToggle)
+export function Disclosure({ title, hint, icon, toggleLabel, defaultOpen = false, open, sunken = false, onToggle, className, children }: DisclosureProps) {
+  const { id, ouvert, creuse, basculer, replie } = useDepli(defaultOpen, open, onToggle)
   const nom = toggleLabel ?? (typeof title === 'string' ? title : 'Déplier')
 
   return (
@@ -100,6 +106,8 @@ export interface DisclosureButtonProps {
   icon?: IconName
   /** Dépliée au premier rendu, sans animation. */
   defaultOpen?: boolean
+  /** Dépliée ou non, quand c'est l'app qui en décide ; l'en-tête appelle alors `onToggle`. */
+  open?: boolean
   onToggle?: (open: boolean) => void
   className?: string
   children: ReactNode
@@ -116,8 +124,8 @@ export interface DisclosureButtonProps {
  * propres commandes, ne peut pas être dans un bouton. Le relief est donc celui de la section, sur
  * son calque d'ombre (`Shade`), qui suit --sink comme celui d'un bouton.
  */
-export function DisclosureButton({ title, hint, icon, defaultOpen = false, onToggle, className, children }: DisclosureButtonProps) {
-  const { id, ouvert, creuse, basculer, replie } = useDepli(defaultOpen, onToggle)
+export function DisclosureButton({ title, hint, icon, defaultOpen = false, open, onToggle, className, children }: DisclosureButtonProps) {
+  const { id, ouvert, creuse, basculer, replie } = useDepli(defaultOpen, open, onToggle)
   const { pressed, handlers } = usePress({})
 
   return (
