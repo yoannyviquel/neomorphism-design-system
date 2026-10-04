@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { foldLines, type FoldLine } from '../fold/lines'
 import { prefersReducedMotion } from '../fold/motion'
-import { foldBackSchedule, foldPush, foldSchedule, POP_S, PUSH_S } from '../fold/schedule'
+import { foldPush, foldSchedule, POP_S, PUSH_S, revealBackSchedule } from '../fold/schedule'
 import { cx } from './cx'
 
 export interface RevealProps {
@@ -20,6 +20,10 @@ export interface RevealProps {
 /** Les marques posées sur le contenu le temps d'une animation : des attributs, que React ne
  *  réécrit pas — une classe ajoutée à la main sauterait au premier rendu du bouton qui la porte. */
 const CACHEE = 'data-fold-hidden'
+
+/** Au repli, la première remontée attend une image, le temps que la hauteur de départ soit peinte :
+ *  sans elle, la transition sauterait de « auto » à la hauteur d'arrivée. */
+const DEPART = 0.02
 
 function decouvrir(ligne: FoldLine) {
   for (const el of ligne.elements) el.removeAttribute(CACHEE)
@@ -53,7 +57,9 @@ function hauteurPour(n: number, lignes: FoldLine[], total: number): number {
  * Le dépli va LIGNE PAR LIGNE, comme celui de la grille : le cadre pousse la suite de la page pour
  * faire la place d'une ligne, puis les commandes de cette ligne POPPENT — elles montent du fond
  * au-delà de leur relief, rebondissent et s'y posent —, pendant que la ligne suivante se découvre.
- * Le repli est le dépli joué à l'envers, depuis le bas.
+ * Le repli est le dépli joué à l'envers, depuis le bas, et part DÈS L'APPUI : le cadre remonte
+ * aussitôt, les commandes de chaque ligne retournant au fond pendant qu'il la recouvre (cf.
+ * revealBackSchedule).
  *
  * Les lignes d'un contenu ne sont pas données comme celles d'une grille : elles sont relevées dans
  * la mise en page mesurée (cf. foldLines) — un titre, un champ avec son libellé, une note, ou une
@@ -179,27 +185,28 @@ export function Reveal({ open, id, onFolded, className, children }: RevealProps)
     })
     setPousse(push)
     setMouvement('closing')
-    // De « auto » à une hauteur en clair : le point de départ de la première remontée.
+    // De « auto » à une hauteur en clair : le point de départ de la première remontée, qui part
+    // dès l'image suivante (la transition a besoin de ce point de départ peint).
     setHauteur(hauteurPour(deja, lignes, total))
 
-    const etapes = foldBackSchedule(deja, push)
+    const etapes = revealBackSchedule(deja, push)
     for (const etape of etapes) {
       // La ligne qui s'en va est la dernière encore découverte.
       const ligne = lignes[etape.rows]
-      plusTard(() => marquer(ligne, 'unpop'), etape.unpopAt)
       plusTard(() => {
+        marquer(ligne, 'unpop')
         decouvertes.current = etape.rows
         setHauteur(hauteurPour(etape.rows, lignes, total))
-      }, etape.pullAt)
+      }, etape.pullAt + DEPART)
       // Recouverte : elle disparaît aussi de la marge qui laisse voir les ombres.
-      plusTard(() => couvrir(ligne), etape.pullAt + push)
+      plusTard(() => couvrir(ligne), etape.pullAt + DEPART + push)
     }
     const derniere = etapes[etapes.length - 1]
     // Les marques restent : le contenu replié est caché, et le prochain dépli les repose toutes.
     plusTard(() => {
       setMouvement(null)
       replieRappel.current?.()
-    }, (derniere ? derniere.pullAt + push : 0) + 0.05)
+    }, (derniere ? derniere.pullAt + DEPART + push : 0) + 0.05)
   }
 
   useEffect(() => {
@@ -212,7 +219,7 @@ export function Reveal({ open, id, onFolded, className, children }: RevealProps)
   }, [open])
 
   const replie = !open && mouvement === null
-  const cadre = { height: hauteur, '--fold-duration': `${pousse}s`, '--pop-delay': `${pousse}s` } as CSSProperties
+  const cadre = { height: hauteur, '--fold-duration': `${pousse}s`, '--pop-delay': `${pousse}s`, '--unpop-duration': `${pousse}s` } as CSSProperties
 
   return (
     <div className={cx('ds-reveal', className)} style={cadre}>
