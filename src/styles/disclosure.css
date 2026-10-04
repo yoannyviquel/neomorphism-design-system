@@ -42,6 +42,113 @@
   margin-block: calc(-1 * var(--selectable-room));
 }
 
+/* LE BOUTON SECTION DÉPLIANTE (DisclosureButton) : la section est le bouton. Son relief est celui
+   d'un bouton — calque d'ombre (.ds-shade) qui suit --sink, au rebond du DS —, mais SOUS le
+   contenu : le creux d'une section dépliée ne doit pas assombrir les champs qu'elle porte. En
+   relief repliée, enfoncée dépliée (et jusqu'à la fin du repli), enfoncée le temps d'un appui. */
+.ds-disclosure-button {
+  --sink: 0;
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--control-radius);
+  transition: --sink 1s var(--release-ease);
+}
+
+.ds-disclosure-button > .ds-shade {
+  z-index: -1;
+}
+
+.ds-disclosure-button.ds-active,
+.ds-disclosure-button.ds-pressed {
+  --sink: 1;
+  transition: --sink 1s var(--sink-ease);
+}
+
+@supports not (transition-timing-function: linear(0, 1)) {
+  .ds-disclosure-button,
+  .ds-disclosure-button.ds-active,
+  .ds-disclosure-button.ds-pressed {
+    transition: --sink 0.45s cubic-bezier(0.34, 1.8, 0.64, 1);
+  }
+}
+
+/* L'en-tête, seule commande : à plat dans le bouton qu'est la section, de toute sa largeur.
+   Icône, intitulé et indication à gauche, le chevron à droite ; le texte à demi-encre au repos, à
+   pleine encre enfoncé, comme un bouton. */
+.ds-disclosure-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 14px 16px;
+  border: none;
+  border-radius: var(--control-radius);
+  background: transparent;
+  color: color-mix(in srgb, var(--btn-active-color) 50%, transparent);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s ease;
+}
+
+.ds-disclosure-button.ds-active > .ds-disclosure-trigger {
+  color: var(--btn-active-color);
+}
+
+.ds-disclosure-trigger:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 60%, transparent);
+  outline-offset: 2px;
+}
+
+.ds-disclosure-trigger .ds-disclosure-titles {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-disclosure-trigger .ds-disclosure-title {
+  font-size: 16px;
+}
+
+.ds-disclosure-trigger .ds-disclosure-hint {
+  font-weight: 400;
+}
+
+.ds-disclosure-trigger .ds-disclosure-icon {
+  margin-top: 0;
+}
+
+.ds-disclosure-chevron {
+  flex: 0 0 auto;
+  font-size: var(--control-icon);
+  transition: transform 0.3s var(--release-ease, ease);
+}
+
+.ds-disclosure-button.ds-open > .ds-disclosure-trigger .ds-disclosure-chevron {
+  transform: rotate(180deg);
+  transition: transform 0.3s var(--sink-ease, ease);
+}
+
+/* Le contenu se range DANS le bouton, sous l'en-tête : rentré de sa marge intérieure de chaque côté
+   (aligné sur l'icône), et posé au-dessus d'une marge. Les marges sont dans le contenu, mesurées
+   avec lui par le dépli ; l'écart avec l'en-tête aussi, plus court que celui d'une section. */
+.ds-disclosure.ds-disclosure-button .ds-reveal-content {
+  padding: 4px 16px 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-disclosure-button,
+  .ds-disclosure-button.ds-active,
+  .ds-disclosure-button.ds-pressed,
+  .ds-disclosure-chevron,
+  .ds-disclosure-button.ds-open > .ds-disclosure-trigger .ds-disclosure-chevron {
+    transition: none;
+  }
+}
+
 /* Ce que la section contient, pour décider sans déplier. */
 .ds-disclosure-hint {
   margin: 3px 0 0;
