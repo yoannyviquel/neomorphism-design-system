@@ -173,7 +173,9 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   d'actions qui s'en va n'annonce pas « 0 sélectionnée ».
 - **Une section dépliée peut s'enfoncer.** Avec `sunken`, une `Disclosure` dépliée se creuse tout
   entière — intitulé, contenu, chevron —, du creux et du rebond d'un élément choisi
-  (`Selectable`) : l'ouverture se lit à la région, plus seulement au chevron. Repliée, elle est à
+  (`Selectable`) : l'ouverture se lit à la région, plus seulement au chevron. Au repli, elle reste
+  enfoncée le temps que le contenu rentre et ne remonte qu'à la fin (`Reveal` prévient alors par
+  `onFolded`). Repliée, elle est à
   plat, et sa marge, prise d'avance et rendue par une marge négative, la garde alignée sur ses
   voisines : rien ne bouge quand elle s'enfonce. Deux sections qui s'enfoncent côte à côte
   demandent à la page un écart d'au moins deux marges (24 px), pour que leurs creux ne se touchent

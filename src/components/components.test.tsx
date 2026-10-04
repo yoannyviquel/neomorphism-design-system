@@ -142,6 +142,27 @@ describe('Disclosure qui s’enfonce', () => {
 })
 
 describe('Reveal', () => {
+  it('prévient à la fin du repli, jamais au dépli', () => {
+    const onFolded = vi.fn()
+    const { rerender } = render(
+      <Reveal open={false} onFolded={onFolded}>
+        <p>Un message</p>
+      </Reveal>,
+    )
+    rerender(
+      <Reveal open onFolded={onFolded}>
+        <p>Un message</p>
+      </Reveal>,
+    )
+    expect(onFolded).not.toHaveBeenCalled()
+    rerender(
+      <Reveal open={false} onFolded={onFolded}>
+        <p>Un message</p>
+      </Reveal>,
+    )
+    expect(onFolded).toHaveBeenCalledTimes(1)
+  })
+
   it("se déplie et se replie au gré de l'état, sans intitulé ni chevron", () => {
     const { rerender } = render(
       <Reveal open={false} id="actions">
