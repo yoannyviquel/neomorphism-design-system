@@ -364,6 +364,28 @@ function Depliantes() {
   )
 }
 
+/** Deux sections qui s'enfoncent, dépliées, du creux d'un élément choisi. */
+function DepliantesEnfoncees() {
+  return (
+    <div className="stack stack-creux">
+      <Disclosure title="Revenus" hint="Le salaire de chacun, mois par mois" icon="tray_arrow_down" sunken>
+        <div className="stack">
+          <Input aria-label="Salaire" defaultValue="2 405,17 €" />
+          <div className="row">
+            <Button>Ajouter une ligne</Button>
+          </div>
+        </div>
+      </Disclosure>
+      <Disclosure title="Données" hint="Synchronisation et sauvegarde" icon="cloud" sunken defaultOpen>
+        <div className="row">
+          <Button icon="tray_arrow_down">Télécharger</Button>
+          <Button icon="tray_arrow_up">Restaurer</Button>
+        </div>
+      </Disclosure>
+    </div>
+  )
+}
+
 function Fields() {
   const [query, setQuery] = useState('')
   const [region, setRegion] = useState('FR')
@@ -652,9 +674,11 @@ export function App() {
       <Demo
         id="depliantes"
         title="Sections dépliantes"
-        intro="Le système de la grille dépliante, pour un contenu quelconque : un intitulé, le contenu replié, et dessous le chevron de la grille, enfoncé tant que tout est affiché. Le dépli va ligne par ligne — un titre, un champ avec son libellé, une rangée de commandes côte à côte — et chaque commande poppe sitôt sa place faite. Le repli est le dépli à l'envers, depuis le bas."
+        intro="Le système de la grille dépliante, pour un contenu quelconque : un intitulé, le contenu replié, et dessous le chevron de la grille, enfoncé tant que tout est affiché. Le dépli va ligne par ligne — un titre, un champ avec son libellé, une rangée de commandes côte à côte — et chaque commande poppe sitôt sa place faite. Le repli est le dépli à l'envers, depuis le bas. Avec `sunken`, la section dépliée s'enfonce tout entière, comme un élément choisi."
       >
         <Depliantes />
+        <h3>Qui s'enfonce</h3>
+        <DepliantesEnfoncees />
       </Demo>
 
       <Demo

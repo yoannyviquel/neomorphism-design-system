@@ -33,6 +33,15 @@
   font-weight: 700;
 }
 
+/* La section qui s'enfonce : le creux d'un élément choisi (.ds-selectable, selection.css), qui
+   donne la marge latérale ; la section y ajoute la marge du haut et du bas, rendue elle aussi par
+   une marge négative — repliée à plat, elle reste alignée sur ses voisines, et rien ne bouge quand
+   elle s'enfonce. */
+.ds-disclosure-sunken {
+  padding-block: var(--selectable-room);
+  margin-block: calc(-1 * var(--selectable-room));
+}
+
 /* Ce que la section contient, pour décider sans déplier. */
 .ds-disclosure-hint {
   margin: 3px 0 0;

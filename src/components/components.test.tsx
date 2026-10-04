@@ -112,6 +112,35 @@ describe('Disclosure', () => {
   })
 })
 
+describe('Disclosure qui s’enfonce', () => {
+  it('se creuse tout entière une fois dépliée, à plat repliée', async () => {
+    const { container } = render(
+      <Disclosure title="Données" sunken>
+        <p>Sauvegarde</p>
+      </Disclosure>,
+    )
+    const section = container.querySelector('.ds-disclosure')
+    expect(section).toHaveClass('ds-selectable', 'ds-disclosure-sunken')
+    expect(section).not.toHaveAttribute('data-selected')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Données' }))
+    expect(section).toHaveAttribute('data-selected')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Données' }))
+    expect(section).not.toHaveAttribute('data-selected')
+  })
+
+  it('reste une section ordinaire sans `sunken`', () => {
+    const { container } = render(
+      <Disclosure title="Immobilier" defaultOpen>
+        <p>Le bien</p>
+      </Disclosure>,
+    )
+    expect(container.querySelector('.ds-disclosure')).not.toHaveClass('ds-selectable')
+    expect(container.querySelector('.ds-disclosure')).not.toHaveAttribute('data-selected')
+  })
+})
+
 describe('Reveal', () => {
   it("se déplie et se replie au gré de l'état, sans intitulé ni chevron", () => {
     const { rerender } = render(
