@@ -16,6 +16,9 @@ export interface DisclosureProps {
   toggleLabel?: string
   /** Dépliée au premier rendu, sans animation. */
   defaultOpen?: boolean
+  /** Dépliée, la section S'ENFONCE tout entière — intitulé, contenu et chevron —, comme un élément
+   *  choisi (`Selectable`) : du même creux, au même rebond. */
+  sunken?: boolean
   onToggle?: (open: boolean) => void
   className?: string
   children: ReactNode
@@ -28,14 +31,21 @@ export interface DisclosureProps {
  * grille — un bouton-icône, enfoncé tant que tout est affiché. Le dépli lui-même est celui de la
  * section dépliante cachée (`Reveal`) : ligne par ligne, chaque commande poppant sitôt sa place
  * faite, le repli joué à l'envers depuis le bas.
+ *
+ * `sunken` : dépliée, la section s'enfonce tout entière, du creux d'un élément choisi
+ * (`Selectable`) — l'ouverture se lit au relief de la région, plus seulement à celui du chevron.
+ * Repliée, elle est à plat, alignée sur ses voisines : le creux a sa marge d'avance.
  */
-export function Disclosure({ title, hint, icon, toggleLabel, defaultOpen = false, onToggle, className, children }: DisclosureProps) {
+export function Disclosure({ title, hint, icon, toggleLabel, defaultOpen = false, sunken = false, onToggle, className, children }: DisclosureProps) {
   const id = useId()
   const [ouvert, setOuvert] = useState(defaultOpen)
   const nom = toggleLabel ?? (typeof title === 'string' ? title : 'Déplier')
 
   return (
-    <section className={cx('ds-disclosure', ouvert && 'ds-open', className)}>
+    <section
+      className={cx('ds-disclosure', ouvert && 'ds-open', sunken && 'ds-selectable ds-disclosure-sunken', className)}
+      data-selected={sunken && ouvert ? '' : undefined}
+    >
       <div className="ds-disclosure-heading">
         {icon && <Icon name={icon} className="ds-disclosure-icon" />}
         <div className="ds-disclosure-titles">

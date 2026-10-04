@@ -171,6 +171,13 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   dont l'état tiendrait le chevron : `Reveal`, la section dépliante cachée, qui est aussi le
   moteur de `Disclosure`. Il garde ce qu'il affichait le temps de son repli : une barre
   d'actions qui s'en va n'annonce pas « 0 sélectionnée ».
+- **Une section dépliée peut s'enfoncer.** Avec `sunken`, une `Disclosure` dépliée se creuse tout
+  entière — intitulé, contenu, chevron —, du creux et du rebond d'un élément choisi
+  (`Selectable`) : l'ouverture se lit à la région, plus seulement au chevron. Repliée, elle est à
+  plat, et sa marge, prise d'avance et rendue par une marge négative, la garde alignée sur ses
+  voisines : rien ne bouge quand elle s'enfonce. Deux sections qui s'enfoncent côte à côte
+  demandent à la page un écart d'au moins deux marges (24 px), pour que leurs creux ne se touchent
+  pas.
 - **Ce qui est choisi s'enfonce, il ne se teint pas.** Le relief dit l'état, ici comme ailleurs :
   un élément choisi (`Selectable`) se creuse dans la page, du même geste et du même rebond que le
   bouton qui le choisit (`SelectToggle`, un bouton-icône à bascule — case vide, puis cochée et
@@ -205,7 +212,7 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `DeleteButton` | le bouton qui supprime : poubelle à l'encre des commandes, armée au premier appui (rebond, poubelle rouge), qui supprime au second et désarme seule au bout de 3 s ou d'un appui ailleurs ; `withLabel`, un bouton à libellé (poubelle et nom) |
 | `Selectable`, `SelectToggle` | la sélection : un bloc (ou une ligne de tableau, `as="tr"`) qui s'enfonce quand il est choisi, et le bouton à bascule qui le choisit, case vide puis cochée |
 | `Reveal` | la section dépliante cachée : le dépli d'une `Disclosure`, sans intitulé ni chevron, commandé par l'état — les actions d'une sélection, un message qui s'impose |
-| `Disclosure` | section dépliante, sur le système de la grille : un intitulé, le chevron dessous, un dépli ligne par ligne où chaque commande poppe |
+| `Disclosure` | section dépliante, sur le système de la grille : un intitulé, le chevron dessous, un dépli ligne par ligne où chaque commande poppe ; `sunken` l'enfonce une fois dépliée |
 | `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'un trait (`#ds-chart-groove`, k = 1/24 pour 2 px), **la même rainure pour une marque pleine** (`#ds-chart-groove-fill` : même géométrie, encre à 40 %) et le sertissage du graphique entier (`#ds-chart-set`, k = 1/3). `#ds-chart-shadow` est **déprécié** — plus aucune marque ne s'en sert |
 | `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile — **et qui ne coupe que s'il défile** : quand il tient dans sa place, le corps laisse déborder les ombres de ses boutons, l'en-tête et le pied rendent leur fond |
 | `Slides` | les écrans côte à côte : changer de destination fait glisser le ruban à gauche ou à droite, tous restés montés, les autres `inert` ; chaque écran porte son `Body`, qui défile seul et garde sa position |

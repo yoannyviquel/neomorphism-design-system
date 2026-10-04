@@ -82,6 +82,12 @@ body {
   max-width: 420px;
 }
 
+/* Des sections qui s'enfoncent : leur creux déborde de sa marge de chaque côté, l'écart entre
+   deux sections la lui rend pour que deux creux voisins ne se touchent pas. */
+.stack-creux {
+  gap: calc(var(--shadow-room) + 24px);
+}
+
 .swatch {
   display: grid;
   gap: 14px;
