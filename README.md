@@ -178,8 +178,8 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   intitulé, indication, et un chevron qui se retourne. Un appui sur l'en-tête enfonce le bouton
   tout entier, du creux et du rebond d'une bascule, et le déplie : le contenu paraît DANS le
   bouton, sous l'en-tête, dans le même creux, rentré de sa marge intérieure. Un second appui le
-  replie : le contenu rentre ligne par ligne depuis le bas, et le bouton ne se rétracte sur
-  une ligne qu'une fois elle rentrée (`retractFirst` de `Reveal`) ; il remonte en relief une fois
+  replie : le contenu rentre ligne par ligne depuis le bas, et le bouton ne se rétracte d'une
+  ligne qu'une fois elle rentrée et partie (`retractFirst` de `Reveal`) ; il remonte en relief une fois
   tout rentré. Seul l'en-tête s'actionne — le contenu
   porte ses propres commandes, qu'un bouton ne peut pas contenir —, et le creux est peint sous le
   contenu, pour ne pas assombrir ses champs.

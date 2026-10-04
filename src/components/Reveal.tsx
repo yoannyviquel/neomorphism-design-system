@@ -13,9 +13,9 @@ export interface RevealProps {
    *  il commence : ce qui doit suivre la fin du repli (une section qui cesse d'être enfoncée) attend
    *  ce moment. Un dépli repris avant la fin ne l'appelle pas. */
   onFolded?: () => void
-  /** Au repli, le cadre attend que la ligne la plus basse soit rentrée avant de remonter, puis
-   *  chaque ligne rentre avant d'être recouverte (cf. revealBackSchedule). Sans lui, le cadre
-   *  remonte dès l'appui. */
+  /** Au repli, chaque ligne, depuis le bas, rentre puis disparaît, et le cadre ne se rétracte
+   *  d'une ligne qu'une fois elle partie (cf. revealBackSchedule). Sans lui, le cadre remonte dès
+   *  l'appui, sur des lignes encore là. */
   retractFirst?: boolean
   className?: string
   children: ReactNode
@@ -203,8 +203,10 @@ export function Reveal({ open, id, onFolded, retractFirst = false, className, ch
         decouvertes.current = etape.rows
         setHauteur(hauteurPour(etape.rows, lignes, total))
       }, etape.pullAt + DEPART)
-      // Recouverte : elle disparaît aussi de la marge qui laisse voir les ombres.
-      plusTard(() => couvrir(ligne), etape.pullAt + DEPART + push)
+      // Recouverte : elle disparaît aussi de la marge qui laisse voir les ombres. Avec
+      // `retractFirst`, elle disparaît dès qu'elle est rentrée, AVANT que le cadre ne remonte : le
+      // cadre ne se rétracte d'une ligne qu'une fois la ligne partie, sur une place vide.
+      plusTard(() => couvrir(ligne), etape.pullAt + DEPART + (retractFirst ? 0 : push))
     }
     const derniere = etapes[etapes.length - 1]
     // Les marques restent : le contenu replié est caché, et le prochain dépli les repose toutes.
