@@ -173,6 +173,33 @@ describe('DisclosureButton', () => {
     expect(section).not.toHaveClass('ds-active')
   })
 
+  it("suit l'app quand elle en décide : l'en-tête demande, `open` tranche", async () => {
+    function Pilote() {
+      const [ouvert, setOuvert] = useState(false)
+      return (
+        <>
+          <DisclosureButton title="Catégorie" open={ouvert} onToggle={setOuvert}>
+            <button type="button" onClick={() => setOuvert(false)}>
+              Enregistrer
+            </button>
+          </DisclosureButton>
+        </>
+      )
+    }
+    const { container } = render(<Pilote />)
+    const entete = screen.getByRole('button', { name: /Catégorie/ })
+    const section = container.querySelector('.ds-disclosure')
+
+    await userEvent.click(entete)
+    expect(entete).toHaveAttribute('aria-expanded', 'true')
+    expect(section).toHaveClass('ds-active')
+
+    // L'app replie : après enregistrement, par exemple.
+    await userEvent.click(screen.getByRole('button', { name: 'Enregistrer' }))
+    expect(entete).toHaveAttribute('aria-expanded', 'false')
+    expect(section).not.toHaveClass('ds-active')
+  })
+
   it('peut s’ouvrir d’emblée', () => {
     render(
       <DisclosureButton title="Revenus" defaultOpen>
