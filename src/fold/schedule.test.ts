@@ -35,6 +35,12 @@ describe('revealBackSchedule', () => {
     for (const step of steps) expect(step.unpopAt).toBeCloseTo(step.pullAt)
   })
 
+  it("attend, avec `retractFirst`, que chaque ligne soit rentrée avant de la recouvrir", () => {
+    const steps = revealBackSchedule(3, PUSH_S, true)
+    expect(steps.map((step) => step.unpopAt)).toEqual([0, PUSH_S, 2 * PUSH_S].map((t) => expect.closeTo(t)))
+    for (const step of steps) expect(step.pullAt).toBeCloseTo(step.unpopAt + PUSH_S)
+  })
+
   it('dure autant que les poussées du dépli, sans attendre les pops', () => {
     const push = foldPush(10)
     const steps = revealBackSchedule(10, push)

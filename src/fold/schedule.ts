@@ -76,11 +76,16 @@ export function foldBackSchedule(extraRows: number, push = PUSH_S): FoldBackStep
  * --unpop-duration, disclosure.css). La grille, elle, attend que ses boutons soient au fond
  * (foldBackSchedule) : ses boutons sont tout son contenu, une section a surtout autre chose à
  * ranger.
+ *
+ * `retractFirst` : le cadre attend que la ligne la plus basse soit rentrée avant de remonter sur
+ * elle — une poussée —, et ainsi de suite en cascade : chaque ligne rentre, puis le cadre la
+ * recouvre, pendant que la suivante rentre à son tour. Le bouton section dépliante se replie ainsi :
+ * c'est le bouton qui se rétracte, une fois son contenu rentré.
  */
-export function revealBackSchedule(extraRows: number, push = PUSH_S): FoldBackStep[] {
+export function revealBackSchedule(extraRows: number, push = PUSH_S, retractFirst = false): FoldBackStep[] {
   return Array.from({ length: Math.max(0, extraRows) }, (_, i) => ({
     rows: extraRows - i - 1,
     unpopAt: i * push,
-    pullAt: i * push,
+    pullAt: i * push + (retractFirst ? push : 0),
   }))
 }
