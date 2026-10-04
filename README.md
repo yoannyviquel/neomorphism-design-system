@@ -159,7 +159,9 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   `FoldingGrid` pour un contenu quelconque : un intitulé toujours visible, le contenu replié, et
   dessous le même chevron, enfoncé tant que tout est affiché. Le dépli va ligne par ligne — le
   cadre pousse la page pour faire la place d'une ligne, puis ses commandes poppent, pendant que la
-  suivante se découvre —, et le repli est le dépli à l'envers, depuis le bas. Les lignes d'un
+  suivante se découvre —, et le repli est le dépli à l'envers, depuis le bas. Il part DÈS L'APPUI :
+  le cadre remonte aussitôt, et les commandes d'une ligne retournent au fond pendant qu'il la
+  recouvre (`revealBackSchedule`) — la grille, elle, attend que ses boutons soient au fond. Les lignes d'un
   formulaire ne sont pas données comme celles d'une grille : elles sont relevées dans la mise en
   page (`foldLines`) — un titre, un champ avec son libellé, une note, ou une rangée de commandes
   côte à côte, qui poppent ensemble. Un texte se découvre sans popper : seul ce qui s'actionne a

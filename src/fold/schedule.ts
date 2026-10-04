@@ -68,3 +68,19 @@ export function foldBackSchedule(extraRows: number, push = PUSH_S): FoldBackStep
     pullAt: i * push + POP_S + SETTLE_S,
   }))
 }
+
+/**
+ * Le repli d'une section dépliante (Reveal, Disclosure) : il commence DÈS L'APPUI. Le cadre remonte
+ * aussitôt sur la dernière ligne, au rythme des poussées, et les commandes de chaque ligne
+ * retournent au fond pendant qu'il la recouvre — leur pop inversé dure une poussée (cf.
+ * --unpop-duration, disclosure.css). La grille, elle, attend que ses boutons soient au fond
+ * (foldBackSchedule) : ses boutons sont tout son contenu, une section a surtout autre chose à
+ * ranger.
+ */
+export function revealBackSchedule(extraRows: number, push = PUSH_S): FoldBackStep[] {
+  return Array.from({ length: Math.max(0, extraRows) }, (_, i) => ({
+    rows: extraRows - i - 1,
+    unpopAt: i * push,
+    pullAt: i * push,
+  }))
+}

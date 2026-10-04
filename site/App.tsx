@@ -674,7 +674,7 @@ export function App() {
       <Demo
         id="depliantes"
         title="Sections dépliantes"
-        intro="Le système de la grille dépliante, pour un contenu quelconque : un intitulé, le contenu replié, et dessous le chevron de la grille, enfoncé tant que tout est affiché. Le dépli va ligne par ligne — un titre, un champ avec son libellé, une rangée de commandes côte à côte — et chaque commande poppe sitôt sa place faite. Le repli est le dépli à l'envers, depuis le bas. Avec `sunken`, la section dépliée s'enfonce tout entière, comme un élément choisi."
+        intro="Le système de la grille dépliante, pour un contenu quelconque : un intitulé, le contenu replié, et dessous le chevron de la grille, enfoncé tant que tout est affiché. Le dépli va ligne par ligne — un titre, un champ avec son libellé, une rangée de commandes côte à côte — et chaque commande poppe sitôt sa place faite. Le repli est le dépli à l'envers, depuis le bas, et part dès l'appui. Avec `sunken`, la section dépliée s'enfonce tout entière, comme un élément choisi."
       >
         <Depliantes />
         <h3>Qui s'enfonce</h3>

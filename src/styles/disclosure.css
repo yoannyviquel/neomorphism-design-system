@@ -98,10 +98,12 @@
     ds-pop-scale 1s linear both var(--pop-delay, 0.3s);
 }
 
+/* Au repli, le cadre remonte dès l'appui : les commandes d'une ligne retournent au fond le temps
+   d'une poussée, pendant qu'il la recouvre (--unpop-duration, posé par le composant). */
 .ds-reveal [data-fold='unpop'] {
   animation:
-    ds-pop 1s linear reverse both,
-    ds-pop-scale 1s linear reverse both;
+    ds-pop var(--unpop-duration, 1s) linear reverse both,
+    ds-pop-scale var(--unpop-duration, 1s) linear reverse both;
 }
 
 /* Le relief suit --pop, quelle que soit la commande : un bouton le porte sur son calque d'ombre, un
@@ -128,7 +130,7 @@
 }
 
 .ds-reveal [data-fold='unpop'] .ds-image {
-  animation: ds-image-in 1s linear reverse both;
+  animation: ds-image-in var(--unpop-duration, 1s) linear reverse both;
 }
 
 @media (prefers-reduced-motion: reduce) {

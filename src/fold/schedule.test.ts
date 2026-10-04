@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { FOLD_MAX_S, foldBackSchedule, foldPush, foldSchedule, POP_S, PUSH_MIN_S, PUSH_S, SETTLE_S } from './schedule'
+import { FOLD_MAX_S, foldBackSchedule, foldPush, foldSchedule, POP_S, PUSH_MIN_S, PUSH_S, revealBackSchedule, SETTLE_S } from './schedule'
 
 describe('foldSchedule', () => {
   it('déplie une ligne par étape, tout du long, les poussées enchaînées sans attendre les pops', () => {
@@ -23,6 +23,22 @@ describe('foldBackSchedule', () => {
     const back = foldBackSchedule(5)
     const forward = foldSchedule(5)
     expect(back[back.length - 1].pullAt + PUSH_S).toBeCloseTo(forward[forward.length - 1].at + PUSH_S + POP_S + SETTLE_S)
+  })
+})
+
+describe('revealBackSchedule', () => {
+  it("replie une section dès l'appui : la dernière ligne recouverte tout de suite, puis une par poussée", () => {
+    const steps = revealBackSchedule(4)
+    expect(steps.map((step) => step.rows)).toEqual([3, 2, 1, 0])
+    expect(steps[0].pullAt).toBe(0)
+    expect(steps.map((step) => step.pullAt)).toEqual([0, PUSH_S, 2 * PUSH_S, 3 * PUSH_S].map((t) => expect.closeTo(t)))
+    for (const step of steps) expect(step.unpopAt).toBeCloseTo(step.pullAt)
+  })
+
+  it('dure autant que les poussées du dépli, sans attendre les pops', () => {
+    const push = foldPush(10)
+    const steps = revealBackSchedule(10, push)
+    expect(steps[steps.length - 1].pullAt + push).toBeCloseTo(10 * push)
   })
 })
 
