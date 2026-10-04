@@ -177,7 +177,8 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   bouton large, de toute sa largeur — icône, intitulé, indication, et un chevron qui se retourne.
   Un appui l'enfonce, enfonce la section (le creux de `sunken`) et la déplie : trois états d'un
   même geste. Un second appui le relève et replie la section, qui remonte à plat une fois le
-  contenu rentré.
+  contenu rentré. Le contenu se range dans la largeur du bouton, rentré de sa marge intérieure de
+  chaque côté, avec une marge sous la dernière ligne.
 - **Une section dépliée peut s'enfoncer.** Avec `sunken`, une `Disclosure` dépliée se creuse tout
   entière — intitulé, contenu, chevron —, du creux et du rebond d'un élément choisi
   (`Selectable`) : l'ouverture se lit à la région, plus seulement au chevron. Au repli, elle reste

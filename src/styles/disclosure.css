@@ -87,6 +87,15 @@
   transition: transform 0.3s var(--sink-ease, ease);
 }
 
+/* Le contenu d'un bouton section dépliante se range DANS le bouton, pas à sa largeur : rentré de
+   chaque côté de la marge intérieure du bouton (aligné sur son icône), et posé au-dessus d'une
+   marge qui laisse l'ombre de la dernière ligne s'étaler dans le creux. La marge est dans le
+   contenu, mesurée avec lui : le dépli en tient compte. */
+.ds-disclosure-button .ds-reveal-content {
+  padding-inline: 16px;
+  padding-bottom: 12px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ds-disclosure-chevron,
   .ds-disclosure-trigger.ds-active .ds-disclosure-chevron {
