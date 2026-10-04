@@ -13,6 +13,10 @@ export interface RevealProps {
    *  il commence : ce qui doit suivre la fin du repli (une section qui cesse d'être enfoncée) attend
    *  ce moment. Un dépli repris avant la fin ne l'appelle pas. */
   onFolded?: () => void
+  /** Au repli, le cadre attend que la ligne la plus basse soit rentrée avant de remonter, puis
+   *  chaque ligne rentre avant d'être recouverte (cf. revealBackSchedule). Sans lui, le cadre
+   *  remonte dès l'appui. */
+  retractFirst?: boolean
   className?: string
   children: ReactNode
 }
@@ -72,7 +76,7 @@ function hauteurPour(n: number, lignes: FoldLine[], total: number): number {
  *
  * C'est le moteur de `Disclosure`, qui y ajoute l'intitulé et le chevron.
  */
-export function Reveal({ open, id, onFolded, className, children }: RevealProps) {
+export function Reveal({ open, id, onFolded, retractFirst = false, className, children }: RevealProps) {
   const contenu = useRef<HTMLDivElement>(null)
   // Le dernier rappel reçu : les minuteries d'un repli lancé plus tôt appellent celui du moment.
   const replieRappel = useRef(onFolded)
@@ -189,12 +193,13 @@ export function Reveal({ open, id, onFolded, className, children }: RevealProps)
     // dès l'image suivante (la transition a besoin de ce point de départ peint).
     setHauteur(hauteurPour(deja, lignes, total))
 
-    const etapes = revealBackSchedule(deja, push)
+    const etapes = revealBackSchedule(deja, push, retractFirst)
     for (const etape of etapes) {
-      // La ligne qui s'en va est la dernière encore découverte.
+      // La ligne qui s'en va est la dernière encore découverte : ses commandes rentrent, puis le
+      // cadre la recouvre — au même instant, ou une fois rentrée (`retractFirst`).
       const ligne = lignes[etape.rows]
+      plusTard(() => marquer(ligne, 'unpop'), etape.unpopAt + DEPART)
       plusTard(() => {
-        marquer(ligne, 'unpop')
         decouvertes.current = etape.rows
         setHauteur(hauteurPour(etape.rows, lignes, total))
       }, etape.pullAt + DEPART)

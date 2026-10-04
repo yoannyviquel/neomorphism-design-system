@@ -118,7 +118,8 @@ export interface DisclosureButtonProps {
  * toute la largeur, qui ne montre que son en-tête — icône, intitulé, indication, et un chevron.
  * Un appui sur l'en-tête ENFONCE le bouton tout entier, du creux et du rebond d'un bouton à bascule,
  * et le déplie : le contenu paraît DANS le bouton, sous l'en-tête, dans le même creux. Un second
- * appui le replie ; le bouton remonte en relief une fois le contenu rentré.
+ * appui le replie : le contenu rentre ligne par ligne, depuis le bas, et le bouton ne se rétracte
+ * sur une ligne qu'une fois elle rentrée (`retractFirst`) ; il remonte en relief une fois tout rentré.
  *
  * Seul l'en-tête s'actionne (un `<button>` à bascule, `aria-expanded`) : le contenu, qui porte ses
  * propres commandes, ne peut pas être dans un bouton. Le relief est donc celui de la section, sur
@@ -139,7 +140,7 @@ export function DisclosureButton({ title, hint, icon, defaultOpen = false, open,
         </span>
         <Icon name="chevron_down" className="ds-disclosure-chevron" />
       </button>
-      <Reveal open={ouvert} id={id} onFolded={replie}>
+      <Reveal open={ouvert} id={id} onFolded={replie} retractFirst>
         {children}
       </Reveal>
     </section>
