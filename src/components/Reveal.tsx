@@ -9,6 +9,10 @@ export interface RevealProps {
   open: boolean
   /** Identifiant du contenu, pour l'`aria-controls` de ce qui le commande. */
   id?: string
+  /** Appelé quand un repli est TERMINÉ — la dernière ligne recouverte, le cadre à zéro —, pas quand
+   *  il commence : ce qui doit suivre la fin du repli (une section qui cesse d'être enfoncée) attend
+   *  ce moment. Un dépli repris avant la fin ne l'appelle pas. */
+  onFolded?: () => void
   className?: string
   children: ReactNode
 }
@@ -62,8 +66,13 @@ function hauteurPour(n: number, lignes: FoldLine[], total: number): number {
  *
  * C'est le moteur de `Disclosure`, qui y ajoute l'intitulé et le chevron.
  */
-export function Reveal({ open, id, className, children }: RevealProps) {
+export function Reveal({ open, id, onFolded, className, children }: RevealProps) {
   const contenu = useRef<HTMLDivElement>(null)
+  // Le dernier rappel reçu : les minuteries d'un repli lancé plus tôt appellent celui du moment.
+  const replieRappel = useRef(onFolded)
+  useEffect(() => {
+    replieRappel.current = onFolded
+  })
   const [mouvement, setMouvement] = useState<'opening' | 'closing' | null>(null)
   // `undefined` veut dire « auto » : la hauteur n'est fixée que le temps d'une animation.
   const [hauteur, setHauteur] = useState<number | undefined>(open ? undefined : 0)
@@ -154,6 +163,7 @@ export function Reveal({ open, id, className, children }: RevealProps) {
       decouvertes.current = 0
       setMouvement(null)
       setHauteur(0)
+      replieRappel.current?.()
       return
     }
 
@@ -186,7 +196,10 @@ export function Reveal({ open, id, className, children }: RevealProps) {
     }
     const derniere = etapes[etapes.length - 1]
     // Les marques restent : le contenu replié est caché, et le prochain dépli les repose toutes.
-    plusTard(() => setMouvement(null), (derniere ? derniere.pullAt + push : 0) + 0.05)
+    plusTard(() => {
+      setMouvement(null)
+      replieRappel.current?.()
+    }, (derniere ? derniere.pullAt + push : 0) + 0.05)
   }
 
   useEffect(() => {

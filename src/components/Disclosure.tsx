@@ -17,7 +17,8 @@ export interface DisclosureProps {
   /** Dépliée au premier rendu, sans animation. */
   defaultOpen?: boolean
   /** Dépliée, la section S'ENFONCE tout entière — intitulé, contenu et chevron —, comme un élément
-   *  choisi (`Selectable`) : du même creux, au même rebond. */
+   *  choisi (`Selectable`) : du même creux, au même rebond. Elle remonte à la FIN du repli, une
+   *  fois le contenu rentré, pas au premier appui. */
   sunken?: boolean
   onToggle?: (open: boolean) => void
   className?: string
@@ -34,17 +35,21 @@ export interface DisclosureProps {
  *
  * `sunken` : dépliée, la section s'enfonce tout entière, du creux d'un élément choisi
  * (`Selectable`) — l'ouverture se lit au relief de la région, plus seulement à celui du chevron.
+ * Au repli, elle reste enfoncée le temps que le contenu rentre, et ne remonte qu'à la fin.
  * Repliée, elle est à plat, alignée sur ses voisines : le creux a sa marge d'avance.
  */
 export function Disclosure({ title, hint, icon, toggleLabel, defaultOpen = false, sunken = false, onToggle, className, children }: DisclosureProps) {
   const id = useId()
   const [ouvert, setOuvert] = useState(defaultOpen)
+  // Enfoncée : dès le dépli, et jusqu'à la fin du repli — le creux tient le temps que le contenu
+  // rentre, puis la section remonte, à plat.
+  const [enfoncee, setEnfoncee] = useState(defaultOpen)
   const nom = toggleLabel ?? (typeof title === 'string' ? title : 'Déplier')
 
   return (
     <section
       className={cx('ds-disclosure', ouvert && 'ds-open', sunken && 'ds-selectable ds-disclosure-sunken', className)}
-      data-selected={sunken && ouvert ? '' : undefined}
+      data-selected={sunken && (ouvert || enfoncee) ? '' : undefined}
     >
       <div className="ds-disclosure-heading">
         {icon && <Icon name={icon} className="ds-disclosure-icon" />}
@@ -53,7 +58,7 @@ export function Disclosure({ title, hint, icon, toggleLabel, defaultOpen = false
           {hint && <p className="ds-disclosure-hint">{hint}</p>}
         </div>
       </div>
-      <Reveal open={ouvert} id={id}>
+      <Reveal open={ouvert} id={id} onFolded={() => setEnfoncee(false)}>
         {children}
       </Reveal>
       <IconButton
@@ -64,6 +69,7 @@ export function Disclosure({ title, hint, icon, toggleLabel, defaultOpen = false
         aria-controls={id}
         className="ds-fold-toggle"
         onClick={() => {
+          if (!ouvert) setEnfoncee(true)
           setOuvert(!ouvert)
           onToggle?.(!ouvert)
         }}
