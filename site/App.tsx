@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Button, IconButton } from '../src/components/Button'
 import { ChartFilters } from '../src/components/ChartFilters'
 import { DeleteButton } from '../src/components/DeleteButton'
-import { Disclosure } from '../src/components/Disclosure'
+import { Disclosure, DisclosureButton } from '../src/components/Disclosure'
 import { Reveal } from '../src/components/Reveal'
 import { Selectable, SelectToggle } from '../src/components/Selection'
 import { Notice, Spinner, Zone } from '../src/components/Feedback'
@@ -386,6 +386,26 @@ function DepliantesEnfoncees() {
   )
 }
 
+/** L'intitulé est le bouton : un appui l'enfonce, enfonce la section et la déplie. */
+function BoutonsDepliants() {
+  return (
+    <div className="stack stack-creux">
+      <DisclosureButton title="Personnes" hint="Mélanie et Yoann" icon="account">
+        <div className="stack">
+          <Input aria-label="Première personne" defaultValue="Mélanie" />
+          <Input aria-label="Seconde personne" defaultValue="Yoann" />
+        </div>
+      </DisclosureButton>
+      <DisclosureButton title="Données" hint="Synchronisation et sauvegarde" icon="cloud">
+        <div className="row">
+          <Button icon="tray_arrow_down">Télécharger</Button>
+          <Button icon="tray_arrow_up">Restaurer</Button>
+        </div>
+      </DisclosureButton>
+    </div>
+  )
+}
+
 function Fields() {
   const [query, setQuery] = useState('')
   const [region, setRegion] = useState('FR')
@@ -674,11 +694,13 @@ export function App() {
       <Demo
         id="depliantes"
         title="Sections dépliantes"
-        intro="Le système de la grille dépliante, pour un contenu quelconque : un intitulé, le contenu replié, et dessous le chevron de la grille, enfoncé tant que tout est affiché. Le dépli va ligne par ligne — un titre, un champ avec son libellé, une rangée de commandes côte à côte — et chaque commande poppe sitôt sa place faite. Le repli est le dépli à l'envers, depuis le bas, et part dès l'appui. Avec `sunken`, la section dépliée s'enfonce tout entière, comme un élément choisi."
+        intro="Le système de la grille dépliante, pour un contenu quelconque : un intitulé, le contenu replié, et dessous le chevron de la grille, enfoncé tant que tout est affiché. Le dépli va ligne par ligne — un titre, un champ avec son libellé, une rangée de commandes côte à côte — et chaque commande poppe sitôt sa place faite. Le repli est le dépli à l'envers, depuis le bas, et part dès l'appui. Avec `sunken`, la section dépliée s'enfonce tout entière, comme un élément choisi. Le bouton section dépliante (`DisclosureButton`) fait de l'intitulé un bouton large : un appui l'enfonce, enfonce la section et la déplie."
       >
         <Depliantes />
         <h3>Qui s'enfonce</h3>
         <DepliantesEnfoncees />
+        <h3>Bouton section dépliante</h3>
+        <BoutonsDepliants />
       </Demo>
 
       <Demo

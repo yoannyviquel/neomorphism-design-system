@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Button, IconButton } from './Button'
 import { ChartFilters } from './ChartFilters'
 import { DELETE_ARM_MS, DeleteButton } from './DeleteButton'
-import { Disclosure } from './Disclosure'
+import { Disclosure, DisclosureButton } from './Disclosure'
 import { Reveal } from './Reveal'
 import { Selectable, SelectToggle } from './Selection'
 import { Checkbox, Select } from './Field'
@@ -138,6 +138,45 @@ describe('Disclosure qui s’enfonce', () => {
     )
     expect(container.querySelector('.ds-disclosure')).not.toHaveClass('ds-selectable')
     expect(container.querySelector('.ds-disclosure')).not.toHaveAttribute('data-selected')
+  })
+})
+
+describe('DisclosureButton', () => {
+  it("s'enfonce, enfonce sa section et la déplie d'un même appui", async () => {
+    const { container } = render(
+      <DisclosureButton title="Données" hint="Synchronisation et sauvegarde" icon="cloud">
+        <button type="button">Télécharger</button>
+      </DisclosureButton>,
+    )
+    const bouton = screen.getByRole('button', { name: /Données/ })
+    const section = container.querySelector('.ds-disclosure')
+    const contenu = document.getElementById(bouton.getAttribute('aria-controls') ?? '')
+
+    // Replié : le bouton en relief, la section à plat, le contenu hors d'atteinte.
+    expect(bouton).toHaveAttribute('aria-expanded', 'false')
+    expect(bouton).not.toHaveClass('ds-active')
+    expect(section).not.toHaveAttribute('data-selected')
+    expect(contenu).toHaveAttribute('inert')
+
+    await userEvent.click(bouton)
+    expect(bouton).toHaveAttribute('aria-expanded', 'true')
+    expect(bouton).toHaveClass('ds-active')
+    expect(section).toHaveAttribute('data-selected')
+    expect(contenu).not.toHaveAttribute('inert')
+
+    await userEvent.click(bouton)
+    expect(bouton).toHaveAttribute('aria-expanded', 'false')
+    expect(bouton).not.toHaveClass('ds-active')
+    expect(section).not.toHaveAttribute('data-selected')
+  })
+
+  it('peut s’ouvrir d’emblée', () => {
+    render(
+      <DisclosureButton title="Revenus" defaultOpen>
+        <p>Le salaire</p>
+      </DisclosureButton>,
+    )
+    expect(screen.getByRole('button', { name: /Revenus/ })).toHaveAttribute('aria-expanded', 'true')
   })
 })
 

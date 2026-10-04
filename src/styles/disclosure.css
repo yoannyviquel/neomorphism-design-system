@@ -42,6 +42,58 @@
   margin-block: calc(-1 * var(--selectable-room));
 }
 
+/* LE BOUTON SECTION DÉPLIANTE (DisclosureButton) : l'intitulé est un bouton large, de toute la
+   largeur, à bascule. Il prend la hauteur de son texte (au moins celle d'une commande) et range
+   icône, intitulé et indication à gauche, le chevron à droite. Enfoncé, le chevron se retourne. */
+.ds-disclosure-trigger.ds-text {
+  display: flex;
+  width: 100%;
+  height: auto;
+  min-height: var(--control-height);
+  padding: 14px 16px;
+  gap: 12px;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: left;
+  white-space: normal;
+}
+
+.ds-disclosure-trigger .ds-disclosure-titles {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-disclosure-trigger .ds-disclosure-title {
+  font-size: 16px;
+}
+
+.ds-disclosure-trigger .ds-disclosure-hint {
+  font-weight: 400;
+}
+
+.ds-disclosure-trigger .ds-disclosure-icon {
+  margin-top: 0;
+}
+
+.ds-disclosure-chevron {
+  flex: 0 0 auto;
+  font-size: var(--control-icon);
+  transition: transform 0.3s var(--release-ease, ease);
+}
+
+.ds-disclosure-trigger.ds-active .ds-disclosure-chevron {
+  transform: rotate(180deg);
+  transition: transform 0.3s var(--sink-ease, ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-disclosure-chevron,
+  .ds-disclosure-trigger.ds-active .ds-disclosure-chevron {
+    transition: none;
+  }
+}
+
 /* Ce que la section contient, pour décider sans déplier. */
 .ds-disclosure-hint {
   margin: 3px 0 0;
