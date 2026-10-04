@@ -173,12 +173,14 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   dont l'état tiendrait le chevron : `Reveal`, la section dépliante cachée, qui est aussi le
   moteur de `Disclosure`. Il garde ce qu'il affichait le temps de son repli : une barre
   d'actions qui s'en va n'annonce pas « 0 sélectionnée ».
-- **L'intitulé peut être le bouton.** `DisclosureButton` fait de l'intitulé d'une section un
-  bouton large, de toute sa largeur — icône, intitulé, indication, et un chevron qui se retourne.
-  Un appui l'enfonce, enfonce la section (le creux de `sunken`) et la déplie : trois états d'un
-  même geste. Un second appui le relève et replie la section, qui remonte à plat une fois le
-  contenu rentré. Le contenu se range dans la largeur du bouton, rentré de sa marge intérieure de
-  chaque côté, avec une marge sous la dernière ligne.
+- **La section peut être le bouton.** `DisclosureButton` est une section en forme de bouton large,
+  de toute la largeur : repliée, un bouton en relief qui ne montre que son en-tête — icône,
+  intitulé, indication, et un chevron qui se retourne. Un appui sur l'en-tête enfonce le bouton
+  tout entier, du creux et du rebond d'une bascule, et le déplie : le contenu paraît DANS le
+  bouton, sous l'en-tête, dans le même creux, rentré de sa marge intérieure. Un second appui le
+  replie ; il remonte en relief une fois le contenu rentré. Seul l'en-tête s'actionne — le contenu
+  porte ses propres commandes, qu'un bouton ne peut pas contenir —, et le creux est peint sous le
+  contenu, pour ne pas assombrir ses champs.
 - **Une section dépliée peut s'enfoncer.** Avec `sunken`, une `Disclosure` dépliée se creuse tout
   entière — intitulé, contenu, chevron —, du creux et du rebond d'un élément choisi
   (`Selectable`) : l'ouverture se lit à la région, plus seulement au chevron. Au repli, elle reste
@@ -223,7 +225,7 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
 | `Selectable`, `SelectToggle` | la sélection : un bloc (ou une ligne de tableau, `as="tr"`) qui s'enfonce quand il est choisi, et le bouton à bascule qui le choisit, case vide puis cochée |
 | `Reveal` | la section dépliante cachée : le dépli d'une `Disclosure`, sans intitulé ni chevron, commandé par l'état — les actions d'une sélection, un message qui s'impose |
 | `Disclosure` | section dépliante, sur le système de la grille : un intitulé, le chevron dessous, un dépli ligne par ligne où chaque commande poppe ; `sunken` l'enfonce une fois dépliée |
-| `DisclosureButton` | bouton section dépliante : l'intitulé est un bouton large, à bascule ; un appui l'enfonce, enfonce la section et la déplie |
+| `DisclosureButton` | bouton section dépliante : la section est un bouton large dont l'en-tête s'actionne ; un appui l'enfonce tout entier et déplie le contenu dedans |
 | `ChartFilters` | le relief d'un graphique, en filtres SVG : la rainure d'un trait (`#ds-chart-groove`, k = 1/24 pour 2 px), **la même rainure pour une marque pleine** (`#ds-chart-groove-fill` : même géométrie, encre à 40 %) et le sertissage du graphique entier (`#ds-chart-set`, k = 1/3). `#ds-chart-shadow` est **déprécié** — plus aucune marque ne s'en sert |
 | `Screen`, `Header`, `Body`, `Footer` | l'écran d'une app : en-tête et pied fixes, corps qui défile — **et qui ne coupe que s'il défile** : quand il tient dans sa place, le corps laisse déborder les ombres de ses boutons, l'en-tête et le pied rendent leur fond |
 | `Slides` | les écrans côte à côte : changer de destination fait glisser le ruban à gauche ou à droite, tous restés montés, les autres `inert` ; chaque écran porte son `Body`, qui défile seul et garde sa position |

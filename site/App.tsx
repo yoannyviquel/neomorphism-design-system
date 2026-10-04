@@ -386,10 +386,10 @@ function DepliantesEnfoncees() {
   )
 }
 
-/** L'intitulé est le bouton : un appui l'enfonce, enfonce la section et la déplie. */
+/** La section est le bouton : un appui sur l'en-tête l'enfonce tout entier et déplie le contenu dedans. */
 function BoutonsDepliants() {
   return (
-    <div className="stack stack-creux">
+    <div className="stack">
       <DisclosureButton title="Personnes" hint="Mélanie et Yoann" icon="account">
         <div className="stack">
           <Input aria-label="Première personne" defaultValue="Mélanie" />
@@ -694,7 +694,7 @@ export function App() {
       <Demo
         id="depliantes"
         title="Sections dépliantes"
-        intro="Le système de la grille dépliante, pour un contenu quelconque : un intitulé, le contenu replié, et dessous le chevron de la grille, enfoncé tant que tout est affiché. Le dépli va ligne par ligne — un titre, un champ avec son libellé, une rangée de commandes côte à côte — et chaque commande poppe sitôt sa place faite. Le repli est le dépli à l'envers, depuis le bas, et part dès l'appui. Avec `sunken`, la section dépliée s'enfonce tout entière, comme un élément choisi. Le bouton section dépliante (`DisclosureButton`) fait de l'intitulé un bouton large : un appui l'enfonce, enfonce la section et la déplie."
+        intro="Le système de la grille dépliante, pour un contenu quelconque : un intitulé, le contenu replié, et dessous le chevron de la grille, enfoncé tant que tout est affiché. Le dépli va ligne par ligne — un titre, un champ avec son libellé, une rangée de commandes côte à côte — et chaque commande poppe sitôt sa place faite. Le repli est le dépli à l'envers, depuis le bas, et part dès l'appui. Avec `sunken`, la section dépliée s'enfonce tout entière, comme un élément choisi. Le bouton section dépliante (`DisclosureButton`) est une section en forme de bouton large : un appui sur son en-tête l'enfonce tout entier et déplie le contenu dedans."
       >
         <Depliantes />
         <h3>Qui s'enfonce</h3>

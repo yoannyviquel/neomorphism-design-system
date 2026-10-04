@@ -1,9 +1,11 @@
 import { useId, useState, type ReactNode } from 'react'
-import { Button, IconButton } from './Button'
+import { IconButton } from './Button'
 import { cx } from './cx'
 import { Icon } from './Icon'
 import type { IconName } from './icons'
 import { Reveal } from './Reveal'
+import { Shade } from './Shade'
+import { usePress } from './usePress'
 
 export interface DisclosureProps {
   /** L'intitulé de la section, toujours visible. */
@@ -104,31 +106,31 @@ export interface DisclosureButtonProps {
 }
 
 /**
- * Le BOUTON SECTION DÉPLIANTE : l'intitulé de la section EST le bouton. Un bouton large, de toute
- * la largeur de la section, qui porte l'icône, l'intitulé, l'indication et un chevron ; un appui
- * l'ENFONCE, enfonce la section qui le porte et la déplie — trois états d'un même geste. Un
- * second appui le relève et replie la section, qui remonte à plat une fois le contenu rentré.
+ * Le BOUTON SECTION DÉPLIANTE : la section EST le bouton. Au repos, un bouton large en relief, de
+ * toute la largeur, qui ne montre que son en-tête — icône, intitulé, indication, et un chevron.
+ * Un appui sur l'en-tête ENFONCE le bouton tout entier, du creux et du rebond d'un bouton à bascule,
+ * et le déplie : le contenu paraît DANS le bouton, sous l'en-tête, dans le même creux. Un second
+ * appui le replie ; le bouton remonte en relief une fois le contenu rentré.
  *
- * Le bouton est à bascule (`aria-expanded`), enfoncé tant que la section est dépliée, comme le
- * chevron d'une `Disclosure` ; son chevron se retourne. La section s'enfonce du creux d'un élément
- * choisi, comme une `Disclosure sunken`, et se déplie du même dépli (`Reveal`).
+ * Seul l'en-tête s'actionne (un `<button>` à bascule, `aria-expanded`) : le contenu, qui porte ses
+ * propres commandes, ne peut pas être dans un bouton. Le relief est donc celui de la section, sur
+ * son calque d'ombre (`Shade`), qui suit --sink comme celui d'un bouton.
  */
 export function DisclosureButton({ title, hint, icon, defaultOpen = false, onToggle, className, children }: DisclosureButtonProps) {
   const { id, ouvert, creuse, basculer, replie } = useDepli(defaultOpen, onToggle)
+  const { pressed, handlers } = usePress({})
 
   return (
-    <section
-      className={cx('ds-disclosure', 'ds-disclosure-button', 'ds-selectable', 'ds-disclosure-sunken', ouvert && 'ds-open', className)}
-      data-selected={creuse ? '' : undefined}
-    >
-      <Button active={ouvert} aria-expanded={ouvert} aria-controls={id} className="ds-disclosure-trigger" onClick={basculer}>
+    <section className={cx('ds-disclosure', 'ds-disclosure-button', ouvert && 'ds-open', creuse && 'ds-active', pressed && 'ds-pressed', className)}>
+      <Shade />
+      <button type="button" aria-expanded={ouvert} aria-controls={id} className="ds-disclosure-trigger" onClick={basculer} {...handlers}>
         {icon && <Icon name={icon} className="ds-disclosure-icon" />}
         <span className="ds-disclosure-titles">
           <span className="ds-disclosure-title">{title}</span>
           {hint && <span className="ds-disclosure-hint">{hint}</span>}
         </span>
         <Icon name="chevron_down" className="ds-disclosure-chevron" />
-      </Button>
+      </button>
       <Reveal open={ouvert} id={id} onFolded={replie}>
         {children}
       </Reveal>

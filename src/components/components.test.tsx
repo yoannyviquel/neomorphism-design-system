@@ -142,7 +142,7 @@ describe('Disclosure qui s’enfonce', () => {
 })
 
 describe('DisclosureButton', () => {
-  it("s'enfonce, enfonce sa section et la déplie d'un même appui", async () => {
+  it("s'enfonce tout entier et se déplie d'un même appui, le contenu dans le bouton", async () => {
     const { container } = render(
       <DisclosureButton title="Données" hint="Synchronisation et sauvegarde" icon="cloud">
         <button type="button">Télécharger</button>
@@ -152,22 +152,25 @@ describe('DisclosureButton', () => {
     const section = container.querySelector('.ds-disclosure')
     const contenu = document.getElementById(bouton.getAttribute('aria-controls') ?? '')
 
-    // Replié : le bouton en relief, la section à plat, le contenu hors d'atteinte.
+    // La section est le bouton : elle porte le calque d'ombre, et l'en-tête est sa seule commande.
+    expect(section?.querySelector(':scope > .ds-shade')).not.toBeNull()
+    expect(bouton).toHaveClass('ds-disclosure-trigger')
+
+    // Replié : la section en relief, le contenu hors d'atteinte.
     expect(bouton).toHaveAttribute('aria-expanded', 'false')
-    expect(bouton).not.toHaveClass('ds-active')
-    expect(section).not.toHaveAttribute('data-selected')
+    expect(section).not.toHaveClass('ds-active')
     expect(contenu).toHaveAttribute('inert')
 
+    // Un appui l'enfonce tout entière et la déplie : le contenu est dans la section, sous l'en-tête.
     await userEvent.click(bouton)
     expect(bouton).toHaveAttribute('aria-expanded', 'true')
-    expect(bouton).toHaveClass('ds-active')
-    expect(section).toHaveAttribute('data-selected')
+    expect(section).toHaveClass('ds-active', 'ds-open')
+    expect(section).toContainElement(contenu as HTMLElement)
     expect(contenu).not.toHaveAttribute('inert')
 
     await userEvent.click(bouton)
     expect(bouton).toHaveAttribute('aria-expanded', 'false')
-    expect(bouton).not.toHaveClass('ds-active')
-    expect(section).not.toHaveAttribute('data-selected')
+    expect(section).not.toHaveClass('ds-active')
   })
 
   it('peut s’ouvrir d’emblée', () => {
