@@ -74,14 +74,32 @@
 
 /* L'en-tête, seule commande : à plat dans le bouton qu'est la section, de toute sa largeur.
    Icône, intitulé et indication à gauche, le chevron à droite ; le texte à demi-encre au repos, à
-   pleine encre enfoncé, comme un bouton. */
+   pleine encre enfoncé, comme un bouton.
+
+   SES BOÎTES SUIVENT L'ÉCHELLE DU SUPPORT, et c'est une correction : la marge et l'écart étaient
+   écrits en dur (14 px et 12 px), c'est-à-dire à l'échelle du POUCE. Un en-tête d'une seule ligne
+   mesurait donc ~47 px à la souris, où une commande en fait 33 — le `min-height` ne servait à rien,
+   la marge décidait avant lui. C'est exactement ce que les six nombres de `tokens.css` existent pour
+   éviter : « ce qui change, ce sont les BOÎTES ».
+
+   LES DEUX EXPRESSIONS RENDENT LES ANCIENNES VALEURS AU POUCE, à l'unité près — 2 × 8 = 16 pour les
+   côtés, 1,5 × 8 = 12 pour l'écart —, donc rien ne bouge là où le dessin a été arrêté. À la souris
+   (`--control-pad` à 5), la marge verticale tombe à 5 px et c'est `min-height` qui décide enfin :
+   l'intitulé de 16 px tient dans ses 33 px.
+
+   `min-height` ET NON `height`, à la différence d'un bouton ordinaire : l'en-tête peut porter une
+   INDICATION sous l'intitulé (cf. `.ds-disclosure-hint`), et il lui faut alors deux lignes. La
+   hauteur d'une commande est son PLANCHER ici, pas sa mesure.
+
+   LA TYPOGRAPHIE, ELLE, NE BOUGE PAS (16 px pour l'intitulé) : c'est la règle de la feuille de
+   jetons, et elle vaut ici comme ailleurs. */
 .ds-disclosure-trigger {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: calc(1.5 * var(--control-pad));
   width: 100%;
   min-height: var(--control-height);
-  padding: 14px 16px;
+  padding: var(--control-pad) calc(2 * var(--control-pad));
   border: none;
   border-radius: var(--control-radius);
   background: transparent;
@@ -134,9 +152,14 @@
 
 /* Le contenu se range DANS le bouton, sous l'en-tête : rentré de sa marge intérieure de chaque côté
    (aligné sur l'icône), et posé au-dessus d'une marge. Les marges sont dans le contenu, mesurées
-   avec lui par le dépli ; l'écart avec l'en-tête aussi, plus court que celui d'une section. */
+   avec lui par le dépli ; l'écart avec l'en-tête aussi, plus court que celui d'une section.
+
+   SUR `--control-pad` COMME L'EN-TÊTE, et pour la même raison : « aligné sur l'icône » n'est vrai
+   que si les deux marges latérales sont la MÊME expression. Écrites en dur, elles se décalaient
+   à la souris, où l'en-tête se resserre et pas le contenu. Les trois valeurs rendent 4, 16 et 16 au
+   pouce, exactement ce qui était dessiné. */
 .ds-disclosure.ds-disclosure-button .ds-reveal-content {
-  padding: 4px 16px 16px;
+  padding: calc(0.5 * var(--control-pad)) calc(2 * var(--control-pad)) calc(2 * var(--control-pad));
 }
 
 @media (prefers-reduced-motion: reduce) {

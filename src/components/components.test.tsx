@@ -17,6 +17,7 @@ import { MENU_RELEASE_DELAY_MS, MenuBar } from './MenuBar'
 import { SearchField } from './SearchField'
 import { SetImage } from './SetImage'
 import { PRESS_HOLD_MS } from './usePress'
+import { PUSH_S } from '../fold/schedule'
 
 describe('ChartFilters', () => {
   it("rend les trois filtres d'un graphique, chacun à son échelle", () => {
@@ -216,6 +217,17 @@ describe('Reveal', () => {
   // basculent sur le chemin ANIMÉ — `inert` n'y revient qu'à la fin du repli.
   afterEach(() => vi.restoreAllMocks())
 
+  /**
+   * jsdom ne mesure rien : sans rectangles, `foldLines` ne relève aucune ligne et le composant tombe
+   * sur son chemin IMMÉDIAT, où il n'y a aucune chorégraphie à observer. Même procédé que la suite de
+   * `foldLines` — c'est la seule façon de tester le dépli lui-même.
+   */
+  function mesurer() {
+    const rect = { top: 0, bottom: 40, left: 0, right: 100, width: 100, height: 40, x: 0, y: 0, toJSON: () => ({}) } as DOMRect
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue(rect)
+    vi.spyOn(Element.prototype, 'getClientRects').mockReturnValue([rect] as unknown as DOMRectList)
+  }
+
   it('prévient à la fin du repli, jamais au dépli', () => {
     const onFolded = vi.fn()
     const { rerender } = render(
@@ -249,17 +261,9 @@ describe('Reveal', () => {
     // ligne soit DÉJÀ couverte. L'ordre vis-à-vis de la PEINTURE, lui, n'est pas observable ici —
     // c'est `useLayoutEffect` qui le garantit, et seul lui.
     //
-    // LA MISE EN PAGE EST SIMULÉE comme dans la suite de `foldLines` : jsdom ne mesure rien, et sans
-    // rectangles le composant tombe sur son chemin immédiat, où il n'y a aucune chorégraphie à
-    // observer. C'est d'ailleurs pourquoi les deux tests voisins ne l'attrapaient pas.
-    const rect = (top: number, bottom: number) =>
-      ({ top, bottom, left: 0, right: 100, width: 100, height: bottom - top, x: 0, y: top, toJSON: () => ({}) }) as DOMRect
-    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
-      return this.tagName === 'P' ? rect(0, 40) : rect(0, 40)
-    })
-    vi.spyOn(Element.prototype, 'getClientRects').mockImplementation(function (this: Element) {
-      return [rect(0, 40)] as unknown as DOMRectList
-    })
+    // LA MISE EN PAGE EST SIMULÉE : c'est d'ailleurs pourquoi les deux tests voisins ne
+    // l'attrapaient pas, leur contenu n'ayant jamais eu de ligne à couvrir.
+    mesurer()
 
     const { rerender } = render(
       <Reveal open={false} id="texte">
@@ -277,6 +281,68 @@ describe('Reveal', () => {
     expect(contenu).not.toHaveAttribute('inert')
     // …mais sa ligne est COUVERTE : rien à peindre tant que le cadre ne lui a pas fait la place.
     expect(contenu.querySelector('p')).toHaveAttribute('data-fold-hidden')
+  })
+
+  it('ne découvre une ligne SANS RELIEF qu’une fois sa place faite, pas au départ de la poussée', () => {
+    // LA RÈGLE DU DS, APPLIQUÉE JUSQU'AU BOUT : le cadre pousse pour faire la place d'une ligne,
+    // PUIS la ligne paraît. Une commande la respecte déjà sans rien devoir à ce code — elle gît à
+    // plat au fond du creux et ne monte qu'une poussée plus tard, par `--pop-delay`. Un TEXTE n'a
+    // rien à montrer à plat : découvert au départ de la poussée, il paraissait à pleine encre
+    // pendant que le cadre s'ouvrait encore, et il se voyait — `.ds-reveal` garde un `--shadow-room`
+    // de marge sous `overflow: hidden`, soit une ligne de texte entière à hauteur nulle.
+    vi.useFakeTimers()
+    mesurer()
+    const { rerender } = render(
+      <Reveal open={false} id="texte">
+        <p>Un long message</p>
+      </Reveal>,
+    )
+    rerender(
+      <Reveal open id="texte">
+        <p>Un long message</p>
+      </Reveal>,
+    )
+    const ligne = document.querySelector('#texte p') as HTMLElement
+
+    // La poussée part après la marge de 50 ms ; la ligne reste couverte pendant toute sa durée.
+    act(() => void vi.advanceTimersByTime(60))
+    expect(ligne).toHaveAttribute('data-fold-hidden')
+    act(() => void vi.advanceTimersByTime(PUSH_S * 1000 - 20))
+    expect(ligne).toHaveAttribute('data-fold-hidden')
+
+    // Sa place faite — une poussée, exactement le retard du pop —, elle paraît.
+    act(() => void vi.advanceTimersByTime(40))
+    expect(ligne).not.toHaveAttribute('data-fold-hidden')
+    vi.useRealTimers()
+  })
+
+  it('découvre TOUT DE SUITE une ligne qui a un relief : elle gît à plat au fond du creux', () => {
+    // LE PENDANT, et c'est lui qui empêche de « corriger » le test précédent en retardant TOUT : une
+    // commande à plat (`--pop: 0`) montre le fond du trou qu'on est en train de creuser, et ce temps
+    // d'attente FAIT PARTIE de l'effet. Retarder sa découverte la ferait surgir toute montée.
+    vi.useFakeTimers()
+    mesurer()
+    const { rerender } = render(
+      <Reveal open={false} id="commandes">
+        <button type="button" className="ds-button">
+          Supprimer
+        </button>
+      </Reveal>,
+    )
+    rerender(
+      <Reveal open id="commandes">
+        <button type="button" className="ds-button">
+          Supprimer
+        </button>
+      </Reveal>,
+    )
+    const ligne = document.querySelector('#commandes button') as HTMLElement
+
+    act(() => void vi.advanceTimersByTime(60))
+    expect(ligne).not.toHaveAttribute('data-fold-hidden')
+    // Et elle est à plat : c'est `--pop-delay` qui la fera monter, pas ce code.
+    expect(ligne.dataset.fold).toBe('pop')
+    vi.useRealTimers()
   })
 
   it("se déplie et se replie au gré de l'état, sans intitulé ni chevron", () => {
