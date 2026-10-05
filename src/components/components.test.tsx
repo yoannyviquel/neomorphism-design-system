@@ -211,6 +211,11 @@ describe('DisclosureButton', () => {
 })
 
 describe('Reveal', () => {
+  // LA MISE EN PAGE SIMULÉE D'UN SEUL TEST NE DOIT PAS DÉBORDER SUR SES VOISINS : sans ce retour à
+  // l'état nu, les deux tests qui suivent trouvent des lignes là où ils n'en attendent aucune et
+  // basculent sur le chemin ANIMÉ — `inert` n'y revient qu'à la fin du repli.
+  afterEach(() => vi.restoreAllMocks())
+
   it('prévient à la fin du repli, jamais au dépli', () => {
     const onFolded = vi.fn()
     const { rerender } = render(
@@ -230,6 +235,48 @@ describe('Reveal', () => {
       </Reveal>,
     )
     expect(onFolded).toHaveBeenCalledTimes(1)
+  })
+
+  it('COUVRE le contenu dans la même image que l’ouverture : jamais de texte avant le cadre', () => {
+    // LE DÉFAUT CORRIGÉ : `replie` se calcule au RENDU, donc le rendu qui ouvre la section retire
+    // déjà `ds-folded` et `inert` — le contenu redevient visible — alors que c'est l'effet qui pose
+    // les marques de dépli. En effet PASSIF, le navigateur peignait entre les deux : une bande de
+    // texte à pleine encre apparaissait AVANT que le cadre ne s'ouvre, puis disparaissait, puis
+    // revenait avec la première poussée. Et elle se voit : `.ds-reveal` garde un `--shadow-room` de
+    // marge sous `overflow: hidden`, soit une ligne de texte entière à hauteur nulle.
+    //
+    // CE QUE jsdom PEUT TENIR, et c'est la moitié qui compte : qu'au sortir du changement d'état la
+    // ligne soit DÉJÀ couverte. L'ordre vis-à-vis de la PEINTURE, lui, n'est pas observable ici —
+    // c'est `useLayoutEffect` qui le garantit, et seul lui.
+    //
+    // LA MISE EN PAGE EST SIMULÉE comme dans la suite de `foldLines` : jsdom ne mesure rien, et sans
+    // rectangles le composant tombe sur son chemin immédiat, où il n'y a aucune chorégraphie à
+    // observer. C'est d'ailleurs pourquoi les deux tests voisins ne l'attrapaient pas.
+    const rect = (top: number, bottom: number) =>
+      ({ top, bottom, left: 0, right: 100, width: 100, height: bottom - top, x: 0, y: top, toJSON: () => ({}) }) as DOMRect
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
+      return this.tagName === 'P' ? rect(0, 40) : rect(0, 40)
+    })
+    vi.spyOn(Element.prototype, 'getClientRects').mockImplementation(function (this: Element) {
+      return [rect(0, 40)] as unknown as DOMRectList
+    })
+
+    const { rerender } = render(
+      <Reveal open={false} id="texte">
+        <p>Un long message</p>
+      </Reveal>,
+    )
+    rerender(
+      <Reveal open id="texte">
+        <p>Un long message</p>
+      </Reveal>,
+    )
+
+    // Le contenu est atteignable (la section est ouverte)…
+    const contenu = document.getElementById('texte') as HTMLElement
+    expect(contenu).not.toHaveAttribute('inert')
+    // …mais sa ligne est COUVERTE : rien à peindre tant que le cadre ne lui a pas fait la place.
+    expect(contenu.querySelector('p')).toHaveAttribute('data-fold-hidden')
   })
 
   it("se déplie et se replie au gré de l'état, sans intitulé ni chevron", () => {
