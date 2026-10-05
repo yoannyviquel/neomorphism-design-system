@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { foldLines, type FoldLine } from '../fold/lines'
 import { prefersReducedMotion } from '../fold/motion'
 import { foldPush, foldSchedule, POP_S, PUSH_S, revealBackSchedule } from '../fold/schedule'
@@ -216,7 +216,28 @@ export function Reveal({ open, id, onFolded, retractFirst = false, className, ch
     }, (derniere ? derniere.pullAt + DEPART + push : 0) + 0.05)
   }
 
-  useEffect(() => {
+  /**
+   * AVANT LA PEINTURE, ET C'EST LOAD-BEARING : `replie` se calcule au RENDU (`!open && mouvement
+   * === null`), si bien que le rendu qui ouvre la section retire déjà `ds-folded` et `inert` — le
+   * contenu redevient visible —, alors que c'est CET effet qui pose les marques de dépli ligne par
+   * ligne. En effet PASSIF, le navigateur peignait entre les deux : une bande de texte à pleine
+   * encre apparaissait AVANT que le cadre ne s'ouvre, puis disparaissait quand `couvrir` tombait,
+   * puis revenait avec la première poussée.
+   *
+   * ET ELLE SE VOIT VRAIMENT, parce que le cadre est plus grand que sa hauteur : `.ds-reveal` est en
+   * `box-sizing: content-box` avec `padding: var(--shadow-room)` sous `overflow: hidden` (la marge
+   * qui laisse les ombres s'étaler). Même à hauteur nulle, il reste une fenêtre d'un `--shadow-room`
+   * — 16 px à la densité souris, soit une ligne de texte entière.
+   *
+   * LE REPLI AVAIT LE MÊME DÉFAUT, en miroir : `replie` redevient vrai au rendu qui ferme, donc le
+   * contenu était caché net AVANT que le cadre n'ait commencé à remonter — il se rétractait sur du
+   * vide.
+   *
+   * `useLayoutEffect` écrit donc les marques dans la même image que le changement d'état. La mesure
+   * y est valide : les `getBoundingClientRect` de `foldLines` forcent la mise en page, qui est déjà
+   * à jour à ce moment-là.
+   */
+  useLayoutEffect(() => {
     if (joue.current === open) return
     joue.current = open
     if (open) deplier()
