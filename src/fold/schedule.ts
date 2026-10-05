@@ -77,9 +77,10 @@ export function foldBackSchedule(extraRows: number, push = PUSH_S): FoldBackStep
  * (foldBackSchedule) : ses boutons sont tout son contenu, une section a surtout autre chose à
  * ranger.
  *
- * `retractFirst` : le cadre attend que la ligne la plus basse soit rentrée avant de remonter sur
- * elle — une poussée —, et ainsi de suite en cascade : chaque ligne rentre, puis le cadre la
- * recouvre, pendant que la suivante rentre à son tour. Le bouton section dépliante se replie ainsi :
+ * `retractFirst` : le cadre attend que la ligne la plus basse soit rentrée — une poussée — et
+ * partie (Reveal la cache alors) avant de se rétracter d'une ligne, et ainsi de suite en cascade :
+ * chaque ligne rentre et part, puis le cadre remonte sur sa place vide, pendant que la suivante
+ * rentre à son tour. Le bouton section dépliante se replie ainsi :
  * c'est le bouton qui se rétracte, une fois son contenu rentré.
  */
 export function revealBackSchedule(extraRows: number, push = PUSH_S, retractFirst = false): FoldBackStep[] {
