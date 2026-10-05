@@ -148,11 +148,31 @@ export function Reveal({ open, id, onFolded, retractFirst = false, className, ch
       plusTard(() => {
         const index = deja + etape.rows - 1
         const ligne = lignes[index]
-        decouvrir(ligne)
         // Le pop part une poussée plus tard (--pop-delay) : sitôt la place faite.
         marquer(ligne, 'pop')
         decouvertes.current = index + 1
         setHauteur(hauteurPour(index + 1, lignes, total))
+        /**
+         * UNE LIGNE SANS RELIEF ATTEND SA PLACE ; une ligne qui en a un se montre tout de suite.
+         *
+         * LA RÈGLE EST CELLE DU DS, appliquée jusqu'au bout : le cadre pousse pour faire la place
+         * d'une ligne, PUIS la ligne paraît. Une commande la respecte déjà sans rien devoir à ce
+         * code — elle gît à plat au fond du creux (`--pop: 0`) et ne monte qu'une poussée plus tard,
+         * par `--pop-delay` ; la voir à plat FAIT PARTIE de l'effet, elle montre le fond du trou
+         * qu'on est en train de creuser.
+         *
+         * UN TEXTE N'A RIEN À MONTRER À PLAT, et c'est tout le défaut signalé à l'usage : découvert
+         * au DÉPART de la poussée, il paraissait à pleine encre pendant que le cadre s'ouvrait
+         * encore. Et il se voyait, parce que `.ds-reveal` garde un `--shadow-room` de marge sous
+         * `overflow: hidden` — 16 px à la densité souris, soit une ligne de texte ENTIÈRE affichée
+         * avant que la hauteur n'ait bougé d'un pixel.
+         *
+         * LE RETARD EST EXACTEMENT CELUI DU POP, et pas un nombre à lui : les deux familles de
+         * lignes paraissent donc au même instant de leur poussée, l'une en montant, l'autre en
+         * s'affichant.
+         */
+        if (ligne.reliefs.length === 0) plusTard(() => decouvrir(ligne), push)
+        else decouvrir(ligne)
       }, debut + etape.at)
     }
     const derniere = etapes[etapes.length - 1]
