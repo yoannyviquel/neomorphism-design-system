@@ -75,6 +75,14 @@
   content: '\f0156';
 }
 
+.nf-md-code_braces::before {
+  content: '\f0169';
+}
+
+.nf-md-code_tags::before {
+  content: '\f0174';
+}
+
 .nf-md-cog::before {
   content: '\f0493';
 }
@@ -107,8 +115,32 @@
   content: '\f0236';
 }
 
+.nf-md-format_bold::before {
+  content: '\f0264';
+}
+
+.nf-md-format_header_3::before {
+  content: '\f026d';
+}
+
+.nf-md-format_italic::before {
+  content: '\f0277';
+}
+
 .nf-md-format_list_bulleted::before {
   content: '\f0279';
+}
+
+.nf-md-format_list_numbered::before {
+  content: '\f027b';
+}
+
+.nf-md-format_quote_close::before {
+  content: '\f027e';
+}
+
+.nf-md-format_strikethrough_variant::before {
+  content: '\f0281';
 }
 
 .nf-md-home::before {
@@ -117,6 +149,10 @@
 
 .nf-md-leaf::before {
   content: '\f032a';
+}
+
+.nf-md-link_variant::before {
+  content: '\f0339';
 }
 
 .nf-md-magnify::before {

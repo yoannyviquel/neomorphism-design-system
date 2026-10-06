@@ -80,6 +80,22 @@
   overflow-y: auto;
 }
 
+/* CHAMP RICHE : la barre d'outils, puis le champ multiligne. L'écart entre les deux est celui d'une
+   ligne de commandes à la suivante (moitié de la marge des ombres) — la barre et le champ sont deux
+   rangées en relief, pas deux blocs de texte. */
+.ds-rich {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--shadow-room) / 2);
+}
+
+/* La barre d'outils emprunte la rangée de commandes de `ButtonBar` — même écart, même repli quand la
+   largeur manque — et ne redresse QUE l'alignement : les outils se suivent le long du bord gauche du
+   champ, ils ne se répartissent pas sur toute sa largeur comme un pied d'écran. */
+.ds-rich-toolbar {
+  justify-content: flex-start;
+}
+
 /* Sélecteur, sans habillage natif : sur iPhone, Safari dessinait sinon son propre sélecteur, à
    plat, par-dessus le relief. Chevron du DS à droite. */
 .ds-select {
