@@ -50,6 +50,36 @@
   color: color-mix(in srgb, var(--color-muted) 70%, transparent);
 }
 
+/* Champ MULTILIGNE. Il porte `ds-input` en plus de `ds-textarea` — même procédé que `.ds-select
+   select` : le relief, le rayon, le fond, les 16 px et le creusé au focus viennent de la recette
+   partagée, telle quelle, et ce bloc ne pose QUE ce qui diffère d'une ligne unique.
+
+   SA HAUTEUR AU REPOS EST CELLE D'UNE COMMANDE, aux deux échelles. Un textarea ne se cale pas comme
+   un input : sa boîte suit le texte, donc la hauteur se construit — une ligne plus le cadre —, elle
+   ne se pose pas. Le cadre est donc DÉDUIT : moitié de ce qui reste d'une commande une fois la ligne
+   retirée. 33 − 20 = 13, soit 6,5 px de part et d'autre à la souris ; 50 − 20 = 30, soit 15 au
+   doigt. Aucune constante à retoucher si --control-height bouge.
+
+   LA LIGNE EST FIGÉE, et le calcul n'emploie PAS l'unité `lh`. Deux raisons, dont la seconde suffit :
+   `lh` demande Safari 16.4, et ce paquet tourne sur des iPhone plus anciens (cf. les contournements
+   Safari semés dans ce fichier et dans tokens.css) ; surtout, `lh` sans line-height déclarée mesure
+   le `normal` de la police, qui varie d'une fonte et d'une plateforme à l'autre — la hauteur au repos
+   cesserait d'être EXACTEMENT --control-height. Une fois la ligne figée, `lh` ne rend plus rien que
+   le px ne rende déjà. */
+.ds-textarea {
+  --textarea-line: 20px;
+  height: auto;
+  line-height: var(--textarea-line);
+  padding-block: calc((var(--control-height) - var(--textarea-line)) / 2);
+  /* La poignée native contredirait la croissance automatique : elle fige une hauteur en ligne que
+     le champ ne pourrait plus reprendre. */
+  resize: none;
+  /* Le PLAFOND appartient à l'app (un composeur de message n'a pas le même qu'un formulaire) : le
+     paquet n'en pose aucun, mais garantit qu'un `max-height` venu du dehors défile au lieu de
+     rogner. */
+  overflow-y: auto;
+}
+
 /* Sélecteur, sans habillage natif : sur iPhone, Safari dessinait sinon son propre sélecteur, à
    plat, par-dessus le relief. Chevron du DS à droite. */
 .ds-select {
