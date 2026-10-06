@@ -1,19 +1,20 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Button, IconButton } from './Button'
 import { ChartFilters } from './ChartFilters'
 import { DELETE_ARM_MS, DeleteButton } from './DeleteButton'
 import { Disclosure, DisclosureButton } from './Disclosure'
 import { Reveal } from './Reveal'
 import { Selectable, SelectToggle } from './Selection'
-import { Checkbox, Select } from './Field'
+import { Checkbox, Select, TextArea } from './Field'
 import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
 import { ImageButton } from './ImageButton'
 import { FlatSelector } from './FlatSelector'
 import { Body, ButtonBar, Footer, Header, Screen, Slides } from './Layout'
 import { MENU_RELEASE_DELAY_MS, MenuBar } from './MenuBar'
+import { RichTextField, type RichTextAction } from './RichTextField'
 import { SearchField } from './SearchField'
 import { SetImage } from './SetImage'
 import { PRESS_HOLD_MS } from './usePress'
@@ -535,6 +536,191 @@ describe('Select et Checkbox', () => {
   it('case à cocher du DS', () => {
     render(<Checkbox aria-label="Vu" defaultChecked />)
     expect(screen.getByRole('checkbox', { name: 'Vu' })).toHaveClass('ds-checkbox')
+  })
+})
+
+describe('TextArea', () => {
+  // jsdom ne met rien en page : `scrollHeight` y vaut toujours 0. On rend donc la mesure qu'un
+  // navigateur rendrait avec la règle du DS — une commande de 33 px pour une ligne, 20 de plus par
+  // ligne suivante —, et 999 tant que la hauteur n'a pas été remise à `auto` : un champ déjà
+  // agrandi se mesure lui-même, et c'est exactement le piège que le composant doit éviter.
+  beforeEach(() => {
+    Object.defineProperty(HTMLTextAreaElement.prototype, 'scrollHeight', {
+      configurable: true,
+      get(this: HTMLTextAreaElement) {
+        if (this.style.height !== 'auto') return 999
+        return 33 + 20 * (this.value.match(/\n/g)?.length ?? 0)
+      },
+    })
+  })
+
+  afterEach(() => {
+    Reflect.deleteProperty(HTMLTextAreaElement.prototype, 'scrollHeight')
+  })
+
+  it("est un champ du DS, d'une ligne au repos", () => {
+    render(<TextArea aria-label="Réponse" />)
+    const champ = screen.getByRole('textbox', { name: 'Réponse' })
+
+    // Il PORTE la recette de champ au lieu de la recopier : relief, rayon, fond et 16 px viennent
+    // de `ds-input`, `ds-textarea` ne pose que la hauteur multiligne.
+    expect(champ).toHaveClass('ds-input')
+    expect(champ).toHaveClass('ds-textarea')
+    expect(champ).toHaveAttribute('rows', '1')
+    expect(champ.style.height).toBe('33px')
+  })
+
+  it('grandit avec le texte, et redescend quand il repart', async () => {
+    function Harness() {
+      const [texte, setTexte] = useState('')
+      return (
+        <>
+          <TextArea aria-label="Réponse" value={texte} onChange={(event) => setTexte(event.target.value)} />
+          <button type="button" onClick={() => setTexte('')}>
+            Envoyer
+          </button>
+        </>
+      )
+    }
+    const user = userEvent.setup()
+    render(<Harness />)
+    const champ = screen.getByRole('textbox', { name: 'Réponse' })
+
+    await user.type(champ, 'un{enter}deux')
+    expect(champ.style.height).toBe('53px')
+
+    // L'ENVOI VIDE LE CHAMP sans que personne y tape : seul un ajustement après rendu le fait
+    // redescendre à la hauteur d'une commande.
+    await user.click(screen.getByRole('button', { name: 'Envoyer' }))
+    expect(champ.style.height).toBe('33px')
+  })
+
+  it('grandit aussi sans être contrôlé, et sert la ref de l’app', async () => {
+    const user = userEvent.setup()
+    let champDeLApp: HTMLTextAreaElement | null = null
+    render(<TextArea aria-label="Note" ref={(node) => void (champDeLApp = node)} />)
+    const champ = screen.getByRole('textbox', { name: 'Note' })
+
+    // Sans `value`, la frappe ne provoque AUCUN rendu : si la croissance ne tenait qu'à l'effet, le
+    // champ resterait à une ligne.
+    await user.type(champ, 'un{enter}deux{enter}trois')
+    expect(champ.style.height).toBe('73px')
+    expect(champDeLApp).toBe(champ)
+  })
+})
+
+describe('RichTextField', () => {
+  function Harness({ initial = '', actions }: { initial?: string; actions?: readonly RichTextAction[] }) {
+    const [texte, setTexte] = useState(initial)
+    return <RichTextField aria-label="Message" value={texte} onChange={setTexte} actions={actions} />
+  }
+
+  const champDe = () => screen.getByRole<HTMLTextAreaElement>('textbox', { name: 'Message' })
+
+  it('rend sa barre en VRAIES COMMANDES du DS, avec le jeu markdown et sans rien passer', () => {
+    render(<Harness />)
+    const barre = screen.getByRole('toolbar', { name: 'Mise en forme' })
+
+    // LE CŒUR DE L'ARBITRAGE : un outil est une commande en relief, qui s'enfonce. À plat
+    // (`ds-flat`), la barre se lit comme du texte iconique et on ne sait plus qu'on peut appuyer.
+    const gras = within(barre).getByRole('button', { name: 'Gras' })
+    expect(gras).toHaveClass('ds-button', 'ds-icon', 'ds-momentary')
+    expect(gras).not.toHaveClass('ds-flat')
+
+    // Le jeu markdown est là sans `actions` : c'est ce qui rend le composant utilisable tel quel.
+    expect(within(barre).getAllByRole('button')).toHaveLength(10)
+    expect(within(barre).getByRole('button', { name: 'Liste à puces' })).toBeInTheDocument()
+    expect(within(barre).getByRole('button', { name: 'Bloc de code' })).toBeInTheDocument()
+  })
+
+  it('entoure la sélection, et la laisse sélectionnée', async () => {
+    const user = userEvent.setup()
+    render(<Harness initial="du texte" />)
+    const champ = champDe()
+    champ.focus()
+    champ.setSelectionRange(3, 8)
+
+    await user.click(screen.getByRole('button', { name: 'Gras' }))
+
+    expect(champ).toHaveValue('du **texte**')
+    // Le texte entouré RESTE sélectionné : on enchaîne souvent deux marques sur le même mot.
+    expect([champ.selectionStart, champ.selectionEnd]).toEqual([5, 10])
+  })
+
+  it('préfixe CHAQUE ligne touchée par la sélection, depuis le début de la première', async () => {
+    const user = userEvent.setup()
+    render(<Harness initial={'un\ndeux\ntrois'} />)
+    const champ = champDe()
+    champ.focus()
+    // La sélection commence AU MILIEU de « deux » : préfixer là produirait « de- ux ».
+    champ.setSelectionRange(4, 9)
+
+    await user.click(screen.getByRole('button', { name: 'Liste à puces' }))
+
+    expect(champ).toHaveValue('un\n- deux\n- trois')
+    expect([champ.selectionStart, champ.selectionEnd]).toEqual([5, 13])
+  })
+
+  it("garde le focus et la sélection du champ au clic d'un outil", async () => {
+    const user = userEvent.setup()
+    render(<Harness initial="du texte" />)
+    const champ = champDe()
+    const gras = screen.getByRole('button', { name: 'Gras' })
+
+    // Le départ du focus est annulé À LA SOURCE, au `mousedown` : sinon le champ est quitté avant
+    // que l'action ne s'exécute, et la sélection qu'on allait entourer est déjà perdue.
+    expect(fireEvent.mouseDown(gras)).toBe(false)
+
+    champ.focus()
+    champ.setSelectionRange(3, 8)
+    await user.click(gras)
+
+    // Et le champ a le focus APRÈS l'insertion : la suite de la phrase se tape dedans, pas ailleurs.
+    expect(document.activeElement).toBe(champ)
+  })
+
+  it('pose le curseur ENTRE les marqueurs à vide, et sélectionne le gabarit du lien', async () => {
+    const user = userEvent.setup()
+    const { unmount } = render(<Harness />)
+    const champ = champDe()
+    champ.focus()
+
+    await user.click(screen.getByRole('button', { name: 'Gras' }))
+    expect(champ).toHaveValue('****')
+    expect([champ.selectionStart, champ.selectionEnd]).toEqual([2, 2])
+    unmount()
+
+    render(<Harness initial="cdiscount" />)
+    const autre = champDe()
+    autre.focus()
+    autre.setSelectionRange(0, 9)
+    await user.click(screen.getByRole('button', { name: 'Lien' }))
+
+    // L'adresse est sélectionnée, prête à être remplacée en tapant — personne ne veut aller la
+    // chercher à la souris.
+    expect(autre).toHaveValue('[cdiscount](url)')
+    expect(autre.value.slice(autre.selectionStart, autre.selectionEnd)).toBe('url')
+  })
+
+  it('remplace tout le jeu par celui de l’app, qui hérite de la mécanique', async () => {
+    const user = userEvent.setup()
+    // Le DS ne connaît aucune syntaxe maison : c'est ainsi qu'une app émet la sienne.
+    const maison: readonly RichTextAction[] = [
+      { icon: 'format_bold', label: 'Gras', run: (editor) => editor.wrap('*', '*') },
+      { icon: 'format_header_3', label: 'Titre', run: (editor) => editor.prefixLines('h3. ') },
+    ]
+    render(<Harness initial="titre" actions={maison} />)
+    const barre = screen.getByRole('toolbar')
+
+    expect(within(barre).getAllByRole('button')).toHaveLength(2)
+    expect(within(barre).queryByRole('button', { name: 'Lien' })).not.toBeInTheDocument()
+
+    const champ = champDe()
+    champ.focus()
+    champ.setSelectionRange(0, 5)
+    await user.click(within(barre).getByRole('button', { name: 'Gras' }))
+
+    expect(champ).toHaveValue('*titre*')
   })
 })
 
