@@ -210,7 +210,12 @@
 }
 
 /* Une ligne pas encore découverte — ou déjà recouverte — ne se montre pas, même dans la marge que
-   le cadre réserve aux ombres : on n'y verrait que le haut de la ligne suivante, coupé. */
+   le cadre réserve aux ombres : on n'y verrait que le haut de la ligne suivante, coupé.
+
+   `visibility` ET NON UNE OPACITÉ : c'est la BARRIÈRE — une ligne couverte n'est ni lue par un
+   lecteur d'écran, ni cliquable, ni atteinte à la tabulation. Le fondu ci-dessous ne la remplace
+   pas, il ne peint que l'ENTRÉE, une fois la barrière levée ; une opacité nulle seule laisserait
+   une ligne invisible mais vivante au milieu d'un dépli. */
 .ds-reveal [data-fold-hidden] {
   visibility: hidden;
 }
@@ -234,6 +239,38 @@
   animation:
     ds-pop var(--unpop-duration, 1s) linear reverse both,
     ds-pop-scale var(--unpop-duration, 1s) linear reverse both;
+}
+
+/* LE FONDU, l'autre façon d'entrer : une ligne sans relief n'a rien à faire monter, elle s'affiche.
+   Le pop et le fondu sont les deux rendus d'une MÊME marque (cf. marquer, Reveal.tsx), pour que le
+   dépli se lise d'un seul geste — ce qui est en relief monte, ce qui n'en a pas paraît.
+
+   LA DURÉE EST UNE POUSSÉE, et ce n'est pas un nombre choisi : `--fold-duration` est le temps que
+   le cadre met à faire la place d'une ligne, et c'est la pulsation de tout le dépli. Une durée
+   écrite en clair se décrocherait du rythme dès que les poussées se resserrent (un groupe de trente
+   réglages les ramène à 0,04 s, cf. foldPush) — le texte continuerait de se peindre pendant que
+   trois lignes ont déjà défilé. En poussée, il reste en mesure quoi qu'il arrive.
+
+   LE RETARD EST CELUI DU POP (`--pop-delay`, une poussée lui aussi) : le fondu part à zéro d'opacité
+   dans l'image même où le composant découvre la ligne, donc sans blanc ni saut. */
+.ds-reveal [data-fold='fade'] {
+  animation: ds-fade-in var(--fold-duration, 0.3s) linear both var(--pop-delay, 0.3s);
+}
+
+/* Au repli, le fondu joué à l'envers, et sur la même mesure que le pop inversé : la ligne s'efface
+   le temps d'une poussée, puis le cadre la recouvre — sans lui, le repli redevenait sec, la ligne
+   disparaissant net sous un cadre encore ouvert. */
+.ds-reveal [data-fold='unfade'] {
+  animation: ds-fade-in var(--unpop-duration, 0.3s) linear reverse both;
+}
+
+@keyframes ds-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Le relief suit --pop, quelle que soit la commande : un bouton le porte sur son calque d'ombre, un
@@ -278,6 +315,10 @@
   .ds-reveal {
     transition: none;
   }
+
+  /* Sans valeur, et c'est ce qui compte : le pop comme le fondu passent par la MÊME marque, donc
+     cette seule règle les coupe tous les deux — un fondu qui reparaîtrait ici serait précisément le
+     mouvement qu'on vient de refuser. */
 
   .ds-reveal [data-fold] {
     animation: none;

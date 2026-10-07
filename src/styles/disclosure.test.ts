@@ -112,3 +112,46 @@ describe('le pop du bouton section', () => {
     expect(POP.join('\n')).toMatch(/:not\(\.ds-active\)/)
   })
 })
+
+describe("le fondu d'une ligne sans relief", () => {
+  /**
+   * CE QUE jsdom NE PEUT PAS TENIR : que l'encre monte vraiment. Il ne joue aucune animation et ne
+   * résout aucun `var()`, donc l'opacité d'une ligne en cours d'entrée n'y est pas observable. Ce
+   * qui se garde ici, c'est la RÈGLE — son existence, et surtout ses durées, qui sont le seul
+   * endroit où le fondu peut se décrocher du rythme du dépli. Le câblage, lui (quelle ligne reçoit
+   * quelle marque, et quand), est tenu par `components.test.tsx`, où il s'observe.
+   */
+  it('entre en fondu sur une POUSSÉE, et part au même instant que le pop', () => {
+    const fondu = rule(`.ds-reveal [data-fold='fade']`)
+
+    expect(fondu).toMatch(/animation:\s*ds-fade-in/)
+    // La durée est la poussée, et le retard celui du pop : deux jetons posés par le composant, qui
+    // suivent le resserrement des poussées. Un nombre écrit en clair décrocherait le texte du
+    // rythme dès qu'une section a beaucoup de lignes.
+    expect(fondu).toContain('var(--fold-duration')
+    expect(fondu).toContain('var(--pop-delay')
+    expect(CSS).toMatch(/@keyframes ds-fade-in/)
+  })
+
+  it('se joue à l’envers au repli, sur la mesure du pop inversé', () => {
+    // Sans quoi le repli redevenait sec : la ligne disparaissait net sous un cadre encore ouvert.
+    const sortie = rule(`.ds-reveal [data-fold='unfade']`)
+
+    expect(sortie).toMatch(/ds-fade-in.*reverse/)
+    expect(sortie).toContain('var(--unpop-duration')
+  })
+
+  it('ne remplace pas la barrière : une ligne couverte reste hors d’atteinte', () => {
+    // L'OPACITÉ NE PEINT QUE L'ENTRÉE. Une ligne pas encore découverte doit rester invisible AU SENS
+    // FORT — ni lue, ni cliquable, ni atteinte à la tabulation —, ce que seule `visibility` donne.
+    expect(rule('.ds-reveal [data-fold-hidden]')).toMatch(/visibility:\s*hidden/)
+  })
+
+  it('disparaît sous prefers-reduced-motion, comme le pop', () => {
+    // La règle coupe la marque SANS VALEUR : pop et fondu passent par la même, donc une seule ligne
+    // les tient tous les deux.
+    const sans = CSS.replace(/\/\*[\s\S]*?\*\//g, '')
+    const reduit = sans.slice(sans.lastIndexOf('@media (prefers-reduced-motion: reduce)'))
+    expect(reduit).toMatch(/\.ds-reveal \[data-fold\]\s*\{\s*animation:\s*none/)
+  })
+})
