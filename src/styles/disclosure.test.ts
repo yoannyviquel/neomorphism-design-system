@@ -155,3 +155,17 @@ describe("le fondu d'une ligne sans relief", () => {
     expect(reduit).toMatch(/\.ds-reveal \[data-fold\]\s*\{\s*animation:\s*none/)
   })
 })
+
+describe('les marges du dépli, dans le bouton section', () => {
+  /**
+   * CE QUE jsdom NE PEUT PAS TENIR : la fusion des marges, qui est de la mise en page. Mesuré dans
+   * Chrome, un bouton section replié posé dans un simple bloc faisait 85 px pour un en-tête de 61 :
+   * la marge négative du bas du cadre de dépli (.ds-reveal, qui rend à la page la marge réservée
+   * aux ombres) traversait la section au lieu de s'y rendre. Une grille ou une colonne flex le
+   * masquaient, ce qui explique que la page de démonstration ne l'ait jamais montré. Ce qui se
+   * garde ici, c'est la RÈGLE qui l'empêche : la section est un contexte de formatage.
+   */
+  it('contient les marges de son dépli : la section est un contexte de formatage', () => {
+    expect(rule('.ds-disclosure-button')).toMatch(/display:\s*flow-root\s*;/)
+  })
+})

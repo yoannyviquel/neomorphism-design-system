@@ -45,9 +45,18 @@
 /* LE BOUTON SECTION DÉPLIANTE (DisclosureButton) : la section est le bouton. Son relief est celui
    d'un bouton — calque d'ombre (.ds-shade) qui suit --sink, au rebond du DS —, mais SOUS le
    contenu : le creux d'une section dépliée ne doit pas assombrir les champs qu'elle porte. En
-   relief repliée, enfoncée dépliée (et jusqu'à la fin du repli), enfoncée le temps d'un appui. */
+   relief repliée, enfoncée dépliée (et jusqu'à la fin du repli), enfoncée le temps d'un appui.
+
+   SES PROPRES MARGES, IL LES CONTIENT (`flow-root`). Le cadre du dépli (.ds-reveal) réserve aux
+   ombres une marge intérieure qu'il rend à la page par une marge négative. Dans un bloc ordinaire,
+   la marge négative du BAS traversait la section — elle fusionnait avec la sienne — au lieu de s'y
+   rendre : la section gardait --shadow-room de vide sous son en-tête repliée, et autant sous son
+   contenu dépliée. Ça ne se voyait pas dans une grille ou une colonne flex, dont chaque élément
+   contient déjà les marges de ses enfants ; ça se voyait dans une app, où le bouton est souvent
+   posé dans un simple bloc. */
 .ds-disclosure-button {
   --sink: 0;
+  display: flow-root;
   position: relative;
   isolation: isolate;
   border-radius: var(--control-radius);

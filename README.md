@@ -182,7 +182,9 @@ et les composants React, avec une page de démonstration. Publié en privé sur 
   ligne qu'une fois elle rentrée et partie (`retractFirst` de `Reveal`) ; il remonte en relief une fois
   tout rentré. Seul l'en-tête s'actionne — le contenu
   porte ses propres commandes, qu'un bouton ne peut pas contenir —, et le creux est peint sous le
-  contenu, pour ne pas assombrir ses champs.
+  contenu, pour ne pas assombrir ses champs. Il contient les marges de son dépli (`flow-root`) :
+  posé dans un simple bloc, il a, replié, la hauteur de son en-tête — la marge négative que le
+  cadre du dépli rend aux ombres ne le traverse plus.
 - **Une section dépliée peut s'enfoncer.** Avec `sunken`, une `Disclosure` dépliée se creuse tout
   entière — intitulé, contenu, chevron —, du creux et du rebond d'un élément choisi
   (`Selectable`) : l'ouverture se lit à la région, plus seulement au chevron. Au repli, elle reste
