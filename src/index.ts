@@ -8,7 +8,7 @@ export { Checkbox, Input, Select, TextArea, type SelectOption, type TextAreaProp
 export { FlatSelector, type FlatSelectorOption, type FlatSelectorProps } from './components/FlatSelector'
 export { FALLBACK_COLUMNS, FoldingGrid, type FoldingGridProps } from './components/FoldingGrid'
 export { Icon } from './components/Icon'
-export { ICONS, type IconName } from './components/icons'
+export { FA_ICONS, ICONS, type IconName } from './components/icons'
 export { Body, ButtonBar, Footer, Header, Screen, SLIDE_MS, Slides } from './components/Layout'
 export { ImageButton, type FoldItemState, type ImageButtonProps, type ImageButtonVariant } from './components/ImageButton'
 export { MenuBar, type MenuBarProps, type MenuItem } from './components/MenuBar'

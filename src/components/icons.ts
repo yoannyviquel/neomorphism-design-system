@@ -1,4 +1,4 @@
-/** Les icônes du DS (Material Design Icons, par la police Symbols Nerd Font). */
+/** Les icônes du DS (Material Design Icons et quelques Font Awesome, par la police Symbols Nerd Font). */
 export const ICONS = [
   'account',
   'alert',
@@ -26,6 +26,8 @@ export const ICONS = [
   'eye_off',
   'fire',
   'filter_variant',
+  'flag',
+  'flag_checkered',
   'flash',
   'format_bold',
   'format_header_3',
@@ -35,6 +37,7 @@ export const ICONS = [
   'format_quote_close',
   'format_strikethrough_variant',
   'gauge',
+  'go_kart_track',
   'home',
   'leaf',
   'link_variant',
@@ -56,9 +59,16 @@ export const ICONS = [
   'volume_high',
   'volume_off',
   'water',
+  'weather_cloudy',
   'weather_night',
+  'weather_partly_cloudy',
+  'weather_pouring',
+  'weather_rainy',
   'weather_sunny',
   'weather_windy',
 ] as const
 
-export type IconName = (typeof ICONS)[number]
+/** Les icônes Font Awesome de la même police (nf-fa-*), quand Material Design n'a pas la bonne. */
+export const FA_ICONS = ['rocket', 'wind'] as const
+
+export type IconName = (typeof ICONS)[number] | `fa-${(typeof FA_ICONS)[number]}`

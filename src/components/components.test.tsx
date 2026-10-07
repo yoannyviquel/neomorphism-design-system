@@ -12,6 +12,7 @@ import { Checkbox, Select, TextArea } from './Field'
 import { FALLBACK_COLUMNS, FoldingGrid } from './FoldingGrid'
 import { ImageButton } from './ImageButton'
 import { FlatSelector } from './FlatSelector'
+import { Icon } from './Icon'
 import { Body, ButtonBar, Footer, Header, Screen, Slides } from './Layout'
 import { MENU_RELEASE_DELAY_MS, MenuBar } from './MenuBar'
 import { RichTextField, type RichTextAction } from './RichTextField'
@@ -530,6 +531,21 @@ describe('Sélection', () => {
     const ligne = screen.getByTestId('ligne')
     expect(ligne.tagName).toBe('TR')
     expect(ligne).toHaveAttribute('data-selected')
+  })
+})
+
+describe('Icon', () => {
+  it('rend une Material Design en nf-md-*, une Font Awesome en nf-fa-*', () => {
+    const { container } = render(
+      <>
+        <Icon name="flag" />
+        <Icon name="fa-rocket" />
+      </>,
+    )
+    const [md, fa] = container.querySelectorAll('i')
+    expect(md).toHaveClass('nf', 'nf-md-flag')
+    expect(fa).toHaveClass('nf', 'nf-fa-rocket')
+    expect(fa).not.toHaveClass('nf-md-fa-rocket')
   })
 })
 

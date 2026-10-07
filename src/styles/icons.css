@@ -1,6 +1,7 @@
 /* Icônes : Symbols Nerd Font (ryanoasis/nerd-fonts, v3.4.0), servie avec le paquet — pas de CDN.
-   Les glyphes sont ceux de Material Design Icons (nf-md-*, même point de code). N'y figurent que
-   ceux dont les apps se servent ; en ajouter un, c'est une ligne ici et une dans icons.ts. */
+   Les glyphes sont ceux de Material Design Icons (nf-md-*, même point de code), plus quelques-uns de
+   Font Awesome (nf-fa-*) quand Material Design n'a pas le bon. N'y figurent que ceux dont les apps
+   se servent ; en ajouter un, c'est une ligne ici et une dans icons.ts (ICONS ou FA_ICONS). */
 @font-face {
   font-family: 'Symbols Nerd Font';
   src: url('../assets/fonts/symbols-nerd-font-v2.woff2') format('woff2');
@@ -253,4 +254,42 @@
 
 .nf-md-weather_windy::before {
   content: '\f059d';
+}
+
+/* La course : drapeau (et damier), piste, et le ciel au-delà du soleil et de la nuit. */
+.nf-md-flag::before {
+  content: '\f023b';
+}
+
+.nf-md-flag_checkered::before {
+  content: '\f023c';
+}
+
+.nf-md-go_kart_track::before {
+  content: '\f0d7a';
+}
+
+.nf-md-weather_cloudy::before {
+  content: '\f0590';
+}
+
+.nf-md-weather_partly_cloudy::before {
+  content: '\f0595';
+}
+
+.nf-md-weather_pouring::before {
+  content: '\f0596';
+}
+
+.nf-md-weather_rainy::before {
+  content: '\f0597';
+}
+
+/* Font Awesome, de la même police : la fusée (DRS, dépassement) et le vent. */
+.nf-fa-rocket::before {
+  content: '\f135';
+}
+
+.nf-fa-wind::before {
+  content: '\ef16';
 }
