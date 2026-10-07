@@ -346,6 +346,102 @@ describe('Reveal', () => {
     vi.useRealTimers()
   })
 
+  it('fait ENTRER EN FONDU une ligne sans relief, au lieu de la poser d’un coup', () => {
+    /**
+     * LE DÉFAUT SIGNALÉ À L'USAGE : « tout le bloc message apparaît d'un coup au lieu que chaque
+     * message fade in ». Le retard de la découverte réglait le QUAND — un texte ne paraît plus
+     * pendant que le cadre s'ouvre encore —, jamais le COMMENT : il arrivait à pleine encre.
+     *
+     * CE QUE CE TEST TIENT : le câblage, et il est tout entier dans la synchronisation. La marque de
+     * fondu est posée au DÉPART de la poussée, alors que la ligne est encore couverte, et son
+     * animation attend `--pop-delay` — la même poussée — pour démarrer : elle part donc à zéro
+     * d'opacité dans l'image même où la ligne se découvre. Que l'encre monte ensuite est affaire de
+     * feuille de style, gardée par `styles/disclosure.test.ts` : jsdom ne joue aucune animation.
+     */
+    vi.useFakeTimers()
+    mesurer()
+    const { rerender } = render(
+      <Reveal open={false} id="message">
+        <p>Un long message</p>
+      </Reveal>,
+    )
+    rerender(
+      <Reveal open id="message">
+        <p>Un long message</p>
+      </Reveal>,
+    )
+    const ligne = document.querySelector('#message p') as HTMLElement
+
+    // Au départ de la poussée : marquée, et encore couverte — le fondu court son retard à l'abri.
+    act(() => void vi.advanceTimersByTime(60))
+    expect(ligne.dataset.fold).toBe('fade')
+    expect(ligne).toHaveAttribute('data-fold-hidden')
+
+    // Sa place faite : découverte, la marque tenant toujours — c'est elle qui peint l'entrée.
+    act(() => void vi.advanceTimersByTime(PUSH_S * 1000))
+    expect(ligne).not.toHaveAttribute('data-fold-hidden')
+    expect(ligne.dataset.fold).toBe('fade')
+
+    // AU REPLI, LE FONDU À L'ENVERS, et il part AVANT que le cadre ne recouvre la ligne : sans lui
+    // elle disparaîtrait net sous un cadre encore ouvert.
+    act(() => void vi.advanceTimersByTime(5000))
+    rerender(
+      <Reveal open={false} id="message">
+        <p>Un long message</p>
+      </Reveal>,
+    )
+    act(() => void vi.advanceTimersByTime(40))
+    expect(ligne.dataset.fold).toBe('unfade')
+    expect(ligne).not.toHaveAttribute('data-fold-hidden')
+
+    act(() => void vi.advanceTimersByTime(PUSH_S * 1000))
+    expect(ligne).toHaveAttribute('data-fold-hidden')
+    vi.useRealTimers()
+  })
+
+  it('découvre un bouton section dépliante comme une COMMANDE : une ligne, qui poppe', () => {
+    /**
+     * LE DÉFAUT CONSTATÉ À L'ÉCRAN : un bouton section mis dans un `Reveal` se découvrait comme du
+     * TEXTE, sans rebond. Son relief est porté par la `<section>` — la section EST le bouton —, or
+     * un `<section>` s'ouvre toujours : il était découpé en son en-tête et son contenu replié, et
+     * aucun des morceaux ne portait de relief. `marquer` n'avait donc rien à marquer.
+     *
+     * CE QUE CE TEST TIENT : la marque de pop, posée sur la section elle-même, et le fait qu'elle
+     * soit SEULE à la porter. Que le rebond se VOIE est affaire de feuille de style (le calque
+     * d'ombre suit --pop) : jsdom ne résout ni `calc()` ni animation, cette moitié-là est gardée par
+     * `styles/disclosure.test.ts`.
+     */
+    vi.useFakeTimers()
+    mesurer()
+    const section = (
+      <DisclosureButton title="Revenus">
+        <button type="button" className="ds-button">
+          Enregistrer
+        </button>
+      </DisclosureButton>
+    )
+    const { rerender } = render(
+      <Reveal open={false} id="bloc">
+        {section}
+      </Reveal>,
+    )
+    rerender(
+      <Reveal open id="bloc">
+        {section}
+      </Reveal>,
+    )
+    const bouton = document.querySelector('#bloc .ds-disclosure-button') as HTMLElement
+
+    // À plat au fond du creux avant sa poussée, comme toute commande.
+    expect(bouton.dataset.fold).toBe('folded')
+
+    act(() => void vi.advanceTimersByTime(60))
+    expect(bouton.dataset.fold).toBe('pop')
+    // Et d'UN BLOC : la commande qu'il cache replié monte avec lui, elle ne rebondit pas à part.
+    expect(bouton.querySelector('.ds-button')).not.toHaveAttribute('data-fold')
+    vi.useRealTimers()
+  })
+
   it("se déplie et se replie au gré de l'état, sans intitulé ni chevron", () => {
     const { rerender } = render(
       <Reveal open={false} id="actions">

@@ -37,9 +37,31 @@ function couvrir(ligne: FoldLine) {
   for (const el of ligne.elements) el.setAttribute(CACHEE, '')
 }
 
+/**
+ * LA MARQUE D'UNE LIGNE SANS RELIEF, qui entre en FONDU au lieu de monter.
+ *
+ * `folded` n'a pas d'équivalent, et c'est voulu : « à plat au fond du creux » ne veut rien dire pour
+ * un texte, qui n'est nulle part avant d'entrer — il est couvert (`data-fold-hidden`), point. Lui
+ * poser quand même la marque du relief le ferait tomber sous les règles du pop, qui mettent à zéro
+ * l'image d'une ligne repliée et ne la rendent qu'au pop : elle y serait restée invisible.
+ */
+const FONDU = { folded: null, pop: 'fade', unpop: 'unfade' } as const
+
+/**
+ * LES DEUX FAÇONS D'ENTRER, et c'est la même marque qui les commande : une ligne qui a un relief le
+ * fait MONTER (pop), une ligne qui n'en a pas s'AFFICHE (fondu). Faute de commande à qui la poser,
+ * la marque va alors sur la ligne elle-même.
+ *
+ * SANS ÇA, UN TEXTE SURGISSAIT : le retard de sa découverte réglait le QUAND — il ne paraît plus
+ * pendant que le cadre s'ouvre encore —, jamais le COMMENT. Il arrivait donc d'un coup, à pleine
+ * encre, là où tout le reste du DS entre par un mouvement. La même marque sert les deux familles
+ * pour qu'un seul endroit (prefers-reduced-motion, l'effacement final) les tienne toutes les deux.
+ */
 function marquer(ligne: FoldLine, etat: 'folded' | 'pop' | 'unpop' | null) {
-  for (const el of ligne.reliefs) {
-    if (etat) el.dataset.fold = etat
+  const fondu = ligne.reliefs.length === 0
+  const marque = etat && (fondu ? FONDU[etat] : etat)
+  for (const el of fondu ? ligne.elements : ligne.reliefs) {
+    if (marque) el.dataset.fold = marque
     else delete el.dataset.fold
   }
 }
@@ -169,7 +191,9 @@ export function Reveal({ open, id, onFolded, retractFirst = false, className, ch
          *
          * LE RETARD EST EXACTEMENT CELUI DU POP, et pas un nombre à lui : les deux familles de
          * lignes paraissent donc au même instant de leur poussée, l'une en montant, l'autre en
-         * s'affichant.
+         * s'affichant. ET C'EST CE QUI SYNCHRONISE LE FONDU : la marque `fade` est posée ici, mais
+         * son animation attend `--pop-delay` — la même poussée —, si bien qu'elle démarre, à zéro
+         * d'opacité, dans l'image même où la ligne se découvre. Pas de blanc, pas de saut.
          */
         if (ligne.reliefs.length === 0) plusTard(() => decouvrir(ligne), push)
         else decouvrir(ligne)
