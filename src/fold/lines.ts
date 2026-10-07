@@ -19,11 +19,27 @@
 const COMMANDES = 'button, input:not([type="hidden"]), select, textarea, a[href]'
 
 /** Ce qui porte un relief et poppe : la commande telle que le DS l'habille. Un sélecteur porte le
- *  sien sur son enveloppe (le chevron grandit avec lui). */
-export const RELIEFS = '.ds-button, .ds-select, .ds-input:not(.ds-select > .ds-input), .ds-checkbox'
+ *  sien sur son enveloppe (le chevron grandit avec lui) ; un bouton section dépliante le porte sur
+ *  la SECTION elle-même, puisque la section EST le bouton. */
+export const RELIEFS = '.ds-button, .ds-disclosure-button, .ds-select, .ds-input:not(.ds-select > .ds-input), .ds-checkbox'
 
 /** Ce qui s'ouvre toujours, quel que soit le nombre de commandes dedans. */
 const SECTIONS = 'section, article, fieldset, form, ul, ol, dl'
+
+/**
+ * Ce qui est UNE commande bien que ce soit une section pleine d'autres : le bouton section
+ * dépliante, dont la section EST le bouton, en relief au repos.
+ *
+ * SANS CETTE EXCEPTION IL SE DÉCOUPAIT, et c'est le défaut corrigé : un `<section>` s'ouvre
+ * toujours, donc son en-tête et son contenu replié faisaient des lignes séparées, dont aucune ne
+ * portait le relief — il est sur la section, et elle n'était plus une ligne. Il se découvrait
+ * comme du TEXTE, sans rebond, alors que c'est une commande.
+ *
+ * L'EXCEPTION EST NOMMÉE, PAS UN RETRAIT DE `SECTIONS` : un vrai `<section>` de mise en page doit
+ * continuer de s'ouvrir, et le compte des commandes ne suffisait pas à les distinguer — un bouton
+ * section en contient autant que son contenu replié en cache.
+ */
+const COMMANDES_ENTIERES = '.ds-disclosure-button'
 
 export interface FoldLine {
   /** Les éléments de la ligne : un seul, ou une rangée côte à côte. */
@@ -75,7 +91,11 @@ export function foldLines(racine: HTMLElement): FoldLine[] {
 
   const ajouter = (elements: HTMLElement[]) => {
     const rects = elements.map((el) => el.getBoundingClientRect())
-    const reliefs = elements.flatMap((el) => [...(el.matches(RELIEFS) ? [el] : []), ...el.querySelectorAll<HTMLElement>(RELIEFS)]).filter(visible)
+    const reliefs = elements
+      .flatMap((el) => [...(el.matches(RELIEFS) ? [el] : []), ...el.querySelectorAll<HTMLElement>(RELIEFS)])
+      // Une commande entière poppe D'UN BLOC : ce qu'elle cache repliée n'a pas de pop à elle, et
+      // le jouer quand même ferait rebondir des commandes invisibles dans une commande qui monte.
+      .filter((el) => visible(el) && !el.parentElement?.closest(COMMANDES_ENTIERES))
     lignes.push({
       elements,
       top: Math.min(...rects.map((r) => r.top)) - origine,
@@ -85,6 +105,11 @@ export function foldLines(racine: HTMLElement): FoldLine[] {
   }
 
   const visiter = (el: HTMLElement) => {
+    // Une commande entière ne se descend pas : elle est la ligne, quoi qu'elle contienne.
+    if (el.matches(COMMANDES_ENTIERES)) {
+      ajouter([el])
+      return
+    }
     const dedans = enfants(el)
     if (dedans.length === 0 || (!el.matches(SECTIONS) && commandes(el) <= 1)) {
       ajouter([el])

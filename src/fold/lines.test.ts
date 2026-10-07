@@ -69,4 +69,42 @@ describe('foldLines', () => {
     // Positions depuis le haut du contenu.
     expect(lignes[2]).toMatchObject({ top: 100, bottom: 150 })
   })
+
+  it("tient un bouton section dépliante pour UNE commande, là où un vrai <section> s'ouvre", () => {
+    /**
+     * LE DÉFAUT : un `<section>` s'ouvre toujours, et le bouton section dépliante en est un. Son
+     * en-tête et son contenu replié faisaient donc des lignes séparées, dont aucune ne portait le
+     * relief — il est sur la SECTION, puisque la section EST le bouton. Rien ne poppait : il se
+     * découvrait comme du texte.
+     *
+     * LES DEUX CAS SONT DANS LE MÊME TEST à dessein : c'est leur DIFFÉRENCE qui est la règle, et une
+     * correction qui ferait d'un `<section>` de mise en page une ligne d'un bloc la casserait sans
+     * que rien ne le dise.
+     */
+    document.body.innerHTML = `
+      <div id="racine" data-r="0,200">
+        <section class="ds-disclosure ds-disclosure-button" data-n="bouton-section" data-r="0,60">
+          <span class="ds-shade" data-r="0,60"></span>
+          <button class="ds-disclosure-trigger" data-n="entete" data-r="0,40">Revenus</button>
+          <div class="ds-reveal" data-r="40,60">
+            <div class="ds-reveal-content" data-r="40,60">
+              <button class="ds-button" data-n="dedans" data-r="40,60">Enregistrer</button>
+            </div>
+          </div>
+        </section>
+        <section data-n="mise-en-page" data-r="80,200">
+          <h3 data-n="titre" data-r="80,100">Famille</h3>
+          <button class="ds-button" data-n="ajouter" data-r="110,160">Ajouter</button>
+        </section>
+      </div>`
+    const lignes = foldLines(document.getElementById('racine') as HTMLElement)
+
+    // Le bouton section : UNE ligne, quoi qu'il contienne. La section de mise en page, elle, s'ouvre
+    // toujours — son titre et son bouton restent deux lignes.
+    expect(lignes.map((l) => l.elements.map(nom).join('+'))).toEqual(['bouton-section', 'titre', 'ajouter'])
+
+    // Ce qui poppe : la section elle-même, et ELLE SEULE — ce qu'elle cache repliée poppe avec elle,
+    // pas à part, sans quoi des commandes invisibles rebondiraient dans une commande qui monte.
+    expect(lignes.map((l) => l.reliefs.map(nom).join('+'))).toEqual(['bouton-section', '', 'ajouter'])
+  })
 })

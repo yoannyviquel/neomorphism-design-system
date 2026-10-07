@@ -85,3 +85,30 @@ describe("l'invariant d'échelle du bouton section", () => {
     expect(marges[1]).toContain('--control-pad')
   })
 })
+
+describe('le pop du bouton section', () => {
+  /**
+   * LA MOITIÉ QUE jsdom NE PEUT PAS TENIR : il ne résout ni `calc()` ni animation, donc le rebond ne
+   * s'y observe pas. Ce qui se garde, c'est que la RÈGLE existe — le bouton section monte son relief
+   * sur --pop comme les autres commandes —, lue depuis le fichier, comme les tests voisins.
+   *
+   * SANS ELLE LE DÉFAUT SE REJOUAIT À MOITIÉ : la marque de pop était bien posée (et `lines.test.ts`
+   * la garde), l'échelle jouait, mais l'ombre restait celle de --sink — le relief ne bougeait pas.
+   * Son calque est enfant de la SECTION, pas d'un `.ds-button` : il n'était atteint par aucun
+   * sélecteur.
+   */
+  const POP = CSS.replace(/\/\*[\s\S]*?\*\//g, '')
+    .split('\n')
+    .filter((ligne) => ligne.includes('[data-fold]') && ligne.includes('.ds-shade'))
+
+  it('monte son relief sur --pop, comme toute commande qui se découvre', () => {
+    expect(POP.join('\n')).toMatch(/\.ds-disclosure-button\b/)
+  })
+
+  it('garde son creux quand il se découvre DÉJÀ DÉPLIÉ : --pop ne commande pas un enfoncé', () => {
+    // La règle de la grille, appliquée ici : un bouton enfoncé garde son creux. C'est aussi ce qui
+    // empêche le pop de se battre avec l'état déplié du bouton section (.ds-active, porté par la
+    // même section), dont le creux vient de --sink.
+    expect(POP.join('\n')).toMatch(/:not\(\.ds-active\)/)
+  })
+})

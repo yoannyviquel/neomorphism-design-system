@@ -346,6 +346,49 @@ describe('Reveal', () => {
     vi.useRealTimers()
   })
 
+  it('découvre un bouton section dépliante comme une COMMANDE : une ligne, qui poppe', () => {
+    /**
+     * LE DÉFAUT CONSTATÉ À L'ÉCRAN : un bouton section mis dans un `Reveal` se découvrait comme du
+     * TEXTE, sans rebond. Son relief est porté par la `<section>` — la section EST le bouton —, or
+     * un `<section>` s'ouvre toujours : il était découpé en son en-tête et son contenu replié, et
+     * aucun des morceaux ne portait de relief. `marquer` n'avait donc rien à marquer.
+     *
+     * CE QUE CE TEST TIENT : la marque de pop, posée sur la section elle-même, et le fait qu'elle
+     * soit SEULE à la porter. Que le rebond se VOIE est affaire de feuille de style (le calque
+     * d'ombre suit --pop) : jsdom ne résout ni `calc()` ni animation, cette moitié-là est gardée par
+     * `styles/disclosure.test.ts`.
+     */
+    vi.useFakeTimers()
+    mesurer()
+    const section = (
+      <DisclosureButton title="Revenus">
+        <button type="button" className="ds-button">
+          Enregistrer
+        </button>
+      </DisclosureButton>
+    )
+    const { rerender } = render(
+      <Reveal open={false} id="bloc">
+        {section}
+      </Reveal>,
+    )
+    rerender(
+      <Reveal open id="bloc">
+        {section}
+      </Reveal>,
+    )
+    const bouton = document.querySelector('#bloc .ds-disclosure-button') as HTMLElement
+
+    // À plat au fond du creux avant sa poussée, comme toute commande.
+    expect(bouton.dataset.fold).toBe('folded')
+
+    act(() => void vi.advanceTimersByTime(60))
+    expect(bouton.dataset.fold).toBe('pop')
+    // Et d'UN BLOC : la commande qu'il cache replié monte avec lui, elle ne rebondit pas à part.
+    expect(bouton.querySelector('.ds-button')).not.toHaveAttribute('data-fold')
+    vi.useRealTimers()
+  })
+
   it("se déplie et se replie au gré de l'état, sans intitulé ni chevron", () => {
     const { rerender } = render(
       <Reveal open={false} id="actions">

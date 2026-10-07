@@ -238,8 +238,19 @@
 
 /* Le relief suit --pop, quelle que soit la commande : un bouton le porte sur son calque d'ombre, un
    sélecteur sur son champ, un champ ou une case sur eux-mêmes. Un bouton enfoncé garde son creux,
-   comme dans la grille. */
-.ds-reveal .ds-button[data-fold]:not(.ds-active) > .ds-shade,
+   comme dans la grille.
+
+   LE BOUTON SECTION DÉPLIANTE EST DU MÊME CALQUE, et il lui fallait pourtant sa place ici : son
+   .ds-shade est enfant de la SECTION, pas d'un .ds-button — sans ce sélecteur, il poppait (le
+   data-fold est bien posé, l'échelle joue) mais son ombre restait celle de --sink, donc le rebond
+   ne se VOYAIT pas, seule la taille bougeait.
+
+   `:not(.ds-active)` VAUT POUR LUI COMME POUR UN BOUTON, et c'est ce qui l'empêche de se battre avec
+   son propre état : un bouton section qui se découvre DÉJÀ DÉPLIÉ est enfoncé, et il garde son creux
+   plutôt que de le voir écrasé par --pop. Avec son `usePress` il n'y a rien à arbitrer : --pop ne
+   commande cette ombre que le temps d'un data-fold, posé puis retiré par le dépli, et un appui
+   pendant ce temps-là se lit comme sur un bouton de grille. */
+.ds-reveal :is(.ds-button, .ds-disclosure-button)[data-fold]:not(.ds-active) > .ds-shade,
 .ds-reveal .ds-select[data-fold] > .ds-input,
 .ds-reveal :is(.ds-input, .ds-checkbox)[data-fold] {
   box-shadow:
