@@ -36,6 +36,7 @@ export const ICONS = [
   'format_list_numbered',
   'format_quote_close',
   'format_strikethrough_variant',
+  'garage_open_variant',
   'gauge',
   'go_kart_track',
   'home',

@@ -269,6 +269,10 @@
   content: '\f0d7a';
 }
 
+.nf-md-garage_open_variant::before {
+  content: '\f12d4';
+}
+
 .nf-md-weather_cloudy::before {
   content: '\f0590';
 }
